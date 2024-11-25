@@ -2,7 +2,7 @@ const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
 const handlebars = require("express-handlebars");
-const port = 3000;
+const port = process.env.PORT || 3000;
 const route = require("./routes");
 
 const app = express();
@@ -23,7 +23,7 @@ app.set("views", path.join(__dirname, "../views/bodies"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use("/public", express.static(path.join(__dirname, "../../public")));
-app.use("/node_modules", express.static("node_modules"));
+
 
 route(app);
 
