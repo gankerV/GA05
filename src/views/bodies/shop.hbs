@@ -1,25 +1,17 @@
 <!-- Shop -->
 <section id="shop">
     <div class="container mx-auto">
-        <!-- Top Filter -->
-        <div class="flex flex-col md:flex-row justify-end items-center py-4">
-            <div class="flex mt-5 md:mt-0 space-x-4">
-                <div class="relative">
-                    <select
-                        class="block appearance-none w-full bg-white border hover:border-primary px-4 py-2 pr-8 rounded-full shadow leading-tight focus:outline-none focus:shadow-outline">
-                        <option>Sort by Latest</option>
-                        <option>Sort by Popularity</option>
-                        <option>Sort by A-Z</option>
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center justify-center px-2">
-                        <img id="arrow-down" class="h-4 w-4" src="/public/images/filter-down-arrow.svg"
-                            alt="filter arrow" />
-                        <img id="arrow-up" class="h-4 w-4 hidden" src="/public/images/filter-up-arrow.svg"
-                            alt="filter arrow" />
-                    </div>
-                </div>
+        <form method="get" action="/shop">
+            <!-- Search field -->
+            <div class="flex flex-col md:flex-row items-center py-4 w-3/4 search-field mt-2 bg-white shadow-lg p-2 rounded ml-auto">
+                <input type="text" 
+                        name="product_name" 
+                        id="search-input"
+                    class="w-full p-2 border border-gray-300 rounded" placeholder="Search for products..."/>
+                <button type="submit">
+                    <img class="bg-primary w-11 rounded-lg ml-2 hover:bg-black " src="../../../public/images/search-icon.svg" alt="Search-icon">
+                </button>
             </div>
-        </div>
         <!-- Filter Toggle Button for Mobile -->
         <div class="block md:hidden text-center mb-4">
             <button id="products-toggle-filters"
@@ -29,11 +21,6 @@
         </div>
         <div class="flex flex-col md:flex-row">
             <!-- Filters -->
-            <form method="get" action="/shop">
-                <!-- Submit Button -->
-                <button type="submit" class="bg-primary border border-primary hover:bg-transparent text-white hover:text-primary font-semibold px-4 py-2 rounded-full inline-block">
-                Apply Filters
-                </button>
                 <div id="filters" class="w-full md:w-1/4 p-4 hidden md:block">
                     <!-- Category Filter -->
                     <div class="mb-6 pb-8 border-b border-gray-line">
@@ -42,7 +29,8 @@
                             <label class="flex items-center">
                                 <input name="category" value="Men"
                                     type="checkbox"
-                                    class="form-checkbox custom-checkbox"
+                                    class="form-checkbox custom-checkbox "
+                                    onclick="applyFilter('category', 'Men', this)"
                                 />
                                 <span class="ml-2">Men</span>
                             </label>
@@ -50,15 +38,9 @@
                                 <input  name="category" value="Women"
                                     type="checkbox"
                                     class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('category', 'Women', this)"
                                 />
                                 <span class="ml-2">Women</span>
-                            </label>
-                            <label class="flex items-center">
-                                <input name="category" value="Acccessories"
-                                    type="checkbox"
-                                    class="form-checkbox custom-checkbox"
-                                />
-                                <span class="ml-2">Accessories</span>
                             </label>
                         </div>
                     </div>
@@ -70,6 +52,7 @@
                                 <input name="size" value="S"
                                     type="checkbox"
                                     class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('size', 'S', this)"
                                 />
                                 <span class="ml-2">S </span>
                             </label>
@@ -77,6 +60,7 @@
                                 <input name="size" value="M"
                                     type="checkbox"
                                     class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('size', 'M', this)"
                                 />
                                 <span class="ml-2">M </span>
                             </label>
@@ -84,6 +68,7 @@
                                 <input name="size" value="L"
                                     type="checkbox"
                                     class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('size', 'L', this)"
                                 />
                                 <span class="ml-2">L </span>
                             </label>
@@ -100,6 +85,7 @@
                                 <input name="color" value="Red"
                                     type="checkbox"
                                     class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('color', 'Red', this)"
                                 />
                                 <span class="ml-2">Red</span>
                             </label>
@@ -110,6 +96,7 @@
                                 <input name="color" value="Blue"
                                     type="checkbox"
                                     class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('color', 'Blue', this)"
                                 />
                                 <span class="ml-2">Blue</span>
                             </label>
@@ -120,6 +107,7 @@
                                 <input name="color" value="Brown"
                                     type="checkbox"
                                     class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('color', 'Brown', this)"
                                 />
                                 <span class="ml-2">Brown</span>
                             </label>
@@ -130,6 +118,7 @@
                                 <input name="color" value="Black"
                                     type="checkbox"
                                     class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('color', 'Black', this)"
                                 />
                                 <span class="ml-2">Black</span>
                             </label>
@@ -140,6 +129,7 @@
                                 <input name="color" value="White"
                                     type="checkbox"
                                     class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('color', 'White', this)"
                                 />
                                 <span class="ml-2">White</span>
                             </label>
@@ -150,6 +140,7 @@
                                 <input name="color" value="Yellow"
                                     type="checkbox"
                                     class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('color', 'Yellow', this)"
                                 />
                                 <span class="ml-2">Yellow</span>
                             </label>
@@ -163,6 +154,7 @@
                                 <input name="brand" value="Nike"
                                     type="checkbox"
                                     class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('brand', 'Nike', this)"
                                 />
                                 <span class="ml-2">Nike</span>
                             </label>
@@ -170,6 +162,7 @@
                                 <input  name="brand" value="Adidas"
                                     type="checkbox"
                                     class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('brand', 'Adidas', this)"
                                 />
                                 <span class="ml-2">Adidas</span>
                             </label>
@@ -177,6 +170,7 @@
                                 <input name="brand" value="Puma"
                                     type="checkbox"
                                     class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('brand', 'Puma', this)"
                                 />
                                 <span class="ml-2">Puma</span>
                             </label>
@@ -190,6 +184,7 @@
                                 <input name="rating" value="5"
                                     type="checkbox"
                                     class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('rating', '5', this)"
                                 />
                                 <span class="ml-2">★★★★★</span>
                             </label>
@@ -197,6 +192,7 @@
                                 <input name="rating" value="4"
                                     type="checkbox"
                                     class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('rating', '4', this)"
                                 />
                                 <span class="ml-2">★★★★☆</span>
                             </label>
@@ -204,6 +200,7 @@
                                 <input name="rating" value="3"
                                     type="checkbox"
                                     class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('rating', '3', this)"
                                 />
                                 <span class="ml-2">★★★☆☆</span>
                             </label>
@@ -316,3 +313,21 @@
         </div>
     </div>
 </section>
+
+
+
+<script>
+    window.onload = function() {
+        const url = new URL(window.location.href);
+
+        // Đánh dấu các giá trị đã chọn
+        document.querySelectorAll('input[name="category"], input[name="size"], input[name="color"], input[name="brand"], input[name="rating"]').forEach(input => {
+            const value = input.value;
+            const values = url.searchParams.getAll(input.name); // Lấy danh sách giá trị
+            if (values.includes(value)) {
+                input.checked = true; // Giữ trạng thái checked
+                input.parentElement.classList.add('selected'); // Cập nhật giao diện
+            }
+        });
+    };
+</script>

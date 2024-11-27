@@ -235,3 +235,43 @@ function activateTab(tabId, contentId) {
     document.getElementById(tabId).setAttribute("aria-selected", "true");
     document.getElementById(contentId).classList.remove("hidden");
 }
+
+
+
+function applyFilter(key, value, element) {
+    const url = new URL(window.location.href);
+
+    // Lấy danh sách các giá trị hiện tại
+    let values = url.searchParams.getAll(key);
+
+    if (values.includes(value)) {
+        // Bỏ chọn filter
+        values = values.filter(v => v !== value);
+        element.classList.remove('selected'); // Bỏ class khi không chọn
+    } else {
+        // Thêm filter
+        values.push(value);
+        element.classList.add('selected'); // Thêm class khi chọn
+    }
+
+    // Cập nhật lại query trong URL
+    url.searchParams.delete(key); // Xóa key cũ
+    values.forEach(v => url.searchParams.append(key, v)); // Thêm các giá trị mới
+
+    // Chuyển hướng đến URL mới
+    window.location.href = url.toString();
+}
+
+window.onload = function() {
+    const url = new URL(window.location.href);
+
+    // Đánh dấu các giá trị đã chọn
+    document.querySelectorAll('input[name="category"], input[name="size"], input[name="color"], input[name="brand"], input[name="rating"]').forEach(input => {
+        const value = input.value;
+        const values = url.searchParams.getAll(input.name); // Lấy danh sách giá trị
+        if (values.includes(value)) {
+            input.checked = true; // Giữ trạng thái checked
+            input.parentElement.classList.add('selected'); // Cập nhật giao diện
+        }
+    });
+};
