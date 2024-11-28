@@ -19,6 +19,7 @@ function route(app) {
     app.get("/cart", userRouter);
     app.get("/about", aboutRouter);
     app.get("/shop",shopRouter);
+    //app.get("/research", shopRouter);
     app.use("/", homeRouter);
 }
 

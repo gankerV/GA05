@@ -262,16 +262,4 @@ function applyFilter(key, value, element) {
     window.location.href = url.toString();
 }
 
-window.onload = function() {
-    const url = new URL(window.location.href);
 
-    // Đánh dấu các giá trị đã chọn
-    document.querySelectorAll('input[name="category"], input[name="size"], input[name="color"], input[name="brand"], input[name="rating"]').forEach(input => {
-        const value = input.value;
-        const values = url.searchParams.getAll(input.name); // Lấy danh sách giá trị
-        if (values.includes(value)) {
-            input.checked = true; // Giữ trạng thái checked
-            input.parentElement.classList.add('selected'); // Cập nhật giao diện
-        }
-    });
-};

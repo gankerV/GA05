@@ -67,51 +67,49 @@ class ShopModel {
     }
 
 
-    static async getProducts({ category = [], size = [], color = [], brand = [], rating = [] }) {
+    static async getProducts({
+        category = [],
+        size = [],
+        color = [],
+        brand = [],
+        rating = [],
+        product_name = null, // Thêm tham số tìm kiếm sản phẩm theo tên
+    }) {
         try {
             // Xử lý filter nếu là chuỗi
-            if (typeof category === "string") {
-                category = [category];
-            }
-            if (typeof size === "string") {
-                size = [size];
-            }
-            if (typeof category === "string") {
-                color = [color];
-            }
-            if (typeof size === "string") {
-                brand = [brand];
-            }
-            if (typeof category === "string") {
-                rating = [rating];
-            }
-
+            if (typeof category === "string") category = [category];
+            if (typeof size === "string") size = [size];
+            if (typeof color === "string") color = [color];
+            if (typeof brand === "string") brand = [brand];
+            if (typeof rating === "string") rating = [rating];
+    
             // Điều kiện truy vấn
             const whereConditions = {};
-            if (category.length > 0) {
-                whereConditions.category = category; // Sequelize tự xử lý IN với mảng
+
+            // Tìm kiếm theo tên sản phẩm (search)
+            if (product_name) {
+                whereConditions.product_name = {
+                    [Op.like]: `%${product_name}%`,
+                };
             }
-            if (size.length > 0) {
-                whereConditions.size = size;
-            }
-            if (color.length > 0) {
-                whereConditions.color = color;
-            }
-            if (brand.length > 0) {
-                whereConditions.brand = brand;
-            }
-            if (rating.length > 0) {
-                whereConditions.rating = rating;
-            }
-            // Truy vấn cơ sở dữ liệu
+
+            // Lọc theo các tiêu chí khác (filter)
+            if (category.length > 0) whereConditions.category = category;
+            if (size.length > 0) whereConditions.size = size;
+            if (color.length > 0) whereConditions.color = color;
+            if (brand.length > 0) whereConditions.brand = brand;
+            if (rating.length > 0) whereConditions.rating = rating;
+
+    
+            // Thực hiện truy vấn
             const products = await Shop.findAll({
                 where: whereConditions,
             });
-
+    
             // Thêm URL hình ảnh vào kết quả
             const baseImageUrl = "../../../public/images/products/";
             return products.map((product) => {
-                const productData = product.toJSON(); // Chuyển sang object thuần
+                const productData = product.get({ plain: true });
                 productData.imageUrl =
                     baseImageUrl + (productData.imageFileName || "");
                 return productData;
@@ -121,6 +119,7 @@ class ShopModel {
             throw error;
         }
     }
+    
 
     static async getSearchProducts(product_name) {
         try {
