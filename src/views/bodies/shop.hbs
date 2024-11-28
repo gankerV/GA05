@@ -317,7 +317,7 @@
 
 
 <script>
-    window.onload = function() {
+    window.onload = function () {
         const url = new URL(window.location.href);
 
         // Đánh dấu các giá trị đã chọn
@@ -329,5 +329,12 @@
                 input.parentElement.classList.add('selected'); // Cập nhật giao diện
             }
         });
+
+        // Giữ giá trị tìm kiếm trong ô input
+        const searchInput = document.getElementById('search-input');
+        const productName = url.searchParams.get('product_name'); // Lấy giá trị product_name
+        if (productName) {
+            searchInput.value = productName; // Gán lại giá trị vào input
+        }
     };
 </script>

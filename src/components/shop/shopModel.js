@@ -66,7 +66,6 @@ class ShopModel {
         return Shop; // Getter cho đối tượng Shop
     }
 
-
     static async getProducts({
         category = [],
         size = [],
@@ -100,7 +99,6 @@ class ShopModel {
             if (brand.length > 0) whereConditions.brand = brand;
             if (rating.length > 0) whereConditions.rating = rating;
 
-    
             // Thực hiện truy vấn
             const products = await Shop.findAll({
                 where: whereConditions,
@@ -120,31 +118,6 @@ class ShopModel {
         }
     }
     
-
-    static async getSearchProducts(product_name) {
-        try {
-            const products = await Shop.findAll({
-                where: {
-                    product_name: {
-                        [Op.like]: `%${product_name}%`, // Tìm kiếm sản phẩm chứa từ khóa
-                    },
-                },
-            });
-
-            const baseImageUrl = "../../../public/images/products/";
-
-            const productData = products.map((product) => {
-                const productData = product.get({ plain: true });
-                productData.imageUrl = baseImageUrl + productData.imageFileName; // Gắn imageUrl
-
-                return productData;
-            });
-            return productData;
-        } catch (error) {
-            console.error("Lỗi khi tìm kiếm:", error);
-            throw error;
-        }
-    }
 }
 
 module.exports = ShopModel;

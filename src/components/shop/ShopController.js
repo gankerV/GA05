@@ -28,24 +28,6 @@ class ShopController {
         }
     }
     
-    
-
-    // [GET] '/shop/search'
-    async research(req, res) {
-        try {
-            const { product_name } = req.query; // Lấy từ khóa tìm kiếm từ query string
-            const productData = await Shop.getSearchProducts(product_name);
-
-            if (!productData.length) {
-                res.render("404");
-            } else {
-                res.render("shop", { shop: productData });
-            }
-        } catch (error) {
-            console.error("Lỗi khi tìm kiếm:", error);
-            res.status(500).send("Lỗi sever.");
-        }
-    }
 }
 
 module.exports = new ShopController();
