@@ -2,16 +2,29 @@
 <section id="shop">
     <div class="container mx-auto">
         <form method="get" action="/shop">
-            <!-- Search field -->
-            <div class="flex flex-col md:flex-row items-center py-4 w-3/4 search-field mt-2 bg-white shadow-lg p-2 rounded ml-auto">
-                <input type="text" 
+            <div class="flex items-center py-4 w-full search-field mt-2 bg-white shadow-lg p-2 rounded">
+                <!-- Nút Clear Filter -->
+                    <a href="/shop">
+                        <button 
+                            id="clear-filters"
+                            class="p-2 font-semibold bg-primary text-white rounded hover:bg-black mr-4"
+                            type="button">
+                            Clear Filter
+                        </button>
+                    </a>
+                <!-- Thanh tìm kiếm dài khoảng 3/4 và lệch về bên trái -->
+                <div class="flex w-3/4 ml-auto">
+                    <input type="text" 
                         name="product_name" 
                         id="search-input"
-                    class="w-full p-2 border border-gray-300 rounded" placeholder="Search for products..."/>
-                <button type="submit">
-                    <img class="bg-primary w-11 rounded-lg ml-2 hover:bg-black " src="../../../public/images/search-icon.svg" alt="Search-icon">
-                </button>
+                        class="w-full p-2 border border-gray-300 rounded" 
+                        placeholder="Search for products..."/>
+                    <button type="submit">
+                        <img class="bg-primary w-11 rounded-lg ml-2 hover:bg-black" src="../../../public/images/search-icon.svg" alt="Search-icon">
+                    </button>
+                </div>
             </div>
+
         <!-- Filter Toggle Button for Mobile -->
         <div class="block md:hidden text-center mb-4">
             <button id="products-toggle-filters"
