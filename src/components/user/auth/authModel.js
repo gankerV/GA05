@@ -1,8 +1,11 @@
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
-        return next(); // Nếu đã xác thực, cho phép tiếp tục vào route
+        return next(); // Nếu người dùng đã đăng nhập, tiếp tục vào route
     }
-    res.redirect('/user/login'); // Nếu chưa xác thực, chuyển hướng về trang đăng nhập
+
+    // Lưu lại URL mà người dùng đang yêu cầu vào session
+    req.session.returnTo = req.originalUrl; // Lưu URL yêu cầu vào session
+    res.redirect('/login'); // Chuyển hướng đến trang login
 }
 
 module.exports = ensureAuthenticated;

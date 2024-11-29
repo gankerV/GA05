@@ -5,7 +5,7 @@ class UserController {
     }
 
     // [GET] '/login'
-    login(req, res) {
+    login(req, res) {    
         res.render("login");
     }
 
