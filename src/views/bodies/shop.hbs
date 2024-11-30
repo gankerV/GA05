@@ -4,55 +4,47 @@
         <form method="get" action="/shop">
             <div class="flex items-center py-4 w-full search-field mt-2 bg-white shadow-lg p-2 rounded">
                 <!-- Nút Clear Filter -->
-                    <a href="/shop">
-                        <button 
-                            id="clear-filters"
-                            class="p-2 font-semibold bg-primary text-white rounded hover:bg-black mr-4"
-                            type="button">
-                            Clear Filter
-                        </button>
-                    </a>
+                <a href="/shop">
+                    <button id="clear-filters"
+                        class="p-2 font-semibold bg-primary text-white rounded hover:bg-black mr-4" type="button">
+                        Clear Filter
+                    </button>
+                </a>
                 <!-- Thanh tìm kiếm dài khoảng 3/4 và lệch về bên trái -->
                 <div class="flex w-3/4 ml-auto">
-                    <input type="text" 
-                        name="product_name" 
-                        id="search-input"
-                        class="w-full p-2 border border-gray-300 rounded" 
-                        placeholder="Search for products..."/>
+                    <input type="text" name="product_name" id="search-input"
+                        class="w-full p-2 border border-gray-300 rounded" placeholder="Search for products..." />
                     <button type="submit">
-                        <img class="bg-primary w-11 rounded-lg ml-2 hover:bg-black" src="../../../public/images/search-icon.svg" alt="Search-icon">
+                        <img class="bg-primary w-11 rounded-lg ml-2 hover:bg-black"
+                            src="../../../public/images/search-icon.svg" alt="Search-icon">
                     </button>
                 </div>
             </div>
 
-        <!-- Filter Toggle Button for Mobile -->
-        <div class="block md:hidden text-center mb-4">
-            <button id="products-toggle-filters"
-                class="bg-primary text-white py-2 px-4 rounded-full focus:outline-none">
-                Show Filters
-            </button>
-        </div>
-        <div class="flex flex-col md:flex-row">
-            <!-- Filters -->
+            <!-- Filter Toggle Button for Mobile -->
+            <div class="block md:hidden text-center mb-4">
+                <button id="products-toggle-filters"
+                    class="bg-primary text-white py-2 px-4 rounded-full focus:outline-none">
+                    Show Filters
+                </button>
+            </div>
+            <div class="flex flex-col md:flex-row">
+                <!-- Filters -->
                 <div id="filters" class="w-full md:w-1/4 p-4 hidden md:block">
                     <!-- Category Filter -->
                     <div class="mb-6 pb-8 border-b border-gray-line">
                         <h3 class="text-lg font-semibold mb-6">Category</h3>
                         <div class="space-y-2">
                             <label class="flex items-center">
-                                <input name="category" value="Men"
-                                    type="checkbox"
+                                <input name="category" value="Men" type="checkbox"
                                     class="form-checkbox custom-checkbox "
-                                    onclick="applyFilter('category', 'Men', this)"
-                                />
+                                    onclick="applyFilter('category', 'Men', this)" />
                                 <span class="ml-2">Men</span>
                             </label>
                             <label class="flex items-center">
-                                <input  name="category" value="Women"
-                                    type="checkbox"
+                                <input name="category" value="Women" type="checkbox"
                                     class="form-checkbox custom-checkbox"
-                                    onclick="applyFilter('category', 'Women', this)"
-                                />
+                                    onclick="applyFilter('category', 'Women', this)" />
                                 <span class="ml-2">Women</span>
                             </label>
                         </div>
@@ -62,27 +54,18 @@
                         <h3 class="text-lg font-semibold mb-6">Size</h3>
                         <div class="space-y-2">
                             <label class="flex items-center">
-                                <input name="size" value="S"
-                                    type="checkbox"
-                                    class="form-checkbox custom-checkbox"
-                                    onclick="applyFilter('size', 'S', this)"
-                                />
+                                <input name="size" value="S" type="checkbox" class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('size', 'S', this)" />
                                 <span class="ml-2">S </span>
                             </label>
                             <label class="flex items-center">
-                                <input name="size" value="M"
-                                    type="checkbox"
-                                    class="form-checkbox custom-checkbox"
-                                    onclick="applyFilter('size', 'M', this)"
-                                />
+                                <input name="size" value="M" type="checkbox" class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('size', 'M', this)" />
                                 <span class="ml-2">M </span>
                             </label>
                             <label class="flex items-center">
-                                <input name="size" value="L"
-                                    type="checkbox"
-                                    class="form-checkbox custom-checkbox"
-                                    onclick="applyFilter('size', 'L', this)"
-                                />
+                                <input name="size" value="L" type="checkbox" class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('size', 'L', this)" />
                                 <span class="ml-2">L </span>
                             </label>
                         </div>
@@ -91,70 +74,34 @@
                     <div class="mb-6 pb-8 border-b border-gray-line">
                         <h3 class="text-lg font-semibold mb-6">Color</h3>
                         <div class="space-y-2">
-                            <label
-                                class="flex items-center custom-color-checkbox"
-                                data-color="#ff0000"
-                            >
-                                <input name="color" value="Red"
-                                    type="checkbox"
-                                    class="form-checkbox custom-checkbox"
-                                    onclick="applyFilter('color', 'Red', this)"
-                                />
+                            <label class="flex items-center custom-color-checkbox" data-color="#ff0000">
+                                <input name="color" value="Red" type="checkbox" class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('color', 'Red', this)" />
                                 <span class="ml-2">Red</span>
                             </label>
-                            <label
-                                class="flex items-center custom-color-checkbox"
-                                data-color="#0000ff"
-                            >
-                                <input name="color" value="Blue"
-                                    type="checkbox"
-                                    class="form-checkbox custom-checkbox"
-                                    onclick="applyFilter('color', 'Blue', this)"
-                                />
+                            <label class="flex items-center custom-color-checkbox" data-color="#0000ff">
+                                <input name="color" value="Blue" type="checkbox" class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('color', 'Blue', this)" />
                                 <span class="ml-2">Blue</span>
                             </label>
-                            <label
-                                class="flex items-center custom-color-checkbox"
-                                data-color="#00ff00"
-                            >
-                                <input name="color" value="Brown"
-                                    type="checkbox"
-                                    class="form-checkbox custom-checkbox"
-                                    onclick="applyFilter('color', 'Brown', this)"
-                                />
+                            <label class="flex items-center custom-color-checkbox" data-color="#00ff00">
+                                <input name="color" value="Brown" type="checkbox" class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('color', 'Brown', this)" />
                                 <span class="ml-2">Brown</span>
                             </label>
-                            <label
-                                class="flex items-center custom-color-checkbox"
-                                data-color="#0000ff"
-                            >
-                                <input name="color" value="Black"
-                                    type="checkbox"
-                                    class="form-checkbox custom-checkbox"
-                                    onclick="applyFilter('color', 'Black', this)"
-                                />
+                            <label class="flex items-center custom-color-checkbox" data-color="#0000ff">
+                                <input name="color" value="Black" type="checkbox" class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('color', 'Black', this)" />
                                 <span class="ml-2">Black</span>
                             </label>
-                            <label
-                                class="flex items-center custom-color-checkbox"
-                                data-color="#0000ff"
-                            >
-                                <input name="color" value="White"
-                                    type="checkbox"
-                                    class="form-checkbox custom-checkbox"
-                                    onclick="applyFilter('color', 'White', this)"
-                                />
+                            <label class="flex items-center custom-color-checkbox" data-color="#0000ff">
+                                <input name="color" value="White" type="checkbox" class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('color', 'White', this)" />
                                 <span class="ml-2">White</span>
                             </label>
-                            <label
-                                class="flex items-center custom-color-checkbox"
-                                data-color="#0000ff"
-                            >
-                                <input name="color" value="Yellow"
-                                    type="checkbox"
-                                    class="form-checkbox custom-checkbox"
-                                    onclick="applyFilter('color', 'Yellow', this)"
-                                />
+                            <label class="flex items-center custom-color-checkbox" data-color="#0000ff">
+                                <input name="color" value="Yellow" type="checkbox" class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('color', 'Yellow', this)" />
                                 <span class="ml-2">Yellow</span>
                             </label>
                         </div>
@@ -164,27 +111,18 @@
                         <h3 class="text-lg font-semibold mb-6">Brand</h3>
                         <div class="space-y-2">
                             <label class="flex items-center">
-                                <input name="brand" value="Nike"
-                                    type="checkbox"
-                                    class="form-checkbox custom-checkbox"
-                                    onclick="applyFilter('brand', 'Nike', this)"
-                                />
+                                <input name="brand" value="Nike" type="checkbox" class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('brand', 'Nike', this)" />
                                 <span class="ml-2">Nike</span>
                             </label>
                             <label class="flex items-center">
-                                <input  name="brand" value="Adidas"
-                                    type="checkbox"
-                                    class="form-checkbox custom-checkbox"
-                                    onclick="applyFilter('brand', 'Adidas', this)"
-                                />
+                                <input name="brand" value="Adidas" type="checkbox" class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('brand', 'Adidas', this)" />
                                 <span class="ml-2">Adidas</span>
                             </label>
                             <label class="flex items-center">
-                                <input name="brand" value="Puma"
-                                    type="checkbox"
-                                    class="form-checkbox custom-checkbox"
-                                    onclick="applyFilter('brand', 'Puma', this)"
-                                />
+                                <input name="brand" value="Puma" type="checkbox" class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('brand', 'Puma', this)" />
                                 <span class="ml-2">Puma</span>
                             </label>
                         </div>
@@ -194,115 +132,38 @@
                         <h3 class="text-lg font-semibold mb-6">Rating</h3>
                         <div class="space-y-2">
                             <label class="flex items-center">
-                                <input name="rating" value="5"
-                                    type="checkbox"
-                                    class="form-checkbox custom-checkbox"
-                                    onclick="applyFilter('rating', '5', this)"
-                                />
+                                <input name="rating" value="5" type="checkbox" class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('rating', '5', this)" />
                                 <span class="ml-2">★★★★★</span>
                             </label>
                             <label class="flex items-center">
-                                <input name="rating" value="4"
-                                    type="checkbox"
-                                    class="form-checkbox custom-checkbox"
-                                    onclick="applyFilter('rating', '4', this)"
-                                />
+                                <input name="rating" value="4" type="checkbox" class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('rating', '4', this)" />
                                 <span class="ml-2">★★★★☆</span>
                             </label>
                             <label class="flex items-center">
-                                <input name="rating" value="3"
-                                    type="checkbox"
-                                    class="form-checkbox custom-checkbox"
-                                    onclick="applyFilter('rating', '3', this)"
-                                />
+                                <input name="rating" value="3" type="checkbox" class="form-checkbox custom-checkbox"
+                                    onclick="applyFilter('rating', '3', this)" />
                                 <span class="ml-2">★★★☆☆</span>
                             </label>
                         </div>
                     </div>
                 </div>
-            </form>
-            <!-- Products List -->
-            <div class="w-full md:w-3/4 p-4">
-                <!-- Products grid -->
-                <div
-                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-                >
-                    <!-- Product -->
-                    {{#each shop}}
-                        <div class="bg-white p-4 rounded-lg shadow">
-                            <a href="/product/{{this.id}}">
-                                <img
-                                    src="{{this.imageUrl}}"
-                                    alt="{{this.product_name}}"
-                                    class="w-full object-cover mb-4 rounded-lg"
-                                />
-                            </a>
-                            <a href="/product/{{this.id}}" class="text-lg font-semibold mb-2">
-                                {{this.product_name}}
-                            </a>
 
-                            <div class="flex items-center mb-4">
-                                <span class="text-lg font-bold text-primary">
-                                    ${{this.price}}
-                                </span>
-                            </div>
+                <!-- Products container -->
+                <div class="w-full md:w-3/4 p-4">
+                    <!-- Products list -->
+                    <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Sản phẩm sẽ được thêm bằng JS -->
+                    </div>
 
-                            <div class="mb-4">
-                                <span class="text-sm font-medium text-gray-600">Category:</span>
-                                <span class="text-sm font-semibold">{{this.category}}</span>
-                            </div>
-
-                            <div class="mb-4">
-                                <span class="text-sm font-medium text-gray-600">Size:</span>
-                                <span class="text-sm font-semibold">{{this.size}}</span>
-                            </div>
-
-                            <div class="mb-4">
-                                <span class="text-sm font-medium text-gray-600">Color:</span>
-                                <span class="text-sm font-semibold">{{this.color}}</span>
-                            </div>
-
-                            <div class="mb-4">
-                                <span class="text-sm font-medium text-gray-600">Brand:</span>
-                                <span class="text-sm font-semibold">{{this.brand}}</span>
-                            </div>
-
-                            <div class="mb-4">
-                                <span class="text-sm font-medium text-gray-600">Rating:</span>
-                                <span class="text-sm font-semibold">{{this.rating}}/5</span>
-                            </div>
-
-                            <button class="bg-primary border border-transparent hover:bg-transparent hover:border-primary text-white hover:text-primary font-semibold py-2 px-4 rounded-full w-full">
-                                Add to Cart
-                            </button>
-                        </div>
-                    {{/each}}
-
+                    <!-- Pagination -->
+                    <div id="pagination" class="flex justify-center mt-8">
+                        <!-- Nút phân trang sẽ được tạo bằng JS -->
+                    </div>
+                </div>
             </div>
-            <!-- Pagination -->
-            <div class="flex justify-center mt-8">
-                <nav aria-label="Page navigation">
-                    <ul class="inline-flex space-x-2">
-                        <li>
-                            <a href="#"
-                                class="bg-primary text-white w-10 h-10 flex items-center justify-center rounded-full">1</a>
-                        </li>
-                        <li>
-                            <a href="#"
-                                class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary hover:text-white">2</a>
-                        </li>
-                        <li>
-                            <a href="#"
-                                class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary hover:text-white">3</a>
-                        </li>
-                        <li>
-                            <a href="#" class="w-10 h-10 flex items-center justify-center rounded-full">Next</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    </div>
+        </form>
     </div>
 </section>
 
@@ -327,7 +188,9 @@
     </div>
 </section>
 
-
+<script id="product-data" type="application/json">
+    {{{json shop}}}
+</script>
 
 <script>
     window.onload = function () {

@@ -1,3 +1,136 @@
+document.addEventListener("DOMContentLoaded", function () {
+    const products = JSON.parse(
+        document.getElementById("product-data").textContent,
+    );
+
+    // Cấu hình phân trang
+    const itemsPerPage = 6;
+    let currentPage = 1;
+
+    // Hiển thị sản phẩm
+    function displayProducts(page) {
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+
+        const productList = document.getElementById("product-list");
+        productList.innerHTML = "";
+
+        products.slice(start, end).forEach((product) => {
+            productList.innerHTML += `
+            <div class="bg-white p-4 rounded-lg shadow">
+                <a href="/product/${product.id}">
+                    <img src="${product.imageUrl}" alt="${product.product_name}" class="w-full object-cover mb-4 rounded-lg" />
+                </a>
+                <a href="/product/${product.id}" class="text-lg font-semibold mb-2">${product.product_name}</a>
+                <div class="flex items-center mb-4">
+                    <span class="text-lg font-bold text-primary">$${product.price}</span>
+                </div>
+                <div class="mb-4">
+                    <span class="text-sm font-medium text-gray-600">Category:</span>
+                    <span class="text-sm font-semibold">${product.category}</span>
+                </div>
+                <div class="mb-4">
+                    <span class="text-sm font-medium text-gray-600">Size:</span>
+                    <span class="text-sm font-semibold">${product.size}</span>
+                </div>
+                <div class="mb-4">
+                    <span class="text-sm font-medium text-gray-600">Color:</span>
+                    <span class="text-sm font-semibold">${product.color}</span>
+                </div>
+                <div class="mb-4">
+                    <span class="text-sm font-medium text-gray-600">Brand:</span>
+                    <span class="text-sm font-semibold">${product.brand}</span>
+                </div>
+                <div class="mb-4">
+                    <span class="text-sm font-medium text-gray-600">Rating:</span>
+                    <span class="text-sm font-semibold">${product.rating}/5</span>
+                </div>
+                <button class="bg-primary border border-transparent hover:bg-transparent hover:border-primary text-white hover:text-primary font-semibold py-2 px-4 rounded-full w-full">
+                    Add to Cart
+                </button>
+            </div>
+        `;
+        });
+    }
+
+    // Hiển thị phân trang
+    function displayPagination() {
+        const totalPages = Math.ceil(products.length / itemsPerPage);
+        const pagination = document.getElementById("pagination");
+        pagination.innerHTML = "";
+
+        // Nút trang đầu tiên
+        if (currentPage > 1) {
+            const prevButton = document.createElement("button");
+            prevButton.textContent = "Prev";
+            prevButton.className = `w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary hover:text-white`;
+            prevButton.onclick = () => {
+                currentPage -= 1;
+                displayProducts(currentPage);
+                displayPagination();
+            };
+            pagination.appendChild(prevButton);
+        }
+
+        // Tạo danh sách trang
+        const createPageButton = (page) => {
+            const button = document.createElement("button");
+            button.textContent = page;
+            button.className = `w-10 h-10 flex items-center justify-center rounded-full ${
+                page > 9 ? "ml-4" : "ml-1"
+            } ${
+                page === currentPage
+                    ? "bg-primary text-white"
+                    : "hover:bg-primary hover:text-white"
+            }`;
+            button.onclick = () => {
+                currentPage = page;
+                displayProducts(currentPage);
+                displayPagination();
+            };
+            return button;
+        };
+
+        if (totalPages <= 5) {
+            for (let i = 1; i <= totalPages; i++) {
+                pagination.appendChild(createPageButton(i));
+            }
+        } else {
+            pagination.appendChild(createPageButton(1));
+            if (currentPage > 3)
+                pagination.appendChild(document.createTextNode("..."));
+
+            const start = Math.max(2, currentPage - 1);
+            const end = Math.min(totalPages - 1, currentPage + 1);
+
+            for (let i = start; i <= end; i++) {
+                pagination.appendChild(createPageButton(i));
+            }
+
+            if (currentPage < totalPages - 2)
+                pagination.appendChild(document.createTextNode("..."));
+            pagination.appendChild(createPageButton(totalPages));
+        }
+
+        // Nút "Next"
+        if (currentPage < totalPages) {
+            const nextButton = document.createElement("button");
+            nextButton.textContent = "Next";
+            nextButton.className = `w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary hover:text-white ml-1`;
+            nextButton.onclick = () => {
+                currentPage += 1;
+                displayProducts(currentPage);
+                displayPagination();
+            };
+            pagination.appendChild(nextButton);
+        }
+    }
+
+    // Khởi chạy
+    displayProducts(currentPage);
+    displayPagination();
+});
+
 /* cart */
 document.addEventListener("DOMContentLoaded", function () {
     const cartIcon = document.querySelector(".cart-wrapper");
@@ -67,17 +200,17 @@ if (typeof Swiper !== "undefined") {
     });
 }
 
-/* search icon show/hide */
-document.getElementById("search-icon").addEventListener("click", function () {
-    var searchField = document.getElementById("search-field");
-    if (searchField.classList.contains("hidden")) {
-        searchField.classList.remove("hidden");
-        searchField.classList.add("search-slide-down");
-    } else {
-        searchField.classList.add("hidden");
-        searchField.classList.remove("search-slide-down");
-    }
-});
+// /* search icon show/hide */
+// document.getElementById("search-icon").addEventListener("click", function () {
+//     var searchField = document.getElementById("search-field");
+//     if (searchField.classList.contains("hidden")) {
+//         searchField.classList.remove("hidden");
+//         searchField.classList.add("search-slide-down");
+//     } else {
+//         searchField.classList.add("hidden");
+//         searchField.classList.remove("search-slide-down");
+//     }
+// });
 
 function toggleDropdown(id, show) {
     const dropdown = document.getElementById(id);
@@ -236,8 +369,6 @@ function activateTab(tabId, contentId) {
     document.getElementById(contentId).classList.remove("hidden");
 }
 
-
-
 function applyFilter(key, value, element) {
     const url = new URL(window.location.href);
 
@@ -246,20 +377,18 @@ function applyFilter(key, value, element) {
 
     if (values.includes(value)) {
         // Bỏ chọn filter
-        values = values.filter(v => v !== value);
-        element.classList.remove('selected'); // Bỏ class khi không chọn
+        values = values.filter((v) => v !== value);
+        element.classList.remove("selected"); // Bỏ class khi không chọn
     } else {
         // Thêm filter
         values.push(value);
-        element.classList.add('selected'); // Thêm class khi chọn
+        element.classList.add("selected"); // Thêm class khi chọn
     }
 
     // Cập nhật lại query trong URL
     url.searchParams.delete(key); // Xóa key cũ
-    values.forEach(v => url.searchParams.append(key, v)); // Thêm các giá trị mới
+    values.forEach((v) => url.searchParams.append(key, v)); // Thêm các giá trị mới
 
     // Chuyển hướng đến URL mới
     window.location.href = url.toString();
 }
-
-

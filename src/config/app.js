@@ -15,6 +15,9 @@ app.engine(
         defaultLayout: "main",
         layoutsDir: path.join(__dirname, "../views", "layouts"),
         partialsDir: path.join(__dirname, "../views", "partials"),
+        helpers: {
+            json: (context) => JSON.stringify(context), // Thêm helper json
+        },
     }),
 );
 app.set("view engine", "hbs");
@@ -23,7 +26,6 @@ app.set("views", path.join(__dirname, "../views/bodies"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use("/public", express.static(path.join(__dirname, "../../public")));
-
 
 route(app);
 
