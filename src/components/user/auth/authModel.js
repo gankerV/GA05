@@ -5,7 +5,7 @@ function ensureAuthenticated(req, res, next) {
 
     // Lưu lại URL mà người dùng đang yêu cầu vào session
     req.session.returnTo = req.originalUrl; // Lưu URL yêu cầu vào session
-    res.redirect('/login'); // Chuyển hướng đến trang login
+    res.redirect("/user/login"); // Chuyển hướng đến trang login
 }
 
 module.exports = ensureAuthenticated;

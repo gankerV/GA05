@@ -18,10 +18,10 @@ document.addEventListener("DOMContentLoaded", function () {
         products.slice(start, end).forEach((product) => {
             productList.innerHTML += `
             <div class="bg-white p-4 rounded-lg shadow">
-                <a href="/product/${product.id}">
+                <a href="/shop/product/${product.id}">
                     <img src="${product.imageUrl}" alt="${product.product_name}" class="w-full object-cover mb-4 rounded-lg" />
                 </a>
-                <a href="/product/${product.id}" class="text-lg font-semibold mb-2">${product.product_name}</a>
+                <a href="/shop/product/${product.id}" class="text-lg font-semibold mb-2">${product.product_name}</a>
                 <div class="flex items-center mb-4">
                     <span class="text-lg font-bold text-primary">$${product.price}</span>
                 </div>
@@ -336,6 +336,23 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
+});
+
+// Ẩn dần thông báo của register/login
+document.addEventListener("DOMContentLoaded", () => {
+    const notification = document.getElementById("notification");
+
+    if (notification) {
+        // Đặt thời gian để tự động ẩn thông báo sau 2 giây
+        setTimeout(() => {
+            notification.classList.replace("opacity-100", "opacity-0"); // Mờ dần
+
+            // Xóa thông báo khỏi DOM sau khi hiệu ứng mờ dần kết thúc
+            setTimeout(() => {
+                notification.remove();
+            }, 1000); // Thời gian hiệu ứng mờ dần
+        }, 2000); // Hiển thị trong 2 giây
+    }
 });
 
 document

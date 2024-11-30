@@ -1,5 +1,5 @@
 -- Tạo cơ sở dữ liệu mới
-#drop database my_store;
+drop database if exists my_store;
 CREATE DATABASE IF NOT EXISTS my_store;
 
 -- Sử dụng cơ sở dữ liệu vừa tạo
@@ -25,6 +25,8 @@ INSERT INTO shop (product_name, price, category, size, color, brand, rating, ima
 ('Yellow mens suit', 200.99, 'Men', 'S', 'Yellow', 'Puma', '3', '7.jpg'),
 ('Red dress', 250.00, 'Women', 'M', 'Red', 'Adidas', '5', '8.jpg'),
 ('Black leather jacket', 300.00, 'Women', 'L', 'Brown', 'Adidas', '4', '4.jpg'),
+('Black long dress', 350.75, 'Women', 'S', 'Black', 'Puma', '5', '3.jpg'),
+('Red dress', 250.00, 'Women', 'M', 'Red', 'Adidas', '5', '8.jpg'),
 ('Black long dress', 350.75, 'Women', 'S', 'Black', 'Puma', '5', '3.jpg');
 
 -- Tạo bảng Product (Chi tiết sản phẩm)
@@ -42,13 +44,15 @@ INSERT INTO product (id, description, product_status) VALUES
 (3, 'Lightweight denim jacket that pairs well with almost any outfit. A timeless piece for any wardrobe.', 'Out Of Stock'),
 (4, 'Sports joggers designed for active wear. Made from breathable fabric for ultimate comfort during workouts.', 'In Stock'),
 (5, 'Premium quality leather shoes with a sleek design. Ideal for both casual and formal occasions.', 'In Stock'),
-(6, 'A fashionable backpack made with durable material. Spacious enough to carry books, gadgets, and other essentials.', 'Out Of Stock');
+(6, 'A fashionable backpack made with durable material. Spacious enough to carry books, gadgets, and other essentials.', 'Out Of Stock'),
+(7, 'A fashionable backpack made with durable material. Spacious enough to carry books, gadgets, and other essentials.', 'Out Of Stock'),
+(8, 'A fashionable backpack made with durable material. Spacious enough to carry books, gadgets, and other essentials.', 'Out Of Stock');
 
 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
-    password_1 VARCHAR(255) NOT NULL
+    password VARCHAR(255) NOT NULL
 );
 INSERT INTO users (email, password_1) VALUES
 ('test@gmail.com', '123');

@@ -1,21 +1,21 @@
-const passport = require('passport');
+const passport = require("passport");
 
 const AuthController = {
     // Đăng nhập
     login: (req, res, next) => {
-        passport.authenticate('local', (err, user, info) => {
+        passport.authenticate("local", (err, user, info) => {
             if (err) {
                 return next(err);
             }
             if (!user) {
-                return res.redirect('/login');
+                return res.redirect("/user/login");
             }
             // Xác thực thành công, lưu người dùng vào session
             req.logIn(user, (err) => {
                 if (err) return next(err);
 
                 // Kiểm tra nếu có một URL trước đó trong session và chuyển hướng về đó
-                const redirectTo = req.session.returnTo || '/home'; // Nếu không có URL trước đó, chuyển hướng về home
+                const redirectTo = req.session.returnTo || "/"; // Nếu không có URL trước đó, chuyển hướng về home
                 delete req.session.returnTo; // Xóa URL đã lưu sau khi đã chuyển hướng
                 res.redirect(redirectTo); // Chuyển hướng về trang yêu cầu
             });
@@ -24,16 +24,16 @@ const AuthController = {
 
     // Đăng xuất
     logout: (req, res, next) => {
-        req.logout(err => {
+        req.logout((err) => {
             if (err) return next(err);
-            res.redirect('/home'); // Sau khi logout, chuyển hướng về trang home
+            res.redirect("/"); // Sau khi logout, chuyển hướng về trang home
         });
     },
-    
+
     // Trang đăng nhập
     loginPage: (req, res) => {
-        res.render('login'); // Render trang login
-    }
+        res.render("login"); // Render trang login
+    },
 };
 
 module.exports = AuthController;
