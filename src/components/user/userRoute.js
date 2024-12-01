@@ -2,22 +2,19 @@ const express = require("express");
 const router = express.Router();
 const ensureAuthenticated = require("./auth/authModel");
 
-const passport = require("../../config/passportConfig");  
-
-
 const userController = require("./UserController");
+
+const AuthController = require('./auth/AuthController');
 
 router.get("/register", userController.register);
 router.post("/register", userController.verifyRegister);
 
-router.get("/login", userController.login);
-router.post("/login", passport.authenticate('local', {
-    successRedirect: "/home",  // Redirect khi đăng nhập thành công
-    failureRedirect: "/user/login",  // Redirect khi đăng nhập thất bại
-    failureFlash: true  // Cho phép hiển thị thông báo lỗi
-}));
+// Route đăng nhập
+router.get("/login", AuthController.loginPage); 
+router.post("/login", AuthController.login); 
+router.get("/logout", AuthController.logout);
 
-router.get("/cart", userController.cart);
+router.get("/cart", ensureAuthenticated, userController.cart);
 router.get("/checkout", ensureAuthenticated, userController.checkout);
 
 module.exports = router;

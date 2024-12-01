@@ -1,4 +1,4 @@
-const passport = require("passport");
+const passport = require("../../../config/passportConfig");  
 
 const AuthController = {
     // Đăng nhập
@@ -26,9 +26,11 @@ const AuthController = {
     logout: (req, res, next) => {
         req.logout((err) => {
             if (err) return next(err);
+            // Xóa cookie session
+            res.clearCookie('connect.sid', { path: '/' });// Xóa cookie có tên 'connect.sid' nếu sử dụng express-session
             res.redirect("/"); // Sau khi logout, chuyển hướng về trang home
         });
-    },
+    },  
 
     // Trang đăng nhập
     loginPage: (req, res) => {
