@@ -22,19 +22,6 @@ class UserController {
         res.render("login");
     }
 
-    // [POST] '/user/login'
-    async verifyLogin(req, res) {
-        const credentials = req.body;
-        const result = await User.loginAccount(credentials);
-
-        if (!result.success) {
-            res.render("login", { result });
-        } else {
-            res.redirect("/home"); 
-        }
-    }
-
-    // [GET] '/user/cart'
     cart(req, res) {
         res.render("cart");
     }

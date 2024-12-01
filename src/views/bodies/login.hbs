@@ -1,16 +1,9 @@
 <!-- Login -->
-{{#if result}}
-{{#if result.success}}
-<div id="notification"
-    class="fixed top-28 right-28 bg-success text-white py-4 rounded shadow-lg p-10 transition-opacity opacity-100 duration-1000">
-    <p>{{result.message}}!</p>
-</div>
-{{else}}
+{{#if errorMessage}}
 <div id="notification"
     class="fixed top-28 right-28 bg-error text-white py-4 rounded shadow-lg p-10 transition-opacity opacity-100 duration-1000">
-    <p>{{result.message}}!</p>
+    <p>{{errorMessage}}!</p>
 </div>
-{{/if}}
 {{/if}}
 
 <section id="register-login-page" class="bg-white py-16">
