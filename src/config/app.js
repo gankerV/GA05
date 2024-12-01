@@ -31,11 +31,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/public", express.static(path.join(__dirname, "../../public")));
 
 // Cấu hình express-session
-app.use(session({
-    secret: process.env.SESSION_SECRET,  // Secret cho session
-    resave: false,
-    saveUninitialized: false,
-}));
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET, // Secret cho session
+        resave: false,
+        saveUninitialized: false,
+        cookie: { secure: false, maxAge: 1000 * 10 },
+    }),
+);
 // Khai báo Passport
 app.use(passport.initialize());
 app.use(passport.session());
@@ -44,6 +47,7 @@ app.use(flash());
 app.use((req, res, next) => {
     res.locals.successMessage = req.flash("success");
     res.locals.errorMessage = req.flash("error");
+    res.locals.user = req.user || null; // Nếu người dùng đã đăng nhập, lưu thông tin vào res.locals
     next();
 });
 

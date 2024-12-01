@@ -81,16 +81,13 @@
 
         <!-- Right section: Buttons (for desktop) -->
         <div class="hidden lg:flex items-center space-x-4 relative">
-            <a href="/user/register"
-                class="bg-primary border border-primary hover:bg-transparent text-white hover:text-primary font-semibold px-4 py-2 rounded-full inline-block">Register</a>
-            <a href="/user/login"
-                class="bg-primary border border-primary hover:bg-transparent text-white hover:text-primary font-semibold px-4 py-2 rounded-full inline-block">Login</a>
+            {{#if user}}
             <div class="relative group cart-wrapper">
                 <a href="/user/cart">
                     <img src="/public/images/cart-shopping.svg" alt="Cart" class="h-6 w-6 group-hover:scale-120" />
                 </a>
                 <!-- Cart dropdown -->
-                <div class="absolute right-0 mt-1 w-80 bg-white shadow-lg p-4 rounded hidden group-hover:block">
+                <div class="absolute right-0 mt-4 w-80 bg-white shadow-lg p-4 rounded hidden group-hover:block">
                     <div class="space-y-4">
                         <!-- product item -->
                         <div class="flex items-center justify-between pb-4 border-b border-gray-line">
@@ -122,6 +119,24 @@
                         to Cart</a>
                 </div>
             </div>
+            <div class="flex items-center">
+                <span class="text-white mr-4">Hi, {{user.dataValues.email}}</span>
+                <div id="user-wrapper" class=" relative group">
+                    <img src="/public/images/person-icon.png" alt="User Avatar" class="h-6 w-6 group-hover:scale-120" />
+
+                    <!-- Dropdown chứa nút logout -->
+                    <div id="user-dropdown"
+                        class="absolute right-0 mt-4 w-32 bg-white shadow-lg rounded hidden group-hover:block">
+                        <a href="/user/logout" class="block px-4 py-2 text-sm hover:bg-gray-200">Logout</a>
+                    </div>
+                </div>
+            </div>
+            {{else}}
+            <a href="/user/register"
+                class="bg-primary border border-primary hover:bg-transparent text-white hover:text-primary font-semibold px-4 py-2 rounded-full inline-block">Register</a>
+            <a href="/user/login"
+                class="bg-primary border border-primary hover:bg-transparent text-white hover:text-primary font-semibold px-4 py-2 rounded-full inline-block">Login</a>
+            {{/if}}
         </div>
     </div>
 </header>

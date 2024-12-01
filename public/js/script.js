@@ -1,3 +1,4 @@
+// Hiển thị sản phẩm và phân trang
 document.addEventListener("DOMContentLoaded", function () {
     const products = JSON.parse(
         document.getElementById("product-data").textContent,
