@@ -54,6 +54,3 @@ CREATE TABLE users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL
 );
-INSERT INTO users (email, password_1) VALUES
-('test@gmail.com', '123');
-

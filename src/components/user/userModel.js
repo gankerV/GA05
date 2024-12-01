@@ -76,6 +76,36 @@ class UserModel {
             };
         }
     }
+
+    static async loginAccount(credentials) {
+        try {
+            const { Email, Password } = credentials;
+
+            // Kiểm tra xem email có tồn tại không
+            const user = await User.findOne({ where: { email: Email } });
+            if (!user) {
+                throw new Error("User not found");
+            }
+
+            // So sánh mật khẩu người dùng nhập vào với mật khẩu đã mã hóa
+            const isMatch = await bcryptjs.compare(Password, user.password);
+            if (!isMatch) {
+                throw new Error("Invalid password");
+            }
+            console.log(1);
+            // Trả về kết quả thành công nếu thông tin hợp lệ
+            return {
+                success: true,
+                message: "Login successful",
+                data: user.email, 
+            };
+        } catch (error) {
+            return {
+                success: false,
+                message: error.message,
+            };
+        }
+    }
 }
 
 module.exports = UserModel;
