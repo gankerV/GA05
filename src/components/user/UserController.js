@@ -17,11 +17,6 @@ class UserController {
         }
     }
 
-    // [GET] '/user/login'
-    login(req, res) {
-        res.render("login");
-    }
-
     cart(req, res) {
         res.render("cart");
     }
