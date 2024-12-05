@@ -1,7 +1,7 @@
 <!-- Shop -->
 <section id="shop">
     <div class="container mx-auto">
-        <form method="get" action="/shop">
+        {{!-- <form method="get" action="/shop"> --}}
             <div class="flex items-center py-4 w-full search-field mt-2 bg-white shadow-lg p-2 rounded">
                 <!-- Nút Clear Filter -->
                 <a href="/shop">
@@ -163,7 +163,8 @@
                     </div>
                 </div>
             </div>
-        </form>
+            {{!--
+        </form> --}}
     </div>
 </section>
 
@@ -187,10 +188,6 @@
         </div>
     </div>
 </section>
-
-<script id="product-data" type="application/json">
-    {{{json shop}}}
-</script>
 
 <script>
     window.onload = function () {

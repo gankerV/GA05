@@ -1,94 +1,87 @@
 // Hiển thị sản phẩm và phân trang
-document.addEventListener("DOMContentLoaded", function () {
-    const products = JSON.parse(
-        document.getElementById("product-data").textContent,
-    );
+document.addEventListener("DOMContentLoaded", () => {
+    // Hàm tải sản phẩm từ server
+    async function fetchProducts(page) {
+        try {
+            const response = await fetch(`/shop/api?page=${page}`);
+            const data = await response.json();
 
-    // Cấu hình phân trang
-    const itemsPerPage = 6;
-    let currentPage = 1;
+            // Hiển thị sản phẩm
+            displayProducts(data.products);
 
-    // Hiển thị sản phẩm
-    function displayProducts(page) {
-        const start = (page - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
+            // Hiển thị phân trang
+            displayPagination(data.currentPage, data.totalPages);
+        } catch (error) {
+            console.error("Error fetching products:", error);
+        }
+    }
 
+    // Hàm hiển thị sản phẩm
+    function displayProducts(products) {
         const productList = document.getElementById("product-list");
         productList.innerHTML = "";
 
-        products.slice(start, end).forEach((product) => {
+        products.forEach((product) => {
             productList.innerHTML += `
-            <div class="bg-white p-4 rounded-lg shadow">
-                <a href="/shop/product/${product.id}">
-                    <img src="${product.imageUrl}" alt="${product.product_name}" class="w-full object-cover mb-4 rounded-lg" />
-                </a>
-                <a href="/shop/product/${product.id}" class="text-lg font-semibold mb-2">${product.product_name}</a>
-                <div class="flex items-center mb-4">
-                    <span class="text-lg font-bold text-primary">$${product.price}</span>
+                <div class="bg-white p-4 rounded-lg shadow">
+                    <a href="/shop/product/${product.id}">
+                        <img src="${product.imageFileName}" alt="${product.product_name}" class="w-full object-cover mb-4 rounded-lg" />
+                    </a>
+                    <a href="/shop/product/${product.id}" class="text-lg font-semibold mb-2">${product.product_name}</a>
+                    <div class="flex items-center mb-4">
+                        <span class="text-lg font-bold text-primary">$${product.price}</span>
+                    </div>
+                    <div class="mb-4">
+                        <span class="text-sm font-medium text-gray-600">Category:</span>
+                        <span class="text-sm font-semibold">${product.category}</span>
+                    </div>
+                    <div class="mb-4">
+                        <span class="text-sm font-medium text-gray-600">Size:</span>
+                        <span class="text-sm font-semibold">${product.size}</span>
+                    </div>
+                    <div class="mb-4">
+                        <span class="text-sm font-medium text-gray-600">Color:</span>
+                        <span class="text-sm font-semibold">${product.color}</span>
+                    </div>
+                    <div class="mb-4">
+                        <span class="text-sm font-medium text-gray-600">Brand:</span>
+                        <span class="text-sm font-semibold">${product.brand}</span>
+                    </div>
+                    <div class="mb-4">
+                        <span class="text-sm font-medium text-gray-600">Rating:</span>
+                        <span class="text-sm font-semibold">${product.rating}/5</span>
+                    </div>
+                    <button class="bg-primary border border-transparent hover:bg-transparent hover:border-primary text-white hover:text-primary font-semibold py-2 px-4 rounded-full w-full">
+                        Add to Cart
+                    </button>
                 </div>
-                <div class="mb-4">
-                    <span class="text-sm font-medium text-gray-600">Category:</span>
-                    <span class="text-sm font-semibold">${product.category}</span>
-                </div>
-                <div class="mb-4">
-                    <span class="text-sm font-medium text-gray-600">Size:</span>
-                    <span class="text-sm font-semibold">${product.size}</span>
-                </div>
-                <div class="mb-4">
-                    <span class="text-sm font-medium text-gray-600">Color:</span>
-                    <span class="text-sm font-semibold">${product.color}</span>
-                </div>
-                <div class="mb-4">
-                    <span class="text-sm font-medium text-gray-600">Brand:</span>
-                    <span class="text-sm font-semibold">${product.brand}</span>
-                </div>
-                <div class="mb-4">
-                    <span class="text-sm font-medium text-gray-600">Rating:</span>
-                    <span class="text-sm font-semibold">${product.rating}/5</span>
-                </div>
-                <button class="bg-primary border border-transparent hover:bg-transparent hover:border-primary text-white hover:text-primary font-semibold py-2 px-4 rounded-full w-full">
-                    Add to Cart
-                </button>
-            </div>
-        `;
+            `;
         });
     }
 
-    // Hiển thị phân trang
-    function displayPagination() {
-        const totalPages = Math.ceil(products.length / itemsPerPage);
+    // Hàm hiển thị phân trang
+    function displayPagination(currentPage, totalPages) {
         const pagination = document.getElementById("pagination");
         pagination.innerHTML = "";
 
-        // Nút trang đầu tiên
+        // Nút "Previous"
         if (currentPage > 1) {
             const prevButton = document.createElement("button");
             prevButton.textContent = "Prev";
             prevButton.className = `w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary hover:text-white`;
-            prevButton.onclick = () => {
-                currentPage -= 1;
-                displayProducts(currentPage);
-                displayPagination();
-            };
+            prevButton.onclick = () => fetchProducts(currentPage - 1);
             pagination.appendChild(prevButton);
         }
 
-        // Tạo danh sách trang
         const createPageButton = (page) => {
             const button = document.createElement("button");
             button.textContent = page;
             button.className = `w-10 h-10 flex items-center justify-center rounded-full ${
-                page > 9 ? "ml-4" : "ml-1"
-            } ${
                 page === currentPage
                     ? "bg-primary text-white"
                     : "hover:bg-primary hover:text-white"
             }`;
-            button.onclick = () => {
-                currentPage = page;
-                displayProducts(currentPage);
-                displayPagination();
-            };
+            button.onclick = () => fetchProducts(page);
             return button;
         };
 
@@ -113,23 +106,17 @@ document.addEventListener("DOMContentLoaded", function () {
             pagination.appendChild(createPageButton(totalPages));
         }
 
-        // Nút "Next"
         if (currentPage < totalPages) {
             const nextButton = document.createElement("button");
             nextButton.textContent = "Next";
-            nextButton.className = `w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary hover:text-white ml-1`;
-            nextButton.onclick = () => {
-                currentPage += 1;
-                displayProducts(currentPage);
-                displayPagination();
-            };
+            nextButton.className = `w-10 h-10 flex items-center justify-center rounded-full hover:bg-primary hover:text-white`;
+            nextButton.onclick = () => fetchProducts(currentPage + 1);
             pagination.appendChild(nextButton);
         }
     }
 
-    // Khởi chạy
-    displayProducts(currentPage);
-    displayPagination();
+    // Bắt đầu tải trang đầu tiên
+    fetchProducts(1);
 });
 
 /* cart */
