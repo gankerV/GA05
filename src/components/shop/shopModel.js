@@ -81,7 +81,7 @@ class ShopModel {
             if (typeof color === "string") color = [color];
             if (typeof brand === "string") brand = [brand];
             if (typeof rating === "string") rating = [rating];
-    
+
             // Điều kiện truy vấn
             const whereConditions = {};
 
@@ -103,7 +103,7 @@ class ShopModel {
             const products = await Shop.findAll({
                 where: whereConditions,
             });
-    
+
             // Thêm URL hình ảnh vào kết quả
             const baseImageUrl = "../../../public/images/products/";
             return products.map((product) => {
@@ -117,7 +117,6 @@ class ShopModel {
             throw error;
         }
     }
-    
 }
 
 module.exports = ShopModel;

@@ -1,7 +1,7 @@
 <!-- Shop -->
 <section id="shop">
     <div class="container mx-auto">
-        {{!-- <form method="get" action="/shop"> --}}
+        <form method="get" action="/shop">
             <div class="flex items-center py-4 w-full search-field mt-2 bg-white shadow-lg p-2 rounded">
                 <!-- Nút Clear Filter -->
                 <a href="/shop">
@@ -156,15 +156,13 @@
                     <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         <!-- Sản phẩm sẽ được thêm bằng JS -->
                     </div>
-
-                    <!-- Pagination -->
-                    <div id="pagination" class="flex justify-center mt-8">
-                        <!-- Nút phân trang sẽ được tạo bằng JS -->
-                    </div>
                 </div>
-            </div>
-            {{!--
-        </form> --}}
+        </form>
+    </div>
+    <!-- Pagination -->
+    <div id="pagination" class="flex justify-center mt-8">
+        <!-- Nút phân trang sẽ được tạo bằng JS -->
+    </div>
     </div>
 </section>
 

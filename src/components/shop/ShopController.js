@@ -1,5 +1,7 @@
 const Shop = require("./shopModel");
 
+let paginationProducts = [];
+
 class ShopController {
     // [GET] '/shop'
     async index(req, res) {
@@ -21,6 +23,8 @@ class ShopController {
                 return res.render("404"); // Hiển thị trang 404 nếu không tìm thấy sản phẩm
             }
 
+            paginationProducts = products;
+
             // Truyền dữ liệu vào view
             res.render("shop", { shop: products });
         } catch (error) {
@@ -38,23 +42,20 @@ class ShopController {
             const offset = (page - 1) * itemsPerPage;
             const limit = itemsPerPage;
 
-            // Lấy dữ liệu từ database
-            const { count, rows: products } = await Shop.Shop.findAndCountAll({
+            // Lấy sản phẩm từ biến toàn cục
+            const totalProducts = paginationProducts.length;
+            const paginatedProducts = paginationProducts.slice(
                 offset,
-                limit,
-            });
+                offset + limit,
+            );
 
-            const baseImageUrl = "../../../public/images/products/"; // Đường dẫn tĩnh chính xác
-            products.forEach((product) => {
-                product.imageFileName =
-                    baseImageUrl + (product.imageFileName || "");
-            });
+            paginatedProducts;
 
             // Trả về dữ liệu JSON
             res.json({
-                products: products,
+                products: paginatedProducts,
                 currentPage: page,
-                totalPages: Math.ceil(count / itemsPerPage),
+                totalPages: Math.ceil(totalProducts / itemsPerPage),
             });
         } catch (error) {
             console.error("Lỗi khi phân trang:", error);

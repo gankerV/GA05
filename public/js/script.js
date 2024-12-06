@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
             productList.innerHTML += `
                 <div class="bg-white p-4 rounded-lg shadow">
                     <a href="/shop/product/${product.id}">
-                        <img src="${product.imageFileName}" alt="${product.product_name}" class="w-full object-cover mb-4 rounded-lg" />
+                        <img src="${product.imageUrl}" alt="${product.product_name}" class="w-full object-cover mb-4 rounded-lg" />
                     </a>
                     <a href="/shop/product/${product.id}" class="text-lg font-semibold mb-2">${product.product_name}</a>
                     <div class="flex items-center mb-4">
