@@ -186,26 +186,3 @@
         </div>
     </div>
 </section>
-
-<script>
-    window.onload = function () {
-        const url = new URL(window.location.href);
-
-        // Đánh dấu các giá trị đã chọn
-        document.querySelectorAll('input[name="category"], input[name="size"], input[name="color"], input[name="brand"], input[name="rating"]').forEach(input => {
-            const value = input.value;
-            const values = url.searchParams.getAll(input.name); // Lấy danh sách giá trị
-            if (values.includes(value)) {
-                input.checked = true; // Giữ trạng thái checked
-                input.parentElement.classList.add('selected'); // Cập nhật giao diện
-            }
-        });
-
-        // Giữ giá trị tìm kiếm trong ô input
-        const searchInput = document.getElementById('search-input');
-        const productName = url.searchParams.get('product_name'); // Lấy giá trị product_name
-        if (productName) {
-            searchInput.value = productName; // Gán lại giá trị vào input
-        }
-    };
-</script>
