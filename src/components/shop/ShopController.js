@@ -37,14 +37,26 @@ class ShopController {
         try {
             
             const page = parseInt(req.query.page, 10) || 1; // Trang hiện tại (mặc định là 1)
-
+            const { category, size, color, brand, rating, product_name } = req.query;
             // Tính offset và limit
             const offset = (page - 1) * itemsPerPage;
             const limit = itemsPerPage;
 
+            // Lọc sản phẩm theo các tham số (nếu có)
+            let filteredProducts = await Shop.getProducts({
+                category,
+                size,
+                color,
+                brand,
+                rating,
+                product_name, // Tham số tìm kiếm
+            });
+
+            console.log("filteredProducts", filteredProducts);
+
             // Phân trang từ danh sách đã tải
-            const totalProducts = allProducts.length;
-            const paginatedProducts = allProducts.slice(offset, offset + limit);
+            const totalProducts = filteredProducts.length;
+            const paginatedProducts = filteredProducts.slice(offset, offset + limit);
 
             // Trả về dữ liệu JSON
             res.json({
