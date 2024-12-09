@@ -75,35 +75,37 @@ class ShopModel {
         product_name = null, // Thêm tham số tìm kiếm sản phẩm theo tên
     }) {
         try {
-            // Xử lý filter nếu là chuỗi
-            if (typeof category === "string") category = [category];
-            if (typeof size === "string") size = [size];
-            if (typeof color === "string") color = [color];
-            if (typeof brand === "string") brand = [brand];
-            if (typeof rating === "string") rating = [rating];
-
+            // Xử lý filter nếu là chuỗi và tách các giá trị
+            if (typeof category === "string") category = category.split(",").map(c => c.trim());
+            if (typeof size === "string") size = size.split(",").map(s => s.trim());
+            if (typeof color === "string") color = color.split(",").map(c => c.trim());
+            if (typeof brand === "string") brand = brand.split(",").map(b => b.trim());
+            if (typeof rating === "string") rating = rating.split(",").map(r => r.trim());
+    
+            console.log("Dữ liệu truy vấn:", { category, size, color, brand, rating });
+    
             // Điều kiện truy vấn
             const whereConditions = {};
-
+    
             // Tìm kiếm theo tên sản phẩm (search)
             if (product_name) {
                 whereConditions.product_name = {
                     [Op.like]: `%${product_name}%`,
                 };
             }
-
+    
             // Lọc theo các tiêu chí khác (filter)
             if (category.length > 0) whereConditions.category = category;
             if (size.length > 0) whereConditions.size = size;
             if (color.length > 0) whereConditions.color = color;
             if (brand.length > 0) whereConditions.brand = brand;
             if (rating.length > 0) whereConditions.rating = rating;
-
+    
             // Thực hiện truy vấn
             const products = await Shop.findAll({
                 where: whereConditions,
             });
-
+    
             // Thêm URL hình ảnh vào kết quả
             const baseImageUrl = "../../../public/images/products/";
             return products.map((product) => {
@@ -116,7 +118,7 @@ class ShopModel {
             console.error("Lỗi khi truy vấn sản phẩm:", error);
             throw error;
         }
-    }
+    }    
 }
 
 module.exports = ShopModel;

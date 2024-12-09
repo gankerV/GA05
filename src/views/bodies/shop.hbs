@@ -1,7 +1,7 @@
 <!-- Shop -->
 <section id="shop">
     <div class="container mx-auto">
-        <form method="get" action="/shop">
+        <form id="searchForm" method="get">
             <div class="flex items-center py-4 w-full search-field mt-2 bg-white shadow-lg p-2 rounded">
                 <!-- Nút Clear Filter -->
                 <a href="/shop">
@@ -14,7 +14,7 @@
                 <div class="flex w-3/4 ml-auto">
                     <input type="text" name="product_name" id="search-input"
                         class="w-full p-2 border border-gray-300 rounded" placeholder="Search for products..." />
-                    <button type="submit">
+                    <button type="button" id="search-button">
                         <img class="bg-primary w-11 rounded-lg ml-2 hover:bg-black"
                             src="../../../public/images/search-icon.svg" alt="Search-icon">
                     </button>
