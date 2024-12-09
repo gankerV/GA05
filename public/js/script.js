@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
     clearButton.addEventListener("click", () => {
         searchInput.value = ""; // Làm sạch ô tìm kiếm
         currentFilters = {};
-        fetchAndDisplayResults(searchValue, currentFilters); // Gửi yêu cầu AJAX với chuỗi rỗng
+        fetchAndDisplayResults(searchValue, currentFilters); 
     });
 });
 

@@ -52,8 +52,6 @@ class ShopController {
                 product_name, // Tham số tìm kiếm
             });
 
-            console.log("filteredProducts", filteredProducts);
-
             // Phân trang từ danh sách đã tải
             const totalProducts = filteredProducts.length;
             const paginatedProducts = filteredProducts.slice(offset, offset + limit);
