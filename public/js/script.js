@@ -98,7 +98,6 @@ function fetchAndDisplayResults(productName, filters) {
     fetch(`/shop/api?${queryString}`)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
             displayProducts(data.products);
             displayPagination(data.currentPage, data.totalPages);
         })

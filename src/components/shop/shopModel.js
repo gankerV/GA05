@@ -82,8 +82,6 @@ class ShopModel {
             if (typeof brand === "string") brand = brand.split(",").map(b => b.trim());
             if (typeof rating === "string") rating = rating.split(",").map(r => r.trim());
     
-            console.log("Dữ liệu truy vấn:", { category, size, color, brand, rating });
-    
             // Điều kiện truy vấn
             const whereConditions = {};
     
