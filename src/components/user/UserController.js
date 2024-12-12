@@ -33,15 +33,6 @@ class UserController {
             res.status(500).json({ error: "Internal server error." });
         }
     }
-
-    cart(req, res) {
-        res.render("cart");
-    }
-
-    // [GET] '/user/checkout'
-    checkout(req, res) {
-        res.render("checkout");
-    }
 }
 
 module.exports = new UserController();

@@ -1,10 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const ensureAuthenticated = require("./auth/authModel");
-
 const userController = require("./UserController");
-
 const AuthController = require("./auth/AuthController");
+const cartRouter = require("./cart/cartRoute");
 
 router.get("/register", userController.register);
 router.post("/register", userController.verifyRegister);
@@ -15,7 +14,6 @@ router.get("/login", AuthController.loginPage);
 router.post("/login", AuthController.login);
 router.get("/logout", AuthController.logout);
 
-router.get("/cart", ensureAuthenticated, userController.cart);
-router.get("/checkout", ensureAuthenticated, userController.checkout);
+router.use("/cart", ensureAuthenticated, cartRouter);
 
 module.exports = router;
