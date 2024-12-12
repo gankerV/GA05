@@ -36,7 +36,7 @@ app.use(
         secret: process.env.SESSION_SECRET, // Secret cho session
         resave: false,
         saveUninitialized: false,
-        cookie: { secure: false, maxAge: 1000 * 30 },
+        cookie: { secure: false, maxAge: 1000 * 3600 },
     }),
 );
 // Khai báo Passport

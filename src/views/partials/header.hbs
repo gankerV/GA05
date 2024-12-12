@@ -119,7 +119,6 @@
                 </div>
             </div>
             {{#if user}}
-
             <div class="flex items-center">
                 <span class="text-white mr-4">Hi, {{user.dataValues.email}}</span>
                 <div id="user-wrapper" class="relative group">
@@ -184,13 +183,22 @@
         <li><a href="/about" class="hover:text-secondary font-bold block py-2">About</a></li>
         <li><a href="/contact" class="hover:text-secondary font-bold block py-2">Contact</a></li>
     </ul>
-    <div class="flex flex-col mt-6 space-y-2 items-center">
+    <div class="flex flex-col space-y-2 items-center">
+
+        <a href="/user/cart"
+            class="bg-primary hover:bg-transparent text-white hover:text-primary border border-primary font-semibold px-4 py-2 rounded-full inline-block flex items-center justify-center min-w-[110px]">Cart
+            -&nbsp;<span>5</span>&nbsp;items</a>
+        {{#if user}}
+        <div class="flex flex-col">
+            <span class="text-black">Hi, {{user.dataValues.email}}</span>
+            <a href="/user/logout" class="block text-black hover:text-primary text-center underline">Logout</a>
+        </div>
+        {{else}}
         <a href="/user/register"
             class="bg-primary hover:bg-transparent text-white hover:text-primary border border-primary font-semibold px-4 py-2 rounded-full inline-block flex items-center justify-center min-w-[110px]">Register</a>
         <a href="/user/login"
             class="bg-primary hover:bg-transparent text-white hover:text-primary border border-primary font-semibold px-4 py-2 rounded-full inline-block flex items-center justify-center min-w-[110px]">Login</a>
-        <a href="/user/cart"
-            class="bg-primary hover:bg-transparent text-white hover:text-primary border border-primary font-semibold px-4 py-2 rounded-full inline-block flex items-center justify-center min-w-[110px]">Cart
-            -&nbsp;<span>5</span>&nbsp;items</a>
+
+        {{/if}}
     </div>
 </nav>
