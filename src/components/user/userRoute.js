@@ -4,14 +4,15 @@ const ensureAuthenticated = require("./auth/authModel");
 
 const userController = require("./UserController");
 
-const AuthController = require('./auth/AuthController');
+const AuthController = require("./auth/AuthController");
 
 router.get("/register", userController.register);
 router.post("/register", userController.verifyRegister);
+router.get("/register/check-email", userController.checkRegistrationEmail);
 
 // Route đăng nhập
-router.get("/login", AuthController.loginPage); 
-router.post("/login", AuthController.login); 
+router.get("/login", AuthController.loginPage);
+router.post("/login", AuthController.login);
 router.get("/logout", AuthController.logout);
 
 router.get("/cart", ensureAuthenticated, userController.cart);

@@ -10,10 +10,27 @@ class UserController {
         const account = req.body;
         const result = await User.saveUser(account);
 
-        if (!result.success) {
+        if (!result) {
             res.render("register", { result });
         } else {
-            res.render("login", { result });
+            res.redirect("/user/login");
+        }
+    }
+
+    async checkRegistrationEmail(req, res) {
+        try {
+            const email = req.query.email;
+
+            if (!email) {
+                return res.status(400).json({ error: "Email is required." });
+            }
+
+            const userExists = await User.isEmailExist(email);
+
+            res.json({ exists: !!userExists }); // Trả về true nếu email tồn tại
+        } catch (error) {
+            console.error("Error checking email:", error);
+            res.status(500).json({ error: "Internal server error." });
         }
     }
 

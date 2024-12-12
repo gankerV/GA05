@@ -2,18 +2,22 @@ window.onload = function () {
     const url = new URL(window.location.href);
 
     // Đánh dấu các giá trị đã chọn
-    document.querySelectorAll('input[name="category"], input[name="size"], input[name="color"], input[name="brand"], input[name="rating"]').forEach(input => {
-        const value = input.value;
-        const values = url.searchParams.getAll(input.name); // Lấy danh sách giá trị
-        if (values.includes(value)) {
-            input.checked = true; // Giữ trạng thái checked
-            input.parentElement.classList.add('selected'); // Cập nhật giao diện
-        }
-    });
+    document
+        .querySelectorAll(
+            'input[name="category"], input[name="size"], input[name="color"], input[name="brand"], input[name="rating"]',
+        )
+        .forEach((input) => {
+            const value = input.value;
+            const values = url.searchParams.getAll(input.name); // Lấy danh sách giá trị
+            if (values.includes(value)) {
+                input.checked = true; // Giữ trạng thái checked
+                input.parentElement.classList.add("selected"); // Cập nhật giao diện
+            }
+        });
 
     // Giữ giá trị tìm kiếm trong ô input
-    const searchInput = document.getElementById('search-input');
-    const productName = url.searchParams.get('product_name'); // Lấy giá trị product_name
+    const searchInput = document.getElementById("search-input");
+    const productName = url.searchParams.get("product_name"); // Lấy giá trị product_name
     if (productName) {
         searchInput.value = productName; // Gán lại giá trị vào input
     }
@@ -27,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Thêm listener cho nút tìm kiếm
     searchButton.addEventListener("click", () => {
         const searchValue = searchInput.value.trim();
-        
+
         // Gọi hàm gửi yêu cầu với thông tin tìm kiếm
         fetchAndDisplayResults(searchValue, currentFilters);
     });
@@ -43,12 +47,12 @@ document.addEventListener("DOMContentLoaded", () => {
     clearButton.addEventListener("click", () => {
         searchInput.value = ""; // Làm sạch ô tìm kiếm
         currentFilters = {};
-        fetchAndDisplayResults(searchValue, currentFilters); 
+        fetchAndDisplayResults(searchValue, currentFilters);
     });
 });
 
 // Lưu trạng thái của bộ lọc
-let currentFilters = {}; 
+let currentFilters = {};
 
 function applyFilter(key, value, element) {
     if (!currentFilters[key]) {
@@ -60,14 +64,19 @@ function applyFilter(key, value, element) {
             currentFilters[key].push(value);
         }
     } else {
-        currentFilters[key] = currentFilters[key].filter(item => item !== value);
+        currentFilters[key] = currentFilters[key].filter(
+            (item) => item !== value,
+        );
         if (currentFilters[key].length === 0) {
             delete currentFilters[key];
         }
     }
 
     // Trigger AJAX sau mỗi thay đổi filter
-    fetchAndDisplayResults(document.getElementById("search-input").value.trim(), currentFilters);
+    fetchAndDisplayResults(
+        document.getElementById("search-input").value.trim(),
+        currentFilters,
+    );
 }
 
 function createQueryString(productName, filters) {
@@ -96,12 +105,14 @@ function fetchAndDisplayResults(productName, filters) {
     const queryString = createQueryString(productName, filters);
 
     fetch(`/shop/api?${queryString}`)
-        .then(response => response.json())
-        .then(data => {
+        .then((response) => response.json())
+        .then((data) => {
             displayProducts(data.products);
             displayPagination(data.currentPage, data.totalPages);
         })
-        .catch(error => console.error("Error fetching search/filter results:", error));
+        .catch((error) =>
+            console.error("Error fetching search/filter results:", error),
+        );
 }
 
 async function fetchProducts(page) {
@@ -218,14 +229,11 @@ function displayPagination(currentPage, totalPages) {
     }
 }
 
-
 // Hiển thị sản phẩm và phân trang
 document.addEventListener("DOMContentLoaded", () => {
-
     // Bắt đầu tải trang đầu tiên
     fetchProducts(1);
 });
-
 
 /* cart */
 document.addEventListener("DOMContentLoaded", function () {

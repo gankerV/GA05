@@ -40,21 +40,6 @@ class UserModel {
                 "Confirm Password": ConfirmPassword,
             } = account;
 
-            // Kiểm tra xem email đã tồn tại trong cơ sở dữ liệu chưa
-            const existingUser = await User.findOne({
-                where: { email: Email },
-            });
-            if (existingUser) {
-                throw new Error("Email already exists");
-            }
-
-            // Kiểm tra xem Password và Confirm Password có khớp không
-            if (Password !== ConfirmPassword) {
-                throw new Error(
-                    '"Password" and "Confirm Password" do not match',
-                );
-            }
-
             // Mã hóa mật khẩu
             const hashedPassword = await bcryptjs.hash(Password, 10); // 10 là số vòng salt
 
@@ -64,17 +49,17 @@ class UserModel {
                 password: hashedPassword,
             });
 
-            return {
-                success: true,
-                message: "Register successful",
-                data: newUser,
-            };
+            return true;
         } catch (error) {
-            return {
-                success: false,
-                message: error.message,
-            };
+            return false;
         }
+    }
+
+    static async isEmailExist(email) {
+        try {
+            const emailExist = await User.findOne({ where: { email: email } });
+            return emailExist;
+        } catch (error) {}
     }
 }
 
