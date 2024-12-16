@@ -125,6 +125,10 @@ async function fetchProducts(page) {
 
         // Hiển thị phân trang
         displayPagination(data.currentPage, data.totalPages);
+
+        // Cập nhật URL
+        const newURL = `/shop/page=${page}`;
+        history.pushState({ page }, "", newURL);
     } catch (error) {
         console.error("Error fetching products:", error);
     }
