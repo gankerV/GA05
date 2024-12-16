@@ -24,6 +24,20 @@ class ProductController {
                 delete product.Shop.imageFileName;
             }
 
+            // Gán imageUrl cho các sản phẩm liên quan
+            if (product.relatedProducts && product.relatedProducts.length > 0) {
+                product.relatedProducts = product.relatedProducts.map(
+                    (related) => {
+                        if (related && related.imageFileName) {
+                            related.imageUrl =
+                                baseImageUrl + related.imageFileName;
+                            delete related.imageFileName;
+                        }
+                        return related;
+                    },
+                );
+            }
+
             res.render("product", { product });
         } catch (error) {
             console.error("Lỗi khi lấy chi tiết sản phẩm:", error);

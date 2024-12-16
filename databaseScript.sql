@@ -27,7 +27,13 @@ INSERT INTO shop (product_name, price, category, size, color, brand, rating, ima
 ('Black leather jacket', 300.00, 'Women', 'L', 'Brown', 'Adidas', '4', '4.jpg'),
 ('Black long dress', 350.75, 'Women', 'S', 'Black', 'Puma', '5', '3.jpg'),
 ('Red dress', 250.00, 'Women', 'M', 'Red', 'Adidas', '5', '8.jpg'),
-('Black long dress', 350.75, 'Women', 'S', 'Black', 'Puma', '5', '3.jpg');
+('Black long dress', 350.75, 'Women', 'S', 'Black', 'Puma', '5', '3.jpg'),
+
+('Black formal suit', 500.00, 'Men', 'L', 'Black', 'Gucci', '5', '14.jpg'),
+('Gray sports hoodie', 90.00, 'Men', 'M', 'Gray', 'Nike', '4', '15.jpg'),
+('Brown leather shoes', 150.00, 'Men', 'M', 'Brown', 'Clarks', '5', '16.jpg'),
+('Navy blue chinos', 70.50, 'Men', 'L', 'Blue', 'Zara', '4', '17.jpg'),
+('White polo T-shirt', 40.99, 'Men', 'S', 'White', 'Lacoste', '4', '18.jpg');
 
 -- Tạo bảng Product (Chi tiết sản phẩm)
 CREATE TABLE product (
@@ -46,7 +52,13 @@ INSERT INTO product (id, description, product_status) VALUES
 (5, 'Premium quality leather shoes with a sleek design. Ideal for both casual and formal occasions.', 'In Stock'),
 (6, 'A fashionable backpack made with durable material. Spacious enough to carry books, gadgets, and other essentials.', 'Out Of Stock'),
 (7, 'A fashionable backpack made with durable material. Spacious enough to carry books, gadgets, and other essentials.', 'Out Of Stock'),
-(8, 'A fashionable backpack made with durable material. Spacious enough to carry books, gadgets, and other essentials.', 'Out Of Stock');
+(8, 'A fashionable backpack made with durable material. Spacious enough to carry books, gadgets, and other essentials.', 'Out Of Stock'),
+
+(9, 'A premium black formal suit, tailored to perfection for business meetings or special occasions.', 'In Stock'),
+(10, 'Comfortable gray sports hoodie with a modern fit. Ideal for workouts and casual outings.', 'In Stock'),
+(11, 'Stylish and durable brown leather shoes. Perfect for both formal events and casual settings.', 'In Stock'),
+(12, 'Slim-fit navy blue chinos made from soft fabric, offering a smart yet casual look.', 'In Stock'),
+(13, 'Classic white polo T-shirt with a breathable fabric, perfect for summer wear.', 'In Stock');
 
 
 CREATE TABLE users (

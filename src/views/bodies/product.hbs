@@ -484,21 +484,22 @@
     </div>
 </section>
 
-<!-- Latest product section -->
+<!-- Related products section -->
+{{#if product.relatedProducts}}
 <section id="latest-products" class="py-10">
     <div class="container mx-auto px-4">
-        <h2 class="text-2xl font-bold mb-8">Latest products</h2>
+        <h2 class="text-2xl font-bold mb-8">Related products</h2>
         <div class="flex flex-wrap -mx-4">
-            <!-- Product 1 -->
+            <!-- Related products -->
+            {{#each product.relatedProducts}}
             <div class="w-full sm:w-1/2 lg:w-1/4 px-4 mb-8">
                 <div class="bg-white p-3 rounded-lg shadow-lg">
-                    <a href="single-product-page.html"><img src="../../../public/images/products/5.jpg" alt="Product 1"
+                    <a href="/shop/product/{{id}}"><img src="{{imageUrl}}" alt="Product 1"
                             class="w-full object-cover mb-4 rounded-lg" /></a>
-                    <a href="single-product-page.html" class="text-lg font-semibold mb-2">Blue women's suit</a>
-                    <p class="my-2">Women</p>
+                    <a href="/shop/product/{{id}}" class="text-lg font-semibold mb-2">{{product_name}}</a>
+                    <p class="my-2">{{category}}</p>
                     <div class="flex items-center mb-4">
-                        <span class="text-lg font-bold text-primary">$19.99</span>
-                        <span class="text-sm line-through ml-2">$24.99</span>
+                        <span class="text-lg font-bold text-primary">${{price}}</span>
                     </div>
                     <button
                         class="bg-primary border border-transparent hover:bg-transparent hover:border-primary text-white hover:text-primary font-semibold py-2 px-4 rounded-full w-full">
@@ -506,6 +507,8 @@
                     </button>
                 </div>
             </div>
+            {{/each}}
         </div>
     </div>
 </section>
+{{/if}}
