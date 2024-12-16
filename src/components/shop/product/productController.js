@@ -59,6 +59,22 @@ class ProductController {
             res.redirect(`/shop/product/${reviewInfo.productId}`);
         } catch (error) {}
     }
+
+    async getReviews(req, res) {
+        try {
+            const productId = req.params.id;
+            const page = Number(req.query.page) || 1;
+
+            const paginatedReviews = await ProductModel.getReviews(
+                productId,
+                page,
+            );
+            console.log(paginatedReviews);
+            res.json(paginatedReviews);
+        } catch (error) {
+            res.status(500).json({ error });
+        }
+    }
 }
 
 module.exports = new ProductController();

@@ -154,6 +154,31 @@ class ProductModel {
             throw error; // Ném lỗi để xử lý ở nơi khác nếu cần
         }
     }
+
+    static async getReviews(productId, page) {
+        try {
+            const limit = 3;
+            const offset = (page - 1) * limit; // Tính offset
+
+            // Lấy danh sách reviews
+            const { count, rows: reviews } = await Review.findAndCountAll({
+                where: { product_id: productId },
+                offset: parseInt(offset, 10),
+                limit: parseInt(limit, 10),
+                order: [["created_at", "DESC"]], // Sắp xếp mới nhất lên đầu
+            });
+
+            // Trả về dữ liệu
+            return {
+                reviews,
+                totalReviews: count,
+                totalPages: Math.ceil(count / limit),
+                currentPage: parseInt(page, 10),
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 module.exports = ProductModel;

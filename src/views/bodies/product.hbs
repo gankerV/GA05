@@ -71,8 +71,8 @@
                             {{product.Shop.product_name}}
                         </h1>
                         <div class="flex items-center mb-8">
-                            <span>★★★★★</span>
-                            <span class="ml-2">{{product.Shop.rating}}</span>
+                            <span class="ml-2">{{fullStars product.Shop.rating}}{{emptyStars
+                                product.Shop.rating}}</span>
                             <a href="#review-form-place" id="write-review-link"
                                 class="ml-4 text-primary font-semibold">Write a review</a>
                         </div>
@@ -381,26 +381,11 @@
                             <h3 class="text-lg font-semibold mb-4">
                                 Customer Reviews
                             </h3>
-                            <div id="reviews-list">
-                                <!-- Reviews -->
-                                {{#if product.reviews.length}}
-                                {{#each product.reviews}}
-                                <div class="border-b border-gray-line py-4">
-                                    <div class="flex items-center mb-2">
-                                        <span class="text-lg font-semibold text-gray-700">{{this.customer_name}}</span>
-                                        <span class="ml-2 text-primary">
-                                            {{fullStars this.rating}}{{emptyStars this.rating}}
-                                        </span>
-                                        <span class="ml-6 text-xs">{{formatDate this.created_at}}</span>
-                                    </div>
-                                    <p>
-                                        {{this.comment}}
-                                    </p>
-                                </div>
-                                {{/each}}
-                                {{else}}
-                                <p>No reviews yet.</p>
-                                {{/if}}
+                            <div id="reviews-list" data-product-id="{{product.id}}">
+                                <!-- Hiển thị các reviews -->
+                            </div>
+                            <div id="reviews-pagination" class="flex gap-2 mt-4">
+                                <!-- Hiển thị nút phân trang -->
                             </div>
                         </div>
 
@@ -496,3 +481,141 @@
     </div>
 </section>
 {{/if}}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const reviewsList = document.getElementById("reviews-list");
+        const paginationControls = document.getElementById("reviews-pagination");
+        const productId = reviewsList.dataset.productId; // Lấy product ID từ dataset
+        let currentPage = 1;
+
+        // Hàm tải reviews
+        async function loadReviews(page) {
+            try {
+                const response = await fetch(`/shop/product/${productId}/api/reviews?page=${page}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Xóa danh sách cũ
+                    reviewsList.innerHTML = "";
+
+                    // Render reviews
+                    if (data.reviews.length) {
+                        data.reviews.forEach((review) => {
+                            const reviewHTML = `
+                        <div class="border-b border-gray-line py-4">
+                            <div class="flex items-center mb-2">
+                                <span class="text-lg font-semibold text-gray-700">${review.customer_name}</span>
+                                <span class="ml-2 text-primary">
+                                    ${"★".repeat(review.rating)}${"☆".repeat(5 - review.rating)}
+                                </span>
+                                <span class="ml-6 text-xs">${new Date(review.created_at).toLocaleString()}</span>
+                            </div>
+                            <p>${review.comment}</p>
+                        </div>`;
+                            reviewsList.insertAdjacentHTML("beforeend", reviewHTML);
+                        });
+
+                        // Render pagination
+                        renderPagination(data.totalPages, data.currentPage);
+                    } else {
+                        reviewsList.innerHTML = "<p>No reviews yet.</p>";
+                    }
+                } else {
+                    console.error("Error loading reviews:", data.error);
+                }
+            } catch (error) {
+                console.error("Error fetching reviews:", error);
+            }
+        }
+
+        // Hàm render pagination
+        function renderPagination(totalPages, currentPage) {
+            paginationControls.innerHTML = ""; // Xóa các nút phân trang cũ
+
+            if (totalPages < 4) return;
+
+            const MAX_VISIBLE_PAGES = 3; // Số lượng nút hiển thị tối đa
+            // Tạo nút "Prev"
+            if (currentPage > 1) {
+                const prevButton = document.createElement("button");
+                prevButton.textContent = "Prev";
+                prevButton.className = "px-3 py-1 border rounded-full hover:bg-primary hover:text-white";
+                prevButton.addEventListener("click", () => {
+                    loadReviews(currentPage - 1);
+                });
+                paginationControls.appendChild(prevButton);
+            }
+
+            // Xác định phạm vi hiển thị các nút
+            let startPage = Math.max(1, currentPage - Math.floor(MAX_VISIBLE_PAGES / 2));
+            let endPage = Math.min(totalPages, startPage + MAX_VISIBLE_PAGES - 1);
+
+            // Điều chỉnh nếu phạm vi vượt quá giới hạn
+            if (endPage - startPage + 1 < MAX_VISIBLE_PAGES) {
+                startPage = Math.max(1, endPage - MAX_VISIBLE_PAGES + 1);
+            }
+
+            // Thêm dấu "..." trước các trang đầu
+            if (startPage > 1) {
+                const firstPageButton = document.createElement("button");
+                firstPageButton.textContent = "1";
+                firstPageButton.className = "px-3 py-1 border rounded-full hover:bg-primary hover:text-white";
+                firstPageButton.addEventListener("click", () => {
+                    loadReviews(1);
+                });
+                paginationControls.appendChild(firstPageButton);
+
+                const dots = document.createElement("span");
+                dots.textContent = "...";
+                dots.className = "mx-2";
+                paginationControls.appendChild(dots);
+            }
+
+            // Thêm các nút trong phạm vi
+            for (let page = startPage; page <= endPage; page++) {
+                const pageButton = document.createElement("button");
+                pageButton.textContent = page;
+                pageButton.className =
+                    "px-3 py-1 border rounded-full" +
+                    (page === currentPage ? " bg-primary text-white" : " hover:bg-primary hover:text-white");
+
+                pageButton.addEventListener("click", () => {
+                    loadReviews(page);
+                });
+
+                paginationControls.appendChild(pageButton);
+            }
+
+            // Thêm dấu "..." sau các trang cuối
+            if (endPage < totalPages) {
+                const dots = document.createElement("span");
+                dots.textContent = "...";
+                dots.className = "mx-2";
+                paginationControls.appendChild(dots);
+
+                const lastPageButton = document.createElement("button");
+                lastPageButton.textContent = totalPages;
+                lastPageButton.className = "px-3 py-1 border rounded-full hover:bg-primary hover:text-white";
+                lastPageButton.addEventListener("click", () => {
+                    loadReviews(totalPages);
+                });
+                paginationControls.appendChild(lastPageButton);
+            }
+
+            // Tạo nút "Next"
+            if (currentPage < totalPages) {
+                const nextButton = document.createElement("button");
+                nextButton.textContent = "Next";
+                nextButton.className = "px-3 py-1 border rounded-full hover:bg-primary hover:text-white";
+                nextButton.addEventListener("click", () => {
+                    loadReviews(currentPage + 1);
+                });
+                paginationControls.appendChild(nextButton);
+            }
+        }
+
+        // Tải trang đầu tiên
+        loadReviews(currentPage);
+    });
+</script>

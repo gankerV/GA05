@@ -42,10 +42,6 @@ Handlebars.registerHelper("emptyStars", function (rating) {
     return "☆".repeat(5 - rating);
 });
 
-Handlebars.registerHelper("formatDate", function (date) {
-    return moment(date).format("DD-MM-YYYY");
-});
-
 // Cấu hình express-session
 app.use(
     session({
