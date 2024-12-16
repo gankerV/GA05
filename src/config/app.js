@@ -21,10 +21,20 @@ app.engine(
         layoutsDir: path.join(__dirname, "../views", "layouts"),
         partialsDir: path.join(__dirname, "../views", "partials"),
         helpers: {
-            json: (context) => JSON.stringify(context), // Thêm helper json
+            json: (context) => JSON.stringify(context),
+            multiply: (a, b) => a * b, // Ensure multiply helper is directly here
+            formatCurrency: (value) => `$${value.toFixed(2)}`, // Define other helpers here
+            calculateSubtotal: (cartItems) => {
+                let subtotal = 0;
+                cartItems.forEach(item => {
+                    subtotal += item.price * item.quantity;
+                });
+                return subtotal.toFixed(2);
+            },
         },
-    }),
+    })
 );
+
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "../views/bodies"));
 

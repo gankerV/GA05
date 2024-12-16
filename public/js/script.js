@@ -134,47 +134,129 @@ async function fetchProducts(page) {
     }
 }
 
-// Hàm hiển thị sản phẩm
 function displayProducts(products) {
     const productList = document.getElementById("product-list");
     productList.innerHTML = "";
 
     products.forEach((product) => {
-        productList.innerHTML += `
-            <div class="bg-white p-4 rounded-lg shadow">
-                <a href="/shop/product/${product.id}">
-                    <img src="${product.imageUrl}" alt="${product.product_name}" class="w-full object-cover mb-4 rounded-lg" />
-                </a>
-                <a href="/shop/product/${product.id}" class="text-lg font-semibold mb-2">${product.product_name}</a>
-                <div class="flex items-center mb-4">
-                    <span class="text-lg font-bold text-primary">$${product.price}</span>
-                </div>
-                <div class="mb-4">
-                    <span class="text-sm font-medium text-gray-600">Category:</span>
-                    <span class="text-sm font-semibold">${product.category}</span>
-                </div>
-                <div class="mb-4">
-                    <span class="text-sm font-medium text-gray-600">Size:</span>
-                    <span class="text-sm font-semibold">${product.size}</span>
-                </div>
-                <div class="mb-4">
-                    <span class="text-sm font-medium text-gray-600">Color:</span>
-                    <span class="text-sm font-semibold">${product.color}</span>
-                </div>
-                <div class="mb-4">
-                    <span class="text-sm font-medium text-gray-600">Brand:</span>
-                    <span class="text-sm font-semibold">${product.brand}</span>
-                </div>
-                <div class="mb-4">
-                    <span class="text-sm font-medium text-gray-600">Rating:</span>
-                    <span class="text-sm font-semibold">${product.rating}/5</span>
-                </div>
-                <button class="bg-primary border border-transparent hover:bg-transparent hover:border-primary text-white hover:text-primary font-semibold py-2 px-4 rounded-full w-full">
+        // Tạo một sản phẩm dưới dạng HTML
+        const productHTML = document.createElement("div");
+        productHTML.classList.add("bg-white", "p-4", "rounded-lg", "shadow");
+        productHTML.innerHTML = `
+            <a href="/shop/product/${product.id}">
+                <img src="${product.imageUrl}" alt="${product.product_name}" class="w-full object-cover mb-4 rounded-lg" />
+            </a>
+            <a href="/shop/product/${product.id}" class="text-lg font-semibold mb-2">${product.product_name}</a>
+            <div class="flex items-center mb-4">
+                <span class="text-lg font-bold text-primary">$${product.price}</span>
+            </div>
+            <div class="mb-4">
+                <span class="text-sm font-medium text-gray-600">Category:</span>
+                <span class="text-sm font-semibold">${product.category}</span>
+            </div>
+            <div class="mb-4">
+                <span class="text-sm font-medium text-gray-600">Size:</span>
+                <span class="text-sm font-semibold">${product.size}</span>
+            </div>
+            <div class="mb-4">
+                <span class="text-sm font-medium text-gray-600">Color:</span>
+                <span class="text-sm font-semibold">${product.color}</span>
+            </div>
+            <div class="mb-4">
+                <span class="text-sm font-medium text-gray-600">Brand:</span>
+                <span class="text-sm font-semibold">${product.brand}</span>
+            </div>
+            <div class="mb-4">
+                <span class="text-sm font-medium text-gray-600">Rating:</span>
+                <span class="text-sm font-semibold">${product.rating}/5</span>
+            </div>
+            <div class="add-to-cart-form" data-product-id="${product.id}">
+                <button class="add-to-cart-btn bg-primary border border-transparent hover:bg-transparent hover:border-primary text-white hover:text-primary font-semibold py-2 px-4 rounded-full w-full">
                     Add to Cart
                 </button>
             </div>
         `;
+
+        // Thêm sản phẩm vào danh sách
+        productList.appendChild(productHTML);
     });
+
+    // Gắn sự kiện cho các nút "Add to Cart"
+    attachAddToCartEvents();
+}
+
+function attachAddToCartEvents() {
+    // Lấy tất cả các nút "Add to Cart"
+    const addToCartButtons = document.querySelectorAll(".add-to-cart-btn");
+
+    addToCartButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+            // Lấy form cha của nút
+            const form = button.closest(".add-to-cart-form");
+
+            // Lấy product_id từ form
+            const productId = form.getAttribute("data-product-id");
+
+            // Đặt quantity luôn bằng 1
+            const payload = { product_id: productId, quantity: 1 };
+
+            // Gửi yêu cầu AJAX tới server
+            fetch("/user/cart/add-product", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+                redirect: "follow", // Cho phép theo dõi chuyển hướng
+            })
+                .then((response) => {
+                    if (response.redirected) {
+                        // Nếu server chuyển hướng, di chuyển người dùng tới URL mới
+                        window.location.href = response.url;
+                    } else if (response.ok) {
+                        // Hiển thị thông báo thành công nếu không bị chuyển hướng
+                        alert("Product added to cart!");
+                    } else {
+                        // Hiển thị thông báo lỗi nếu không thành công
+                        alert("Failed to add product to cart.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error adding product to cart:", error);
+                    alert("An error occurred.");
+                });
+        });
+    });
+}
+
+// Hàm xóa cart 
+document.addEventListener("DOMContentLoaded", function () {
+    // Attach event listener to the "Empty Cart" button
+    const emptyCartButton = document.getElementById("empty-cart-btn");
+    if (emptyCartButton) {
+        emptyCartButton.addEventListener("click", function () {
+            emptyCart();
+        });
+    }
+});
+
+async function emptyCart() {
+    try {
+        const response = await fetch("http://localhost:3000/user/cart/clear-product", {
+            method: 'DELETE',
+        });
+
+        if (response.ok) {
+            alert('Cart emptied successfully!');
+            window.location.reload();  // Reload the page to reflect changes
+        } else {
+            const errorData = await response.json();
+            alert(`Failed to empty cart: ${errorData.message || 'Unknown error'}`);
+        }
+    } catch (error) {
+        console.error("Error emptying the cart:", error);
+        alert("An error occurred while emptying the cart.");
+    }
 }
 
 // Hàm hiển thị phân trang
