@@ -169,7 +169,7 @@
                     </button>
                     <button id="reviews-tab" role="tab" aria-controls="reviews-content" aria-selected="false"
                         class="tab">
-                        Reviews (3)
+                        Reviews ({{product.reviews.length}})
                     </button>
                 </div>
                 <div class="mt-8">
@@ -382,42 +382,25 @@
                                 Customer Reviews
                             </h3>
                             <div id="reviews-list">
-                                <!-- Review 1 -->
-                                <div class="py-4">
+                                <!-- Reviews -->
+                                {{#if product.reviews.length}}
+                                {{#each product.reviews}}
+                                <div class="border-b border-gray-line py-4">
                                     <div class="flex items-center mb-2">
-                                        <span class="text-lg font-semibold text-gray-700">John Doe</span>
-                                        <span class="ml-2 text-primary">★★★★★</span>
+                                        <span class="text-lg font-semibold text-gray-700">{{this.customer_name}}</span>
+                                        <span class="ml-2 text-primary">
+                                            {{fullStars this.rating}}{{emptyStars this.rating}}
+                                        </span>
+                                        <span class="ml-6 text-xs">{{formatDate this.created_at}}</span>
                                     </div>
                                     <p>
-                                        Great quality! Fits perfectly and the
-                                        material feels premium. Highly recommend
-                                        this t-shirt.
+                                        {{this.comment}}
                                     </p>
                                 </div>
-                                <!-- Review 2 -->
-                                <div class="border-t border-gray-line py-4">
-                                    <div class="flex items-center mb-2">
-                                        <span class="text-lg font-semibold text-gray-700">Jane Smith</span>
-                                        <span class="ml-2 text-primary">★★★★☆</span>
-                                    </div>
-                                    <p>
-                                        I love the design and the fabric is very
-                                        comfortable. However, I wish it came in
-                                        more colors.
-                                    </p>
-                                </div>
-                                <!-- Review 3 -->
-                                <div class="border-t border-gray-line py-4">
-                                    <div class="flex items-center mb-2">
-                                        <span class="text-lg font-semibold text-gray-700">Alice Johnson</span>
-                                        <span class="ml-2 text-primary">★★★★★</span>
-                                    </div>
-                                    <p>
-                                        Excellent t-shirt! The size is perfect
-                                        and it looks great. Will definitely buy
-                                        again.
-                                    </p>
-                                </div>
+                                {{/each}}
+                                {{else}}
+                                <p>No reviews yet.</p>
+                                {{/if}}
                             </div>
                         </div>
 
@@ -426,24 +409,25 @@
                             <h3 class="text-lg font-semibold mb-4">
                                 Write a Review
                             </h3>
-                            <form id="review-form" class="space-y-4">
+                            <form id="review-form" method="post" action="/shop/product/{{product.id}}/post-review"
+                                class="space-y-4">
                                 <div class="space-y-4 md:flex md:space-x-4 md:space-y-0">
                                     <div class="md:flex-1">
                                         <label for="review-name"
                                             class="block text-sm font-medium text-gray-700">Name</label>
-                                        <input type="text" id="review-name" name="review-name"
+                                        <input type="text" id="review-name" name="name"
                                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" />
                                     </div>
                                     <div class="md:flex-1">
                                         <label for="review-email"
                                             class="block text-sm font-medium text-gray-700">Email</label>
-                                        <input type="email" id="review-email" name="review-email"
+                                        <input type="email" id="review-email" name="email"
                                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm" />
                                     </div>
                                     <div class="md:flex-1">
                                         <label for="review-rating"
                                             class="block text-sm font-medium text-gray-700">Rating</label>
-                                        <select id="review-rating" name="review-rating"
+                                        <select id="review-rating" name="rating"
                                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
                                             <option value="5">
                                                 ★★★★★
@@ -466,7 +450,7 @@
                                 <div>
                                     <label for="review-text"
                                         class="block text-sm font-medium text-gray-700">Review</label>
-                                    <textarea id="review-text" name="review-text" rows="4"
+                                    <textarea id="review-text" name="comment" rows="4"
                                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"></textarea>
                                 </div>
                                 <div>

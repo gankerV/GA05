@@ -3,6 +3,7 @@ const router = express.Router();
 
 const productController = require("./productController");
 
-router.get("/product/:id", productController.index);
+router.get("/:id", productController.index);
+router.post("/:id/post-review", productController.writeReview);
 
 module.exports = router;
