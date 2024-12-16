@@ -79,6 +79,12 @@ INSERT INTO review (product_id, customer_name, customer_email, rating, comment) 
 (1, "Charlie Brown", "charlie.brown@gmail.com", 4, "Very comfortable and stylish, but the color is a bit lighter than expected."),
 (1, "Lily White", "lily.white@gmail.com", 5, "Absolutely love it! Feels so comfortable and looks great."),
 (1, "David Wilson", "david.wilson@gmail.com", 2, "Not satisfied with the quality. The fabric feels rough."),
+(1, "Sophia Clark", "sophia.clark@gmail.com", 4, "Great shirt, fits well, but I would like a wider range of colors."),
+(1, "John Doe", "johndoe@gmail.com", 5, "Great quality! Fits perfectly and the material feels premium. Highly recommend this t-shirt."),
+(1, "Alice Smith", "alice.smith@gmail.com", 4, "Nice quality, but a bit too tight. Still love the design."),
+(1, "Bob Johnson", "bob.johnson@gmail.com", 5, "The best t-shirt I’ve ever bought. Perfect fit and amazing fabric."),
+(1, "Eve Green", "eve.green@gmail.com", 3, "It’s good, but the material could be softer."),
+(1, "Charlie Brown", "charlie.brown@gmail.com", 4, "Very comfortable and stylish, but the color is a bit lighter than expected."),
 (1, "Sophia Clark", "sophia.clark@gmail.com", 4, "Great shirt, fits well, but I would like a wider range of colors.");
 
 CREATE TABLE users (

@@ -533,7 +533,7 @@
         function renderPagination(totalPages, currentPage) {
             paginationControls.innerHTML = ""; // Xóa các nút phân trang cũ
 
-            if (totalPages < 4) return;
+            if (totalPages < 2) return;
 
             const MAX_VISIBLE_PAGES = 3; // Số lượng nút hiển thị tối đa
             // Tạo nút "Prev"

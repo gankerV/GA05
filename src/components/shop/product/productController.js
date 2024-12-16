@@ -69,7 +69,6 @@ class ProductController {
                 productId,
                 page,
             );
-            console.log(paginatedReviews);
             res.json(paginatedReviews);
         } catch (error) {
             res.status(500).json({ error });
