@@ -7,8 +7,8 @@ const ensureAuthenticated = require("../user/auth/authModel");
 const cartRoute = require("../user/cart/cartRoute");
 const userRoute = require("../user/userRoute");
 
-router.get("/product/:id", productRouter);
 router.get("/api", shopController.pagination);
+router.use("/product", productRouter);
 router.use("/", shopController.index);
 
 router.use("/user", userRoute);

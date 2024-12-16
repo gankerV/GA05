@@ -7,6 +7,8 @@ const route = require("./routes");
 const session = require("express-session");
 const passport = require("./passportConfig");
 const flash = require("connect-flash");
+const Handlebars = require("handlebars");
+const moment = require("moment");
 
 const app = express();
 
@@ -39,6 +41,16 @@ app.set("views", path.join(__dirname, "../views/bodies"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use("/public", express.static(path.join(__dirname, "../../public")));
+
+// Helper để tạo mảng sao đầy (★)
+Handlebars.registerHelper("fullStars", function (rating) {
+    return "★".repeat(rating);
+});
+
+// Helper để tạo mảng sao rỗng (☆)
+Handlebars.registerHelper("emptyStars", function (rating) {
+    return "☆".repeat(5 - rating);
+});
 
 // Cấu hình express-session
 app.use(

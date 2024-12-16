@@ -40,8 +40,39 @@ class ProductController {
 
             res.render("product", { product });
         } catch (error) {
-            console.error("Lỗi khi lấy chi tiết sản phẩm:", error);
             res.status(500).send("Lỗi Server");
+        }
+    }
+
+    async writeReview(req, res) {
+        try {
+            const reviewInfo = {
+                productId: Number(req.params.id), // Lấy productId từ URL
+                name: req.body.name, // Lấy tên người đánh giá từ body
+                email: req.body.email, // Lấy email từ body
+                rating: Number(req.body.rating), // Lấy rating từ body
+                comment: req.body.comment, // Lấy comment từ body
+            };
+
+            await ProductModel.saveReview(reviewInfo);
+
+            res.redirect(`/shop/product/${reviewInfo.productId}`);
+        } catch (error) {}
+    }
+
+    async getReviews(req, res) {
+        try {
+            const productId = req.params.id;
+            const page = Number(req.query.page) || 1;
+
+            const paginatedReviews = await ProductModel.getReviews(
+                productId,
+                page,
+            );
+            console.log(paginatedReviews);
+            res.json(paginatedReviews);
+        } catch (error) {
+            res.status(500).json({ error });
         }
     }
 }
