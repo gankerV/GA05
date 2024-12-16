@@ -106,7 +106,7 @@
                                 +
                             </button>
                         </div>
-                        <button
+                        <button id="add-to-cart-btn"
                             class="bg-primary border border-transparent hover:bg-transparent hover:border-primary text-white hover:text-primary font-semibold py-2 px-4 rounded-full">
                             Add to Cart
                         </button>
@@ -501,10 +501,6 @@
                     <div class="flex items-center mb-4">
                         <span class="text-lg font-bold text-primary">${{price}}</span>
                     </div>
-                    <button
-                        class="bg-primary border border-transparent hover:bg-transparent hover:border-primary text-white hover:text-primary font-semibold py-2 px-4 rounded-full w-full">
-                        Add to Cart
-                    </button>
                 </div>
             </div>
             {{/each}}
@@ -512,3 +508,60 @@
     </div>
 </section>
 {{/if}}
+
+
+
+<script>
+    // Increase quantity functionality
+    document.getElementById("increase").addEventListener("click", function() {
+        const quantityInput = document.getElementById("quantity");
+        quantityInput.value = parseInt(quantityInput.value) + 1;
+    });
+
+    // Decrease quantity functionality
+    document.getElementById("decrease").addEventListener("click", function() {
+        const quantityInput = document.getElementById("quantity");
+        if (quantityInput.value > 1) {
+            quantityInput.value = parseInt(quantityInput.value) - 1;
+        }
+    });
+
+    // Handle Add to Cart button click
+    document.getElementById("add-to-cart-btn").addEventListener("click", function() {
+        // Lấy product_id từ HBS và quantity từ input
+        const productId = "{{product.id}}"; // Assuming `product.id` is the unique identifier for the product
+        const quantity = document.getElementById("quantity").value;
+
+        // Tạo payload gửi tới server
+        const payload = {
+            product_id: productId,
+            quantity: parseInt(quantity)
+        };
+
+        // Gửi yêu cầu POST tới server
+        fetch("/user/cart/add-product", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload),
+            redirect: "follow" // Cho phép theo dõi chuyển hướng
+        })
+        .then((response) => {
+            if (response.redirected) {
+                // Nếu server chuyển hướng, di chuyển người dùng tới URL mới
+                window.location.href = response.url;
+            } else if (response.ok) {
+                // Hiển thị thông báo thành công nếu không bị chuyển hướng
+                alert("Product added to cart!");
+            } else {
+                // Hiển thị thông báo lỗi nếu không thành công
+                alert("Failed to add product to cart.");
+            }
+        })
+        .catch((error) => {
+            console.error("Error adding product to cart:", error);
+            alert("An error occurred.");
+        });
+    });
+</script>

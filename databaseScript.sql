@@ -64,3 +64,16 @@ CREATE TABLE users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL
 );
+
+
+CREATE TABLE cart (
+    id INT AUTO_INCREMENT PRIMARY KEY,          -- ID duy nhất cho mỗi mục trong giỏ hàng
+    user_id INT NOT NULL,                       -- ID của người dùng
+    product_id INT NOT NULL,                    -- ID của sản phẩm
+    quantity INT DEFAULT 1,                     -- Số lượng sản phẩm (mặc định là 1)
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Thời gian thêm vào giỏ hàng
+    FOREIGN KEY (user_id) REFERENCES users(id)  -- Ràng buộc khóa ngoại tới bảng users
+        ON DELETE CASCADE,                      -- Xóa mục trong giỏ khi user bị xóa
+    FOREIGN KEY (product_id) REFERENCES shop(id) -- Ràng buộc khóa ngoại tới bảng shop
+        ON DELETE CASCADE                       -- Xóa mục trong giỏ khi sản phẩm bị xóa
+);
