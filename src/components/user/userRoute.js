@@ -8,6 +8,7 @@ const cartRouter = require("./cart/cartRoute");
 router.get("/register", userController.register);
 router.post("/register", userController.verifyRegister);
 router.get("/register/check-email", userController.checkRegistrationEmail);
+router.get("/register/activate/:token", userController.activateAccount);
 
 // Route đăng nhập
 router.get("/login", AuthController.loginPage);

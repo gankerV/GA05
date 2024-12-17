@@ -1,6 +1,7 @@
 const { DataTypes, Sequelize } = require("sequelize");
 const sequelize = require("../../config/dataConfig");
 const bcryptjs = require("bcryptjs");
+const crypto = require("crypto");
 
 const User = sequelize.define(
     "User",
@@ -19,6 +20,14 @@ const User = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        is_active: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
+        activation_token: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
     },
     {
         tableName: "users",
@@ -33,25 +42,58 @@ class UserModel {
 
     static async saveUser(account) {
         try {
-            // Kiểm tra các trường bắt buộc
             const {
                 Email,
                 Password,
                 "Confirm Password": ConfirmPassword,
             } = account;
 
+            // Kiểm tra mật khẩu khớp
+            if (Password !== ConfirmPassword) {
+                return false;
+            }
+
             // Mã hóa mật khẩu
-            const hashedPassword = await bcryptjs.hash(Password, 10); // 10 là số vòng salt
+            const hashedPassword = await bcryptjs.hash(Password, 10);
+
+            // Tạo mã kích hoạt
+            const activationToken = crypto.randomBytes(20).toString("hex");
 
             // Lưu người dùng vào cơ sở dữ liệu
-            const newUser = await User.create({
+            await User.create({
                 email: Email,
                 password: hashedPassword,
+                is_active: false, // Mặc định chưa kích hoạt
+                activation_token: activationToken, // Lưu token
             });
+
+            return activationToken; // Trả về token để gửi email
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async activateUserByToken(token) {
+        try {
+            // Tìm người dùng với activation_token khớp
+            const user = await User.findOne({
+                where: {
+                    activation_token: token,
+                    is_active: false,
+                },
+            });
+
+            if (!user) return false;
+
+            // Cập nhật trạng thái tài khoản
+            user.is_active = true;
+            user.activation_token = null; // Xóa token sau khi kích hoạt
+            await user.save();
 
             return true;
         } catch (error) {
-            return false;
+            console.error("Lỗi kích hoạt tài khoản:", error);
+            throw error;
         }
     }
 
