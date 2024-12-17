@@ -2391,6 +2391,11 @@ video {
   border-color: transparent;
 }
 
+.border-gray-light {
+  --tw-border-opacity: 1;
+  border-color: rgb(50 50 50 / var(--tw-border-opacity, 1));
+}
+
 .bg-\[\#011c2b\] {
   --tw-bg-opacity: 1;
   background-color: rgb(1 28 43 / var(--tw-bg-opacity, 1));

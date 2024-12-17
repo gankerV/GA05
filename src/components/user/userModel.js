@@ -18,7 +18,11 @@ const User = sequelize.define(
         },
         password: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
+        },
+        is_google: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
         },
         is_active: {
             type: DataTypes.BOOLEAN,

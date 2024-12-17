@@ -2,6 +2,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bcryptjs = require("bcryptjs");
 const UserModel = require("../components/user/userModel");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
 // Sử dụng LocalStrategy cho đăng nhập
 passport.use(
@@ -30,6 +31,33 @@ passport.use(
             } catch (err) {
                 return done(err);
             }
+        },
+    ),
+);
+
+passport.use(
+    new GoogleStrategy(
+        {
+            clientID: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            callbackURL: "/user/login/google/callback", // Đảm bảo khớp với URL callback đã cấu hình trong Google Console
+        },
+        async (accessToken, refreshToken, profile, done) => {
+            // Lưu thông tin người dùng vào cơ sở dữ liệu hoặc session
+            let user = await UserModel.User.findOne({
+                where: { email: profile.emails[0].value },
+            });
+
+            if (!user) {
+                // Nếu chưa có người dùng, tạo mới
+                user = await UserModel.User.create({
+                    email: profile.emails[0].value,
+                    is_google: true,
+                    is_active: true,
+                });
+            }
+
+            return done(null, user); // Trả về đối tượng người dùng sau khi xác thực thành công
         },
     ),
 );

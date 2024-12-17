@@ -1,6 +1,33 @@
 const passport = require("../../../config/passportConfig");
 
 const AuthController = {
+    // Đăng nhập qua Google
+    googleAuth: passport.authenticate("google", {
+        scope: ["profile", "email"],
+    }),
+
+    // Callback Google
+    googleAuthCallback: (req, res, next) => {
+        passport.authenticate("google", (err, user, info) => {
+            if (err) {
+                return next(err); // Nếu có lỗi, chuyển tiếp lỗi đến middleware xử lý
+            }
+            if (!user) {
+                // Nếu không có người dùng, chuyển hướng về trang đăng nhập
+                return res.redirect("/user/login");
+            }
+
+            // Lưu người dùng vào session
+            req.login(user, (err) => {
+                if (err) {
+                    return next(err);
+                }
+                // Sau khi đăng nhập thành công, chuyển hướng đến trang chính hoặc dashboard
+                return res.redirect("/"); // Hoặc trang bạn muốn chuyển hướng
+            });
+        })(req, res, next); // Gọi hàm passport.authenticate
+    },
+
     // Đăng nhập
     login: (req, res, next) => {
         passport.authenticate("local", (err, user, info) => {

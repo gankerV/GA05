@@ -3,7 +3,6 @@ const aboutRouter = require("../components/about/aboutRoute");
 const userRouter = require("../components/user/userRoute");
 const shopRouter = require("../components/shop/shopRoute");
 const contactRouter = require("../components/contact/contactRoute");
-const productRouter = require("../components/shop/product/productRoute");
 const ensureAuthenticated = require("../components/user/auth/authModel");
 
 function route(app) {

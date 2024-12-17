@@ -26,31 +26,31 @@ app.engine(
             formatCurrency: (value) => `$${value.toFixed(2)}`, // Define other helpers here
             calculateSubtotal: (cartItems) => {
                 let subtotal = 0;
-                cartItems.forEach(item => {
+                cartItems.forEach((item) => {
                     subtotal += item.price * item.quantity;
                 });
                 return subtotal.toFixed(2);
             },
         },
-    })
+    }),
 );
 
+// Cấu hình handlebars
 app.set("view engine", "hbs");
 app.set("views", path.join(__dirname, "../views/bodies"));
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use("/public", express.static(path.join(__dirname, "../../public")));
-
 // Helper để tạo mảng sao đầy (★)
 Handlebars.registerHelper("fullStars", function (rating) {
     return "★".repeat(rating);
 });
-
 // Helper để tạo mảng sao rỗng (☆)
 Handlebars.registerHelper("emptyStars", function (rating) {
     return "☆".repeat(5 - rating);
 });
+
+// Cấu hình express
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use("/public", express.static(path.join(__dirname, "../../public")));
 
 // Cấu hình express-session
 app.use(
@@ -61,7 +61,8 @@ app.use(
         cookie: { secure: false, maxAge: 1000 * 3600 },
     }),
 );
-// Khai báo Passport
+
+// Cấu hình passport
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
