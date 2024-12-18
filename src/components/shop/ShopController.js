@@ -1,3 +1,4 @@
+const { query } = require("express");
 const Shop = require("./shopModel");
 
 // Biến toàn cục để lưu danh sách sản phẩm sau khi filter hoặc search
