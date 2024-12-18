@@ -41,7 +41,7 @@ passport.use(
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             callbackURL:
-                "https://ga05-1.onrender.com//user/login/google/callback", // Đảm bảo khớp với URL callback đã cấu hình trong Google Console
+                "https://ga05-1.onrender.com/user/login/google/callback", // Đảm bảo khớp với URL callback đã cấu hình trong Google Console
         },
         async (accessToken, refreshToken, profile, done) => {
             // Lưu thông tin người dùng vào cơ sở dữ liệu hoặc session
