@@ -79,36 +79,31 @@ function applyFilter(key, value, element) {
     );
 }
 
+// Tạo Query String từ productName và filters
 function createQueryString(productName, filters) {
-    const filterStrings = Object.entries(filters)
-        .map(([key, values]) => `${key}=${values.join(",")}`)
-        .join("&");
-
-    let queryString = "";
-
-    if (productName && productName.length > 0) {
-        queryString += `product_name=${encodeURIComponent(productName)}`;
-    }
-
-    if (filterStrings) {
-        if (queryString.length > 0) {
-            queryString += `&${filterStrings}`;
-        } else {
-            queryString = filterStrings;
+    const params = new URLSearchParams();
+    if (productName) params.set("product_name", productName);
+    if (filters) {
+        for (const key in filters) {
+            if (filters[key]) params.set(key, filters[key]);
         }
     }
-
-    return queryString;
+    return params.toString();
 }
 
+// Lấy và hiển thị kết quả tìm kiếm và bộ lọc
 function fetchAndDisplayResults(productName, filters) {
     const queryString = createQueryString(productName, filters);
+    const newURL = `/shop?${queryString}`;
 
     fetch(`/shop/api?${queryString}`)
         .then((response) => response.json())
         .then((data) => {
             displayProducts(data.products);
             displayPagination(data.currentPage, data.totalPages);
+
+            // Cập nhật URL chỉ một lần
+            history.replaceState({ filters, productName }, "", newURL);
         })
         .catch((error) =>
             console.error("Error fetching search/filter results:", error),
@@ -117,20 +112,32 @@ function fetchAndDisplayResults(productName, filters) {
 
 async function fetchProducts(page) {
     try {
-        const response = await fetch(`/shop/api?page=${page}`);
+        // Lấy thông tin lọc từ URL hiện tại
+        const urlParams = new URLSearchParams(window.location.search);
+        const productName = urlParams.get("product_name") || "";
+        const filters = {
+            category: urlParams.get("category") || ""
+        };
+
+        // Sử dụng hàm createQueryString để xây dựng query string
+        const queryString = createQueryString(productName, { ...filters, page });
+
+        // Fetch dữ liệu từ API
+        const response = await fetch(`/shop/api?${queryString}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
 
-        // Hiển thị sản phẩm
+        // Hiển thị dữ liệu lên giao diện
         displayProducts(data.products);
-
-        // Hiển thị phân trang
         displayPagination(data.currentPage, data.totalPages);
 
-        // Cập nhật URL
-        const newURL = `/shop/page=${page}`;
-        history.pushState({ page }, "", newURL);
+        // Cập nhật URL với thông tin mới
+        history.replaceState(null, "", `/shop?${queryString}`);
     } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Error fetching products:", error.message || error);
     }
 }
 

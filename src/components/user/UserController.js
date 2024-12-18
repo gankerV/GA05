@@ -26,7 +26,7 @@ class UserController {
                     },
                 });
 
-                const activationLink = `http://localhost:3000/user/register/activate/${activationToken}`;
+                const activationLink = `https://ga05-1.onrender.com/user/register/activate/${activationToken}`;
 
                 await transporter.sendMail({
                     from: '"Tail Store" nguyenhuytan2004@gmail.com',
