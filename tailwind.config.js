@@ -1,43 +1,128 @@
+const colors = require("tailwindcss/colors");
+
 module.exports = {
-    content: [
-        "./src/views/**/*.hbs",
-        "./public/js/**/*.js",
-        "./public/css/**/*.css",
-    ],
-    theme: {
-        container: {
-            center: true,
-            padding: "1rem",
-        },
-        screens: {
-            sm: "640px",
-            md: "768px",
-            lg: "1024px",
-            xl: "1280px",
-        },
-        fontFamily: {
-            manrope: ["Manrope", "sans-serif"],
-        },
-        colors: {
-            transparent: "transparent",
-            current: "currentColor",
-            white: "#ffffff",
-            black: "#010717",
-            primary: "#ff0042",
-            gray: {
-                lighter: "#FAF7F3",
-                light: "#323232",
-                dark: "#010717",
-                txt: "#4c4d56",
-                line: "#E5E5E5",
-            },
-        },
-        extend: {
-            colors: {
-                success: "#22c55e", // Màu xanh lá
-                error: "#ef4444", // Màu đỏ
-            },
-        },
+  content: [
+    "./src/views/**/*.hbs",
+    "./public/js/**/*.js",
+    "./public/css/**/*.css",
+    "./layouts/**/*.html",
+    "./content/**/*.md",
+    "./content/**/*.html",
+    "./src/*.js",
+    "./node_modules/flowbite/**/*.js",
+  ],
+  safelist: [
+    "w-64",
+    "w-1/2",
+    "rounded-l-lg",
+    "rounded-r-lg",
+    "bg-gray-200",
+    "grid-cols-4",
+    "grid-cols-7",
+    "h-6",
+    "leading-6",
+    "h-9",
+    "leading-9",
+    "shadow-lg",
+    "bg-opacity-50",
+    "dark:bg-opacity-80",
+  ],
+  darkMode: "class",
+  theme: {
+    container: {
+      center: true,
+      padding: "1rem",
     },
-    plugins: [],
+    screens: {
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+    },
+    fontFamily: {
+      manrope: ["Manrope", "sans-serif"],
+      sans: [
+        "Inter",
+        "ui-sans-serif",
+        "system-ui",
+        "-apple-system",
+        "system-ui",
+        "Segoe UI",
+        "Roboto",
+        "Helvetica Neue",
+        "Arial",
+        "Noto Sans",
+        "sans-serif",
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        "Noto Color Emoji",
+      ],
+      body: [
+        "Inter",
+        "ui-sans-serif",
+        "system-ui",
+        "-apple-system",
+        "system-ui",
+        "Segoe UI",
+        "Roboto",
+        "Helvetica Neue",
+        "Arial",
+        "Noto Sans",
+        "sans-serif",
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        "Noto Color Emoji",
+      ],
+      mono: [
+        "ui-monospace",
+        "SFMono-Regular",
+        "Menlo",
+        "Monaco",
+        "Consolas",
+        "Liberation Mono",
+        "Courier New",
+        "monospace",
+      ],
+    },
+    colors: {
+      transparent: "transparent",
+      current: "currentColor",
+      white: "#ffffff",
+      black: "#010717",
+      primary: {
+        DEFAULT: "#ff0042",
+        "50": "#eff6ff",
+        "100": "#dbeafe",
+        "200": "#bfdbfe",
+        "300": "#93c5fd",
+        "400": "#60a5fa",
+        "500": "#3b82f6",
+        "600": "#2563eb",
+        "700": "#1d4ed8",
+        "800": "#1e40af",
+        "900": "#1e3a8a",
+      },
+      gray: {
+        lighter: "#FAF7F3", // Phím tắt tùy chỉnh
+        light: "#323232",
+        dark: "#010717",
+        txt: "#4c4d56",
+        line: "#E5E5E5",
+        ...colors.gray, // Giữ nguyên bảng màu mặc định Tailwind
+      },
+      success: "#22c55e",
+      error: "#ef4444",
+    },
+    extend: {
+      transitionProperty: {
+        width: "width",
+      },
+      textDecoration: ["active"],
+      minWidth: {
+        kanban: "28rem",
+      },
+    },
+  },
 };
