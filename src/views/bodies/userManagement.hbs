@@ -17,58 +17,47 @@
       <h1 class="text-2xl font-semibold">User Management</h1>
     </div>
 
-    <!-- Table -->
-    <div class="overflow-x-auto bg-white shadow sm:rounded-lg">
-      <table class="min-w-full border-collapse border border-gray-300">
-        <thead>
+    <table class="min-w-full border-collapse border border-gray-300">
+      <thead>
           <tr class="bg-gray-200">
-            <th class="border border-gray-300 px-4 py-2">ID</th>
-            <th class="border border-gray-300 px-4 py-2">Name</th>
-            <th class="border border-gray-300 px-4 py-2">Email</th>
-            <th class="border border-gray-300 px-4 py-2">Role</th>
-            <th class="border border-gray-300 px-4 py-2">Status</th>
-            <th class="border border-gray-300 px-4 py-2">Actions</th>
+              <th class="border border-gray-300 px-4 py-2">ID</th>
+              <th class="border border-gray-300 px-4 py-2">Email</th>
+              <th class="border border-gray-300 px-4 py-2">Access</th>
+              <th class="border border-gray-300 px-4 py-2">Registration Time</th>
+              <th class="border border-gray-300 px-4 py-2">Actions</th>
           </tr>
-        </thead>
-        <tbody>
-          <!-- Static User Data -->
+      </thead>
+      <tbody>
+          {{#each users}}
           <tr class="hover:bg-gray-100">
-            <td class="border border-gray-300 px-4 py-2">1</td>
-            <td class="border border-gray-300 px-4 py-2">John Doe</td>
-            <td class="border border-gray-300 px-4 py-2">john@example.com</td>
-            <td class="border border-gray-300 px-4 py-2">Admin</td>
-            <td class="border border-gray-300 px-4 py-2">
-              <span class="text-green-600">Active</span>
-            </td>
-            <td class="border border-gray-300 px-4 py-2 flex space-x-2">
-              <a href="/admin/users/1" class="text-blue-600 hover:underline">Details</a>
-              <a href="/admin/users/edit/1" class="text-yellow-600 hover:underline">Edit</a>
-              <form action="/admin/users/status/1" method="POST" class="inline">
-                <input type="hidden" name="status" value="banned">
-                <button type="submit" class="text-red-600 hover:text-red-800">Ban</button>
-              </form>
-            </td>
+              <td class="border border-gray-300 px-4 py-2">{{this.id}}</td>
+              <td class="border border-gray-300 px-4 py-2">{{this.email}}</td>
+              <td class="border border-gray-300 px-4 py-2">
+                  {{#if this.access}}
+                      Yes
+                  {{else}}
+                      No
+                  {{/if}}
+              </td>
+              <td class="border border-gray-300 px-4 py-2">{{this.registration_time}}</td>
+              <td class="border border-gray-300 px-4 py-2 flex justify-center">
+                  {{#if this.access}}
+                      <form action="/admin/users/status/{{this.id}}" method="POST" class="inline">
+                          <input type="hidden" name="status" value="banned">
+                          <button type="submit" class="text-red-600 hover:text-red-800">Ban</button>
+                      </form>
+                  {{else}}
+                      <form action="/admin/users/status/{{this.id}}" method="POST" class="inline">
+                          <input type="hidden" name="status" value="active">
+                          <button type="submit" class="text-green-600 hover:text-green-800">Unban</button>
+                      </form>
+                  {{/if}}
+                  <button class="pl-4"><a href="/admin/users/{{this.id}}" class="text-blue-600 hover:underline">Details</a></button>
+              </td>
           </tr>
-          <tr class="hover:bg-gray-100">
-            <td class="border border-gray-300 px-4 py-2">2</td>
-            <td class="border border-gray-300 px-4 py-2">Jane Doe</td>
-            <td class="border border-gray-300 px-4 py-2">jane@example.com</td>
-            <td class="border border-gray-300 px-4 py-2">User</td>
-            <td class="border border-gray-300 px-4 py-2">
-              <span class="text-red-600">Banned</span>
-            </td>
-            <td class="border border-gray-300 px-4 py-2 flex space-x-2">
-              <a href="/admin/users/2" class="text-blue-600 hover:underline">Details</a>
-              <a href="/admin/users/edit/2" class="text-yellow-600 hover:underline">Edit</a>
-              <form action="/admin/users/status/2" method="POST" class="inline">
-                <input type="hidden" name="status" value="active">
-                <button type="submit" class="text-green-600 hover:text-green-800">Unban</button>
-              </form>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+          {{/each}}
+      </tbody>
+  </table>
   </main>
 
   <!-- Footer -->

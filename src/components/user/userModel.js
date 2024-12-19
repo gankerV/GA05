@@ -20,6 +20,18 @@ const User = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true,
         },
+        access: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true,
+        },
+        registration_time: {
+            type: DataTypes.DATE,
+            defaultValue: Sequelize.NOW,
+        },
+        is_admin: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
         is_google: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
