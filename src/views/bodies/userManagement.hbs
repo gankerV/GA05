@@ -1,0 +1,78 @@
+
+<body class="bg-gray-100 min-h-screen">
+  <!-- Header -->
+  <header class="bg-blue-600 text-white py-4 shadow">
+    <div class="container mx-auto text-lg font-semibold text-center">Admin Dashboard - User Management</div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto my-8 px-4">
+    <!-- Navigation -->
+    <div class="mb-4">
+      <a href="/admin/dashboard" class="text-blue-600 hover:underline">Back to Dashboard</a>
+    </div>
+
+    <!-- Title -->
+    <div class="mb-6">
+      <h1 class="text-2xl font-semibold">User Management</h1>
+    </div>
+
+    <!-- Table -->
+    <div class="overflow-x-auto bg-white shadow sm:rounded-lg">
+      <table class="min-w-full border-collapse border border-gray-300">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border border-gray-300 px-4 py-2">ID</th>
+            <th class="border border-gray-300 px-4 py-2">Name</th>
+            <th class="border border-gray-300 px-4 py-2">Email</th>
+            <th class="border border-gray-300 px-4 py-2">Role</th>
+            <th class="border border-gray-300 px-4 py-2">Status</th>
+            <th class="border border-gray-300 px-4 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Static User Data -->
+          <tr class="hover:bg-gray-100">
+            <td class="border border-gray-300 px-4 py-2">1</td>
+            <td class="border border-gray-300 px-4 py-2">John Doe</td>
+            <td class="border border-gray-300 px-4 py-2">john@example.com</td>
+            <td class="border border-gray-300 px-4 py-2">Admin</td>
+            <td class="border border-gray-300 px-4 py-2">
+              <span class="text-green-600">Active</span>
+            </td>
+            <td class="border border-gray-300 px-4 py-2 flex space-x-2">
+              <a href="/admin/users/1" class="text-blue-600 hover:underline">Details</a>
+              <a href="/admin/users/edit/1" class="text-yellow-600 hover:underline">Edit</a>
+              <form action="/admin/users/status/1" method="POST" class="inline">
+                <input type="hidden" name="status" value="banned">
+                <button type="submit" class="text-red-600 hover:text-red-800">Ban</button>
+              </form>
+            </td>
+          </tr>
+          <tr class="hover:bg-gray-100">
+            <td class="border border-gray-300 px-4 py-2">2</td>
+            <td class="border border-gray-300 px-4 py-2">Jane Doe</td>
+            <td class="border border-gray-300 px-4 py-2">jane@example.com</td>
+            <td class="border border-gray-300 px-4 py-2">User</td>
+            <td class="border border-gray-300 px-4 py-2">
+              <span class="text-red-600">Banned</span>
+            </td>
+            <td class="border border-gray-300 px-4 py-2 flex space-x-2">
+              <a href="/admin/users/2" class="text-blue-600 hover:underline">Details</a>
+              <a href="/admin/users/edit/2" class="text-yellow-600 hover:underline">Edit</a>
+              <form action="/admin/users/status/2" method="POST" class="inline">
+                <input type="hidden" name="status" value="active">
+                <button type="submit" class="text-green-600 hover:text-green-800">Unban</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-200 py-4 mt-8 text-center text-sm text-gray-600">
+    &copy; 2024 Admin Dashboard
+  </footer>
+</body>
