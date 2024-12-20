@@ -83,8 +83,12 @@ INSERT INTO review (product_id, customer_name, customer_email, rating, comment) 
 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    name nvarchar (50),
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255),
+    access BOOLEAN DEFAULT TRUE,
+    registration_time timestamp DEFAULT current_timestamp,
+    is_admin BOOLEAN DEFAULT FALSE,
     is_google BOOLEAN DEFAULT FALSE,
     is_active BOOLEAN DEFAULT FALSE,
     activation_token VARCHAR(255)
