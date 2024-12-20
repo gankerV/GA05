@@ -22,21 +22,29 @@ app.engine(
         partialsDir: path.join(__dirname, "../views", "partials"),
         helpers: {
             json: (context) => JSON.stringify(context),
-            multiply: (a, b) => a * b, // Ensure multiply helper is directly here
-            formatCurrency: (value) => `$${value.toFixed(2)}`, // Define other helpers here
-            calculateSubtotal: (cartItems) => {
+            multiply: (a, b) => a * b, // Tính toán nhân
+            formatCurrency: (value) => `$${value.toFixed(2)}`, // Định dạng tiền tệ
+            calculateSubtotal: (cartItems) => { // Tính tổng phụ
                 let subtotal = 0;
                 cartItems.forEach((item) => {
                     subtotal += item.price * item.quantity;
                 });
                 return subtotal.toFixed(2);
             },
-            // Register custom helpers directly in this object
-            eq: function(a, b) {
-                return a === b;
+            eq: (a, b) => a === b, // So sánh bằng
+            add: (a, b) => a + b, // Cộng hai giá trị
+            subtract: (a, b) => a - b, // Trừ hai giá trị
+            range: (start, end) => { // Tạo mảng các số từ start đến end
+                const range = [];
+                for (let i = start; i <= end; i++) {
+                    range.push(i);
+                }
+                return range;
             },
+            gt: (a, b) => a > b, // Kiểm tra lớn hơn
+            lt: (a, b) => a < b, // Kiểm tra nhỏ hơn
         },
-    }),
+    })
 );
 
 // Cấu hình handlebars
