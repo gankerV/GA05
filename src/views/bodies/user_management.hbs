@@ -1,10 +1,4 @@
-
 <body class="bg-gray-100 min-h-screen">
-  <!-- Header -->
-  <header class="bg-blue-600 text-white py-4 shadow">
-    <div class="container mx-auto text-lg font-semibold text-center">Admin Dashboard - User Management</div>
-  </header>
-
   <!-- Main Content -->
   <main class="container mx-auto my-8 px-4">
     <!-- Navigation -->
@@ -17,10 +11,35 @@
       <h1 class="text-2xl font-semibold">User Management</h1>
     </div>
 
+    <!-- Filter and Sort Controls -->
+    <div class="mb-6">
+      <form action="/admin/users" method="GET" class="flex space-x-4">
+        <!-- Search by Name and Email -->
+        <input type="text" name="search" placeholder="Search by Name or Email" class="px-4 py-2 border border-gray-300 rounded-lg" value="{{search}}">
+        
+        <!-- Sort by -->
+        <select name="sortBy" class="px-4 py-2 border border-gray-300 rounded-lg">
+          <option value="name" {{#if (eq sortBy "name")}}selected{{/if}}>Name</option>
+          <option value="email" {{#if (eq sortBy "email")}}selected{{/if}}>Email</option>
+          <option value="registration_time" {{#if (eq sortBy "registration_time")}}selected{{/if}}>Registration Time</option>
+        </select>
+        
+        <!-- Sort Order -->
+        <select name="sortOrder" class="px-4 py-2 border border-gray-300 rounded-lg">
+          <option value="asc" {{#if (eq sortOrder "asc")}}selected{{/if}}>Ascending</option>
+          <option value="desc" {{#if (eq sortOrder "desc")}}selected{{/if}}>Descending</option>
+        </select>
+
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Apply</button>
+      </form>
+    </div>
+
+    <!-- User Table -->
     <table class="min-w-full border-collapse border border-gray-300">
       <thead>
           <tr class="bg-gray-200">
               <th class="border border-gray-300 px-4 py-2">ID</th>
+              <th class="border border-gray-300 px-4 py-2">Name</th>
               <th class="border border-gray-300 px-4 py-2">Email</th>
               <th class="border border-gray-300 px-4 py-2">Access</th>
               <th class="border border-gray-300 px-4 py-2">Registration Time</th>
@@ -31,6 +50,7 @@
           {{#each users}}
           <tr class="hover:bg-gray-100">
               <td class="border border-gray-300 px-4 py-2">{{this.id}}</td>
+              <td class="border border-gray-300 px-4 py-2">{{this.name}}</td>
               <td class="border border-gray-300 px-4 py-2">{{this.email}}</td>
               <td class="border border-gray-300 px-4 py-2">
                   {{#if this.access}}
@@ -57,11 +77,6 @@
           </tr>
           {{/each}}
       </tbody>
-  </table>
+    </table>
   </main>
-
-  <!-- Footer -->
-  <footer class="bg-gray-200 py-4 mt-8 text-center text-sm text-gray-600">
-    &copy; 2024 Admin Dashboard
-  </footer>
 </body>

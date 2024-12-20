@@ -31,6 +31,10 @@ app.engine(
                 });
                 return subtotal.toFixed(2);
             },
+            // Register custom helpers directly in this object
+            eq: function(a, b) {
+                return a === b;
+            },
         },
     }),
 );

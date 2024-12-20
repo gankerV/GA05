@@ -1,0 +1,59 @@
+
+<body class="bg-gray-100 min-h-screen">
+  <!-- Main Content -->
+  <main class="container mx-auto my-8 px-4">
+    <!-- Navigation -->
+    <div class="mb-4">
+      <a href="/admin/{{user.id}}" class="text-blue-600 hover:underline">Back to Dashboard</a>
+    </div>
+
+    <div class="bg-white shadow rounded-lg p-8">
+      <div class="flex items-center gap-6">
+        <!-- Profile Picture -->
+        <img src="{{user.profilePicture}}" alt="Profile Picture" class="w-32 h-32 rounded-full shadow">
+        
+        <!-- Profile Details -->
+        <div>
+          <h1 class="text-2xl font-semibold text-gray-700">{{user.name}}</h1>
+          <p class="text-lg font-medium text-gray-600">Email: {{user.email}}</p>
+        </div>
+      </div>
+
+      <!-- Update Profile Button -->
+        <div class="mt-6">
+            <!-- Nút bấm để hiển thị form -->
+            <button id="editProfileBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Edit Profile</button>
+        </div>
+
+        <!-- Form để cập nhật thông tin người dùng (ban đầu ẩn đi) -->
+        <div id="editProfileForm" class="mt-6 hidden">
+            <form action="/admin/profile/update/{{user.id}}" method="POST">
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                    <input type="text" id="name" name="name" value="{{user.name}}" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md" required>
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="email" name="email" value="{{user.email}}" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md" required>
+                </div>
+                <div class="mb-4">
+                    <label for="profilePicture" class="block text-sm font-medium text-gray-700">Profile Picture</label>
+                    <input type="file" id="profilePicture" name="profilePicture" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md">
+                </div>
+                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">Save Changes</button>
+            </form>
+        </div>
+
+    </div>
+  </main>
+
+</body>
+
+<script>
+    document.getElementById("editProfileBtn").addEventListener("click", function() {
+        // Hiển thị form cập nhật
+        document.getElementById("editProfileForm").classList.toggle("hidden");
+    });
+</script>
+
+
