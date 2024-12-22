@@ -104,26 +104,33 @@
       </tbody>
     </table>
 
-    <!-- Pagination -->
+<!-- Pagination -->
     <div class="flex justify-center mt-4 space-x-2">
       {{#if (gt currentPage 1)}}
-      <a href="?page={{subtract currentPage 1}}" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Previous</a>
+        <a href="#" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400" onclick="goToPage({{subtract currentPage 1}})">Previous</a>
       {{/if}}
 
       {{#each (range 1 totalPages)}}
-      <a href="?page={{this}}" class="px-4 py-2 {{#if (eq this ../currentPage)}}bg-blue-600 text-white{{else}}bg-gray-300 hover:bg-gray-400{{/if}} rounded">
-        {{this}}
-      </a>
+        <a href="#" class="px-4 py-2 {{#if (eq this ../currentPage)}}bg-blue-600 text-white{{else}}bg-gray-300 hover:bg-gray-400{{/if}} rounded" onclick="goToPage({{this}})">
+          {{this}}
+        </a>
       {{/each}}
 
       {{#if (lt currentPage totalPages)}}
-      <a href="?page={{add currentPage 1}}" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Next</a>
+        <a href="#" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400" onclick="goToPage({{add currentPage 1}})">Next</a>
       {{/if}}
     </div>
   </main>
 </body>
 
 <script>
+
+  function goToPage(page) {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('page', page); // Cập nhật trang
+    window.location.search = urlParams.toString(); // Chuyển hướng với query string mới
+  }
+
   // Hiển thị modal và tải dữ liệu người dùng
   function showUserDetails(userId) {
     // Lấy thông tin người dùng từ server bằng AJAX
@@ -191,5 +198,3 @@
   };
 
 </script>
-
-
