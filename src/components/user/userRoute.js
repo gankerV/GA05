@@ -17,6 +17,10 @@ router.post("/login", authController.login);
 router.use("/login", authRouter);
 router.get("/logout", authController.logout);
 
+// Route quên mật khẩu
+router.post("/login/identity", userController.identity);
+router.use("/login/identity", userController.findEmail);
+
 router.use("/cart", ensureAuthenticated, cartRouter);
 
 module.exports = router;

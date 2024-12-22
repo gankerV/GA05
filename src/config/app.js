@@ -24,7 +24,8 @@ app.engine(
             json: (context) => JSON.stringify(context),
             multiply: (a, b) => a * b, // Tính toán nhân
             formatCurrency: (value) => `$${value.toFixed(2)}`, // Định dạng tiền tệ
-            calculateSubtotal: (cartItems) => { // Tính tổng phụ
+            calculateSubtotal: (cartItems) => {
+                // Tính tổng phụ
                 let subtotal = 0;
                 cartItems.forEach((item) => {
                     subtotal += item.price * item.quantity;
@@ -34,7 +35,8 @@ app.engine(
             eq: (a, b) => a === b, // So sánh bằng
             add: (a, b) => a + b, // Cộng hai giá trị
             subtract: (a, b) => a - b, // Trừ hai giá trị
-            range: (start, end) => { // Tạo mảng các số từ start đến end
+            range: (start, end) => {
+                // Tạo mảng các số từ start đến end
                 const range = [];
                 for (let i = start; i <= end; i++) {
                     range.push(i);
@@ -44,7 +46,7 @@ app.engine(
             gt: (a, b) => a > b, // Kiểm tra lớn hơn
             lt: (a, b) => a < b, // Kiểm tra nhỏ hơn
         },
-    })
+    }),
 );
 
 // Cấu hình handlebars
@@ -57,6 +59,13 @@ Handlebars.registerHelper("fullStars", function (rating) {
 // Helper để tạo mảng sao rỗng (☆)
 Handlebars.registerHelper("emptyStars", function (rating) {
     return "☆".repeat(5 - rating);
+});
+// Helper để so sánh
+Handlebars.registerHelper("isEqual", function (a, b) {
+    return a === b;
+});
+Handlebars.registerHelper("isLessThan", function (a, b) {
+    return a < b;
 });
 
 // Cấu hình express

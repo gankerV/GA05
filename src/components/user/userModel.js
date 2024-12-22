@@ -117,6 +117,28 @@ class UserModel {
         }
     }
 
+    static async resetPasswordByToken(token) {
+        try {
+            // Tìm người dùng với activation_token khớp
+            const user = await User.findOne({
+                where: {
+                    activation_token: token,
+                    is_active: true,
+                },
+            });
+
+            if (!user) return false;
+
+            user.activation_token = null; // Xóa token sau khi kích hoạt
+            await user.save();
+
+            return true;
+        } catch (error) {
+            console.error("Lỗi kích hoạt tài khoản:", error);
+            throw error;
+        }
+    }
+
     static async isEmailExist(email) {
         try {
             const emailExist = await User.findOne({ where: { email: email } });

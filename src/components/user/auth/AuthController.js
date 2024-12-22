@@ -36,7 +36,7 @@ const AuthController = {
             }
             if (!user) {
                 return res.render("login", {
-                    errorMessage: "Invalid email or password!",
+                    errorMessage: info.message,
                 });
             }
             // Xác thực thành công, lưu người dùng vào session

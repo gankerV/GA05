@@ -17,7 +17,7 @@ passport.use(
                     where: { email: Email },
                 });
 
-                if (!user) {
+                if (!user || user.is_google) {
                     return done(null, false, { message: "Email not found" });
                 }
 
@@ -41,7 +41,8 @@ passport.use(
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             callbackURL:
-                "https://ga05-1.onrender.com/user/login/google/callback", // Đảm bảo khớp với URL callback đã cấu hình trong Google Console
+                "https://ga05-1.onrender.com/user/login/google/callback",
+            // "http://localhost:3000/user/login/google/callback",
         },
         async (accessToken, refreshToken, profile, done) => {
             // Lưu thông tin người dùng vào cơ sở dữ liệu hoặc session
