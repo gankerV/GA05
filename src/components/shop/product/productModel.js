@@ -179,6 +179,34 @@ class ProductModel {
             throw error;
         }
     }
+
+    static async getAllProducts({ limit, offset, order }) {
+        try {
+            // Lấy danh sách sản phẩm từ bảng Product kèm thông tin từ bảng Shop
+            const { rows, count } = await Product.findAndCountAll({
+                include: [
+                    {
+                        model: Shop, // Kết hợp bảng Shop
+                        attributes: ["product_name", "price", "category", "size", "color", "brand", "rating", "imageFileName"],
+                        required: true, // Chỉ lấy sản phẩm có thông tin trong bảng Shop
+                    },
+                ],
+                attributes: ["id", "description", "product_status"], // Các trường từ bảng Product
+                order: order || [["id", "ASC"]],
+                limit: limit || 8,
+                offset: offset || 0,
+            });
+    
+            // Chuyển đổi dữ liệu
+            return { 
+                rows: rows.map((product) => product.toJSON()), 
+                count 
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+    
 }
 
 module.exports = ProductModel;

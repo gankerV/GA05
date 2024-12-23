@@ -1,4 +1,5 @@
 const { User } = require("../user/userModel"); // Adjust the path as needed
+const Product = require("../shop/product/productModel"); // Adjust the path as needed
 const Sequelize = require("sequelize");
 
 allUser = [];
@@ -210,6 +211,33 @@ class AdminController {
         } catch (error) {
         console.error("Error updating user status:", error);
         res.status(500).json({ message: "Internal Server Error" });
+        }
+    }
+    
+    async getAllProducts(req, res) {
+        try {
+            const page = parseInt(req.query.page) || 1; // Trang hiện tại (mặc định là 1)
+            const limit = 8; // Số lượng sản phẩm mỗi trang
+            const offset = (page - 1) * limit; // Vị trí bắt đầu
+    
+            // Gọi phương thức để lấy sản phẩm
+            const { rows: products, count: totalProducts } = await Product.getAllProducts({
+                limit,
+                offset,
+                order: [["id", "ASC"]],
+            });
+    
+            const totalPages = Math.ceil(totalProducts / limit); // Tổng số trang
+    
+            // Trả về giao diện với dữ liệu
+            res.render("product_management", {
+                products,
+                currentPage: page,
+                totalPages,
+            });
+        } catch (error) {
+            console.error("Error fetching products:", error);
+            res.status(500).json({ message: "Internal Server Error" });
         }
     }
     

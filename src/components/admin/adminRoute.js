@@ -8,6 +8,7 @@ router.get("/users/:id", admin.getAccountDetails);
 router.post("/users/status/:id", admin.updateUserStatus);
 router.get("/profile/:id", admin.getAccountProfile);
 router.post("/profile/update/:id", admin.updateAccountProfile);
+router.use("/products", admin.getAllProducts);
 router.use("/", admin.index);
 
 module.exports = router;

@@ -1,0 +1,93 @@
+<body class="bg-gray-100 min-h-screen">
+  <!-- Main Content -->
+  <main class="container mx-auto my-8 px-4">
+    <!-- Navigation -->
+    <div class="mb-4">
+      <a href="/admin/dashboard" class="text-blue-600 hover:underline">Back to Dashboard</a>
+    </div>
+
+    <!-- Title -->
+    <div class="mb-6">
+      <h1 class="text-2xl font-semibold">Product Management</h1>
+    </div>
+
+    <!-- Filter and Search Controls -->
+    <div class="mb-6">
+      <form action="/admin/products" method="GET" class="flex space-x-4">
+        <input type="text" name="search" placeholder="Search by Keyword" class="px-4 py-2 border border-gray-300 rounded-lg" value="{{search}}">
+
+        <select name="sortBy" class="px-4 py-2 border border-gray-300 rounded-lg">
+          <option value="id" {{#if (eq sortBy 'id')}}selected{{/if}}>ID</option>
+          <option value="price" {{#if (eq sortBy 'price')}}selected{{/if}}>Price</option>
+          <option value="rating" {{#if (eq sortBy 'rating')}}selected{{/if}}>Rating</option>
+        </select>
+
+        <select name="sortOrder" class="px-4 py-2 border border-gray-300 rounded-lg">
+          <option value="asc" {{#if (eq sortOrder 'asc')}}selected{{/if}}>Ascending</option>
+          <option value="desc" {{#if (eq sortOrder 'desc')}}selected{{/if}}>Descending</option>
+        </select>
+
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Search</button>
+      </form>
+    </div>
+
+    <!-- Product Table -->
+    <table class="min-w-full border-collapse border border-gray-300">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="border border-gray-300 px-4 py-2">ID</th>
+          <th class="border border-gray-300 px-4 py-2">Product Name</th>
+          <th class="border border-gray-300 px-4 py-2">Price</th>
+          <th class="border border-gray-300 px-4 py-2">Category</th>
+          <th class="border border-gray-300 px-4 py-2">Size</th>
+          <th class="border border-gray-300 px-4 py-2">Brand</th>
+          <th class="border border-gray-300 px-4 py-2">Image</th>
+          <th class="border border-gray-300 px-4 py-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each products}}
+        <tr class="hover:bg-gray-100">
+          <td class="border border-gray-300 px-4 py-2">{{id}}</td>
+          <td class="border border-gray-300 px-4 py-2">{{Shop.product_name}}</td>
+          <td class="border border-gray-300 px-4 py-2">${{Shop.price}}</td>
+          <td class="border border-gray-300 px-4 py-2">{{Shop.category}}</td>
+          <td class="border border-gray-300 px-4 py-2">{{Shop.size}}</td>
+          <td class="border border-gray-300 px-4 py-2">{{Shop.brand}}</td>
+          <td class="border border-gray-300 px-4 py-2">
+            <img src="/public/images/products/{{Shop.imageFileName}}" alt="{{Shop.product_name}}" class="w-16 h-16 object-cover rounded">
+          </td>
+          <td class="border border-gray-300 px-4 py-2 flex justify-center">
+            <form id="deleteForm-{{id}}" action="/admin/products/delete/{{id}}" method="POST" class="inline">
+              <button type="button" onclick="confirmDelete({{id}})" class="text-red-600 hover:text-red-800">Delete</button>
+            </form>
+            <button class="pl-4">
+              <a href="#" onclick="showProductDetails({{id}})" class="text-blue-600 hover:underline">Details</a>
+            </button>
+            <button class="pl-4">
+              <a href="/admin/products/update/{{id}}" class="text-green-600 hover:underline">Update</a>
+            </button>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="flex justify-center mt-4 space-x-2">
+      {{#if (gt currentPage 1)}}
+      <a href="?page={{subtract currentPage 1}}" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Previous</a>
+      {{/if}}
+
+      {{#each (range 1 totalPages)}}
+      <a href="?page={{this}}" class="px-4 py-2 {{#if (eq this ../currentPage)}}bg-blue-600 text-white{{else}}bg-gray-300 hover:bg-gray-400{{/if}} rounded">
+        {{this}}
+      </a>
+      {{/each}}
+
+      {{#if (lt currentPage totalPages)}}
+      <a href="?page={{add currentPage 1}}" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Next</a>
+      {{/if}}
+    </div>
+  </main>
+</body>
