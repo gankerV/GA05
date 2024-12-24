@@ -5,6 +5,7 @@ const userController = require("./UserController");
 const authController = require("./auth/AuthController");
 const cartRouter = require("./cart/cartRoute");
 const authRouter = require("./auth/authRoute");
+const profileRouter = require("./profile/profileRoute");
 
 router.get("/register", userController.register);
 router.post("/register", userController.verifyRegister);
@@ -21,6 +22,7 @@ router.get("/logout", authController.logout);
 router.post("/login/identity", userController.identity);
 router.use("/login/identity", userController.findEmail);
 
+router.use("/profile", ensureAuthenticated, profileRouter);
 router.use("/cart", ensureAuthenticated, cartRouter);
 
 module.exports = router;

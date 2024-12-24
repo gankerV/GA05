@@ -8,7 +8,6 @@ const session = require("express-session");
 const passport = require("./passportConfig");
 const flash = require("connect-flash");
 const Handlebars = require("handlebars");
-const moment = require("moment");
 
 const app = express();
 
@@ -78,7 +77,7 @@ app.use(
     session({
         secret: process.env.SESSION_SECRET, // Secret cho session
         resave: false,
-        saveUninitialized: false,
+        saveUninitialized: true,
         cookie: { secure: false, maxAge: 1000 * 3600 },
     }),
 );
@@ -87,7 +86,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-
 app.use((req, res, next) => {
     res.locals.successMessage = req.flash("success");
     res.locals.errorMessage = req.flash("error");

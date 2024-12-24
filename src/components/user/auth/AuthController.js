@@ -22,8 +22,7 @@ const AuthController = {
                 if (err) {
                     return next(err);
                 }
-                // Sau khi đăng nhập thành công, chuyển hướng đến trang chính hoặc dashboard
-                return res.redirect("/"); // Hoặc trang bạn muốn chuyển hướng
+                return res.redirect("/");
             });
         })(req, res, next); // Gọi hàm passport.authenticate
     },
@@ -48,7 +47,7 @@ const AuthController = {
                 delete req.session.returnTo; // Xóa URL đã lưu sau khi đã chuyển hướng
                 res.redirect(redirectTo); // Chuyển hướng về trang yêu cầu
             });
-        })(req, res, next); // Đảm bảo rằng passport.authenticate được gọi đúng cách
+        })(req, res, next); // Gọi hàm passport.authenticate
     },
 
     // Đăng xuất

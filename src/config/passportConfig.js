@@ -41,8 +41,8 @@ passport.use(
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             callbackURL:
-                "https://ga05-1.onrender.com/user/login/google/callback",
-            // "http://localhost:3000/user/login/google/callback",
+                // "https://ga05-1.onrender.com/user/login/google/callback",
+                "http://localhost:3000/user/login/google/callback",
         },
         async (accessToken, refreshToken, profile, done) => {
             // Lưu thông tin người dùng vào cơ sở dữ liệu hoặc session
@@ -71,12 +71,9 @@ passport.serializeUser((user, done) => {
 
 // Deserialize user: Tìm lại user từ cơ sở dữ liệu bằng ID đã lưu trong session
 passport.deserializeUser(async (id, done) => {
-    try {
-        const user = await UserModel.User.findByPk(id); // Tìm user theo ID
-        done(null, user); // Lưu thông tin user vào session
-    } catch (err) {
-        done(err);
-    }
+    UserModel.User.findByPk(id)
+        .then((user) => done(null, user))
+        .catch(done); // Xử lý lỗi trong trường hợp không tìm thấy user
 });
 
 module.exports = passport;

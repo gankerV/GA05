@@ -1,0 +1,47 @@
+<section id="profile-page" class="bg-white py-16">
+    <div class="flex flex-col justify-center items-center">
+        <div class="relative flex flex-col items-center rounded-[20px] mx-auto bg-white bg-clip-border shadow-lg">
+            <!-- User Avatar and Name -->
+            <div class="flex flex-row w-full justify-between items-center px-4">
+                <p></p>
+                <div class="flex items-center">
+                    <img class="w-10 h-10 rounded-full" src="../../../public/images/cat-image4.jpg" alt="User Avatar">
+                    <p class="ml-3 text-lg font-medium">{{user.dataValues.email}}</p>
+                </div>
+
+                <img src="/public/images/pencil-icon.svg" alt="" class="h-8 w-8 border rounded-full p-1">
+            </div>
+            <!-- Grid Layout for User Information -->
+            <div class="p-4">
+                <div class="grid grid-cols-2 gap-4 w-full border-t-2 pt-6">
+                    <!-- Email -->
+                    <div class="flex flex-col items-start justify-center rounded-2xl bg-white px-3 py-4 shadow-md">
+                        <p class="text-sm text-gray-light">Name</p>
+                        <p class="text-base font-medium text-gray-dark">{{userInfo.fullname}}</p>
+                    </div>
+                    <!-- Phone -->
+                    <div class="flex flex-col items-start justify-center rounded-2xl bg-white px-3 py-4 shadow-md">
+                        <p class="text-sm text-gray-light">Phone</p>
+                        <p class="text-base font-medium text-gray-dark">{{userInfo.phone}}</p>
+                    </div>
+                    <!-- Education -->
+                    <div class="flex flex-col items-start justify-center rounded-2xl bg-white px-3 py-4 shadow-md">
+                        <p class="text-sm text-gray-light">Gender</p>
+                        <p class="text-base font-medium text-gray-dark">{{userInfo.gender}}</p>
+                    </div>
+                    <!-- Department -->
+                    <div class="flex flex-col items-start justify-center rounded-2xl bg-white px-3 py-4 shadow-md">
+                        <p class="text-sm text-gray-light">Day of Birth</p>
+                        <p class="text-base font-medium text-gray-dark">{{userInfo.dob}}</p>
+                    </div>
+                    <!-- Organization -->
+                    <div
+                        class="flex flex-col col-span-2 items-center justify-center rounded-2xl bg-white px-3 py-4 shadow-md">
+                        <p class="text-sm text-gray-light">Address</p>
+                        <p class="text-base font-medium text-gray-dark">{{userInfo.address}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
