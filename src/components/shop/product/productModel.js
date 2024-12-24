@@ -182,31 +182,77 @@ class ProductModel {
 
     static async getAllProducts({ limit, offset, order }) {
         try {
+            // Mặc định sắp xếp theo "id" nếu không có điều kiện sắp xếp
+            const defaultOrder = [["id", "ASC"]];
+            
+            // Xác định điều kiện sắp xếp (bao gồm sold_quantity)
+            let sortingOrder;
+            if (order && order[0][0] === "sold_quantity") {
+                sortingOrder = [
+                    [
+                        sequelize.literal(`(
+                            SELECT COALESCE(SUM(order_items.quantity), 0) 
+                            FROM order_items
+                            INNER JOIN orders ON orders.order_id = order_items.order_id
+                            WHERE order_items.product_id = Product.id
+                            AND orders.order_status = 'Delivered'
+                        )`),
+                        order[0][1] || "ASC" // Sắp xếp ASC hoặc DESC
+                    ],
+                ];
+            } else {
+                sortingOrder = order || defaultOrder;
+            }
+    
             // Lấy danh sách sản phẩm từ bảng Product kèm thông tin từ bảng Shop
             const { rows, count } = await Product.findAndCountAll({
                 include: [
                     {
                         model: Shop, // Kết hợp bảng Shop
-                        attributes: ["product_name", "price", "category", "size", "color", "brand", "rating", "imageFileName"],
+                        attributes: [
+                            "product_name", 
+                            "price", 
+                            "category", 
+                            "size", 
+                            "color", 
+                            "brand", 
+                            "rating", 
+                            "imageFileName"
+                        ],
                         required: true, // Chỉ lấy sản phẩm có thông tin trong bảng Shop
                     },
                 ],
-                attributes: ["id", "description", "product_status"], // Các trường từ bảng Product
-                order: order || [["id", "ASC"]],
+                attributes: [
+                    "id",
+                    "description",
+                    "product_status",
+                    [
+                        sequelize.literal(`(
+                            SELECT COALESCE(SUM(order_items.quantity), 0) 
+                            FROM order_items
+                            INNER JOIN orders ON orders.order_id = order_items.order_id
+                            WHERE order_items.product_id = Product.id
+                            AND orders.order_status = 'Delivered'
+                        )`),
+                        "sold_quantity"
+                    ], // Thêm trường số lượng đã bán
+                ],
+                order: sortingOrder,
                 limit: limit || 8,
                 offset: offset || 0,
             });
     
             // Chuyển đổi dữ liệu
-            return { 
-                rows: rows.map((product) => product.toJSON()), 
-                count 
+            return {
+                rows: rows.map((product) => product.toJSON()),
+                count,
             };
         } catch (error) {
             throw error;
         }
     }
     
+
 }
 
 module.exports = ProductModel;
