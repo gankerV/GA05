@@ -83,7 +83,6 @@ INSERT INTO review (product_id, customer_name, customer_email, rating, comment) 
 
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name nvarchar (50),
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255),
     access BOOLEAN DEFAULT TRUE,
@@ -94,6 +93,15 @@ CREATE TABLE users (
     activation_token VARCHAR(255)
 );
 
+CREATE TABLE user_info (
+    userID INT PRIMARY KEY NOT NULL,
+    fullname VARCHAR(50),
+    phone VARCHAR(15),
+    dob DATE,
+    gender ENUM("Male", "Female", "Other"),
+    address VARCHAR(255),
+    FOREIGN KEY (userID) REFERENCES users(id) ON DELETE CASCADE
+);
 
 CREATE TABLE cart (
     id INT AUTO_INCREMENT PRIMARY KEY,          -- ID duy nhất cho mỗi mục trong giỏ hàng

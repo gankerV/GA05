@@ -11,10 +11,6 @@ const User = sequelize.define(
             primaryKey: true,
             autoIncrement: true,
         },
-        name: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
         email: {
             type: DataTypes.STRING,
             unique: true,
@@ -86,6 +82,8 @@ class UserModel {
                 is_active: false, // Mặc định chưa kích hoạt
                 activation_token: activationToken, // Lưu token
             });
+
+            const user = User.findOne({ where: { email: Email } });
 
             return activationToken; // Trả về token để gửi email
         } catch (error) {
