@@ -221,15 +221,47 @@ class AdminController {
             const offset = (page - 1) * limit; // Vị trí bắt đầu
             const { search, sortBy, sortOrder, category, brand } = req.query;
     
-            // Gọi phương thức để lấy sản phẩm
-            const sortingOrder = 
-            sortBy === "sold_quantity" 
-                ? [[sortBy || "id", sortOrder || "ASC"]] // Sắp xếp theo sold_quantity
-                : [["Shop", sortBy || "id", sortOrder || "ASC"]]; // Sắp xếp theo bảng Shop
-        
+            // Điều kiện lọc cơ bản
+            const whereCondition = {};
+    
+            // Lọc theo tên sản phẩm
+            if (search) {
+                whereCondition["$Shop.product_name$"] = { [Sequelize.Op.like]: `%${search}%` }; // Tìm theo tên sản phẩm
+            }
+    
+            // Lọc theo category (trong bảng Shop)
+            if (category) {
+                whereCondition["$Shop.category$"] = category; // Sử dụng dấu $ để tham chiếu đến bảng Shop
+            }
+    
+            // Lọc theo brand (trong bảng Shop)
+            if (brand) {
+                whereCondition["$Shop.brand$"] = brand; // Sử dụng dấu $ để tham chiếu đến bảng Shop
+            }
+    
+            // Điều kiện sắp xếp (sắp xếp theo sold_quantity nếu có)
+            const sortingOrder = sortBy === "sold_quantity"
+                ? [
+                    [
+                        Sequelize.literal(`(
+                            SELECT COALESCE(SUM(order_items.quantity), 0)
+                            FROM order_items
+                            INNER JOIN orders ON orders.order_id = order_items.order_id
+                            WHERE order_items.product_id = Product.id
+                            AND orders.order_status = 'Delivered'
+                        )`),
+                        sortOrder || "ASC" // Sắp xếp theo sold_quantity
+                    ]
+                ]
+                : [
+                    ["Shop", sortBy || "id", sortOrder || "ASC"] // Sắp xếp theo trường khác từ bảng Shop
+                ];
+    
+            // Gọi phương thức trong model để lấy dữ liệu sản phẩm
             const { rows: products, count: totalProducts } = await Product.getAllProducts({
                 limit,
                 offset,
+                whereConditions: whereCondition, // Truyền điều kiện lọc
                 order: sortingOrder,
             });
     
@@ -245,7 +277,7 @@ class AdminController {
             console.error("Error fetching products:", error);
             res.status(500).json({ message: "Internal Server Error" });
         }
-    }
+    }    
     
 }
 

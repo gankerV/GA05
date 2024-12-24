@@ -14,6 +14,7 @@
     <!-- Filter and Search Controls -->
     <div class="mb-6">
       <form action="/admin/products" method="GET" class="flex space-x-4">
+         <h1 class="text-2xl pt-2 font-semibold text-gray-800 mb-2 capitalize flex items-center">Filter:</h1>
         <select id="category" name="category" class="px-4 py-2 border border-gray-300 rounded-lg">
           <option value="">All Categories</option>
           <option value="Men">Men</option>
@@ -31,6 +32,7 @@
           <option value="Clarks">Clarks</option>
         </select>
 
+        <h1 class="text-2xl pt-2 font-semibold text-gray-800 mb-2 capitalize flex items-center">Sort:</h1>
         <select id="sortBy" name="sortBy" class="px-4 py-2 border border-gray-300 rounded-lg">
           <option value="id" {{#if (eq sortBy 'id')}}selected{{/if}}>ID</option>
           <option value="price" {{#if (eq sortBy 'price')}}selected{{/if}}>Price</option>
@@ -42,7 +44,7 @@
           <option value="desc" {{#if (eq sortOrder 'desc')}}selected{{/if}}>Descending</option>
         </select>
 
-        <input type="text" name="search" placeholder="Search by Keyword" class="px-4 py-2 border border-gray-300 rounded-lg" value="{{search}}">
+        <input id="search" type="text" name="search" placeholder="Search by Keyword" class="px-4 py-2 border border-gray-300 rounded-lg" value="{{search}}">
         
         <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Search</button>
       </form>
@@ -125,6 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const sortBy = params.get("sortBy");
     const sortOrder = params.get("sortOrder");
     const category = params.get("category");
+    const search = params.get("search");
 
     // Gán giá trị cho dropdown category
     if (category) {
@@ -150,6 +153,12 @@ document.addEventListener("DOMContentLoaded", () => {
         sortOrderElement.value = sortOrder;
     }
 
+    // Gán giá trị cho ô search
+    if (search) {
+        const searchElement = document.getElementById("search");
+        searchElement.value = search;
+    }
+
     // Hàm cập nhật URL và tải lại trang
     const updateURL = () => {
         const params = new URLSearchParams(window.location.search);
@@ -159,16 +168,18 @@ document.addEventListener("DOMContentLoaded", () => {
         params.set("sortOrder", sortOrderElement.value);
         params.set("category", categoryElement.value);
         params.set("brand", brandElement.value);
+        params.set("search", searchElement.value); // Đảm bảo trường search cũng được thêm vào URL
 
         // Load lại trang với URL mới
         window.location.search = params.toString();
     };
 
-    // Lắng nghe sự kiện `change` trên sortBy và sortOrder
+    // Lắng nghe sự kiện `change` trên sortBy, sortOrder, category, brand và search
     const sortByElement = document.getElementById("sortBy");
     const sortOrderElement = document.getElementById("sortOrder");
     const categoryElement = document.getElementById("category");
     const brandElement = document.getElementById("brand");
+    const searchElement = document.getElementById("search");
 
     sortByElement.addEventListener("change", updateURL);
     sortOrderElement.addEventListener("change", updateURL);

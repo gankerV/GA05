@@ -180,7 +180,7 @@ class ProductModel {
         }
     }
 
-    static async getAllProducts({ limit, offset, order }) {
+    static async getAllProducts({ limit, offset, whereConditions, order }) {
         try {
             // Mặc định sắp xếp theo "id" nếu không có điều kiện sắp xếp
             const defaultOrder = [["id", "ASC"]];
@@ -191,14 +191,14 @@ class ProductModel {
                 sortingOrder = [
                     [
                         sequelize.literal(`(
-                            SELECT COALESCE(SUM(order_items.quantity), 0) 
+                            SELECT COALESCE(SUM(order_items.quantity), 0)
                             FROM order_items
                             INNER JOIN orders ON orders.order_id = order_items.order_id
                             WHERE order_items.product_id = Product.id
                             AND orders.order_status = 'Delivered'
                         )`),
                         order[0][1] || "ASC" // Sắp xếp ASC hoặc DESC
-                    ],
+                    ]
                 ];
             } else {
                 sortingOrder = order || defaultOrder;
@@ -220,7 +220,7 @@ class ProductModel {
                             "imageFileName"
                         ],
                         required: true, // Chỉ lấy sản phẩm có thông tin trong bảng Shop
-                    },
+                    }
                 ],
                 attributes: [
                     "id",
@@ -228,7 +228,7 @@ class ProductModel {
                     "product_status",
                     [
                         sequelize.literal(`(
-                            SELECT COALESCE(SUM(order_items.quantity), 0) 
+                            SELECT COALESCE(SUM(order_items.quantity), 0)
                             FROM order_items
                             INNER JOIN orders ON orders.order_id = order_items.order_id
                             WHERE order_items.product_id = Product.id
@@ -237,15 +237,16 @@ class ProductModel {
                         "sold_quantity"
                     ], // Thêm trường số lượng đã bán
                 ],
-                order: sortingOrder,
-                limit: limit || 8,
-                offset: offset || 0,
+                where: whereConditions, // Lọc theo điều kiện
+                order: sortingOrder,   // Sắp xếp theo điều kiện
+                limit: limit || 8,     // Giới hạn số lượng kết quả mỗi trang
+                offset: offset || 0,   // Vị trí bắt đầu của dữ liệu
             });
     
             // Chuyển đổi dữ liệu
             return {
-                rows: rows.map((product) => product.toJSON()),
-                count,
+                rows: rows.map((product) => product.toJSON()), // Chuyển các đối tượng Sequelize thành JSON
+                count, // Tổng số sản phẩm
             };
         } catch (error) {
             throw error;
