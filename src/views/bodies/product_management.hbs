@@ -14,19 +14,36 @@
     <!-- Filter and Search Controls -->
     <div class="mb-6">
       <form action="/admin/products" method="GET" class="flex space-x-4">
-        <input type="text" name="search" placeholder="Search by Keyword" class="px-4 py-2 border border-gray-300 rounded-lg" value="{{search}}">
-
-        <select name="sortBy" class="px-4 py-2 border border-gray-300 rounded-lg">
-          <option value="id" {{#if (eq sortBy 'id')}}selected{{/if}}>ID</option>
-          <option value="price" {{#if (eq sortBy 'price')}}selected{{/if}}>Price</option>
-          <option value="rating" {{#if (eq sortBy 'rating')}}selected{{/if}}>Rating</option>
+        <select id="category" name="category" class="px-4 py-2 border border-gray-300 rounded-lg">
+          <option value="">All Categories</option>
+          <option value="Men">Men</option>
+          <option value="Women">Women</option>
         </select>
 
-        <select name="sortOrder" class="px-4 py-2 border border-gray-300 rounded-lg">
+        <select id="brand" name="brand" class="px-4 py-2 border border-gray-300 rounded-lg">
+          <option value="">All Brands</option>
+          <option value="Nike">Nike</option>
+          <option value="Adidas">Adidas</option>
+          <option value="Puma">Puma</option>
+          <option value="Zara">Zara</option>
+          <option value="Lacoste">Lacoste</option>
+          <option value="Gucci">Gucci</option>
+          <option value="Clarks">Clarks</option>
+        </select>
+
+        <select id="sortBy" name="sortBy" class="px-4 py-2 border border-gray-300 rounded-lg">
+          <option value="id" {{#if (eq sortBy 'id')}}selected{{/if}}>ID</option>
+          <option value="price" {{#if (eq sortBy 'price')}}selected{{/if}}>Price</option>
+          <option value="sold_quantity" {{#if (eq sortBy 'sold_quantity')}}selected{{/if}}>Sold</option>
+        </select>
+
+        <select id="sortOrder" name="sortOrder" class="px-4 py-2 border border-gray-300 rounded-lg">
           <option value="asc" {{#if (eq sortOrder 'asc')}}selected{{/if}}>Ascending</option>
           <option value="desc" {{#if (eq sortOrder 'desc')}}selected{{/if}}>Descending</option>
         </select>
 
+        <input type="text" name="search" placeholder="Search by Keyword" class="px-4 py-2 border border-gray-300 rounded-lg" value="{{search}}">
+        
         <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Search</button>
       </form>
     </div>
@@ -75,21 +92,89 @@
       </tbody>
     </table>
 
-    <!-- Pagination -->
+   <!-- Pagination -->
     <div class="flex justify-center mt-4 space-x-2">
       {{#if (gt currentPage 1)}}
-      <a href="?page={{subtract currentPage 1}}" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Previous</a>
+        <a href="#" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400" onclick="goToPage({{subtract currentPage 1}})">Previous</a>
       {{/if}}
 
       {{#each (range 1 totalPages)}}
-      <a href="?page={{this}}" class="px-4 py-2 {{#if (eq this ../currentPage)}}bg-blue-600 text-white{{else}}bg-gray-300 hover:bg-gray-400{{/if}} rounded">
-        {{this}}
-      </a>
+        <a href="#" class="px-4 py-2 {{#if (eq this ../currentPage)}}bg-blue-600 text-white{{else}}bg-gray-300 hover:bg-gray-400{{/if}} rounded" onclick="goToPage({{this}})">
+          {{this}}
+        </a>
       {{/each}}
 
       {{#if (lt currentPage totalPages)}}
-      <a href="?page={{add currentPage 1}}" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Next</a>
+        <a href="#" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400" onclick="goToPage({{add currentPage 1}})">Next</a>
       {{/if}}
     </div>
   </main>
 </body>
+<script>
+  function goToPage(page) {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('page', page); // Cập nhật trang
+    window.location.search = urlParams.toString(); // Chuyển hướng với query string mới
+  }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    
+    // Lấy giá trị từ URL
+    const brand = params.get("brand");
+    const sortBy = params.get("sortBy");
+    const sortOrder = params.get("sortOrder");
+    const category = params.get("category");
+
+    // Gán giá trị cho dropdown category
+    if (category) {
+        const categoryElement = document.getElementById("category");
+        categoryElement.value = category;
+    }
+
+    // Gán giá trị cho dropdown brand
+    if (brand) {
+        const brandElement = document.getElementById("brand");
+        brandElement.value = brand;
+    }
+
+    // Gán giá trị cho dropdown sortBy
+    if (sortBy) {
+        const sortByElement = document.getElementById("sortBy");
+        sortByElement.value = sortBy;
+    }
+
+    // Gán giá trị cho dropdown sortOrder
+    if (sortOrder) {
+        const sortOrderElement = document.getElementById("sortOrder");
+        sortOrderElement.value = sortOrder;
+    }
+
+    // Hàm cập nhật URL và tải lại trang
+    const updateURL = () => {
+        const params = new URLSearchParams(window.location.search);
+
+        // Cập nhật giá trị query
+        params.set("sortBy", sortByElement.value);
+        params.set("sortOrder", sortOrderElement.value);
+        params.set("category", categoryElement.value);
+        params.set("brand", brandElement.value);
+
+        // Load lại trang với URL mới
+        window.location.search = params.toString();
+    };
+
+    // Lắng nghe sự kiện `change` trên sortBy và sortOrder
+    const sortByElement = document.getElementById("sortBy");
+    const sortOrderElement = document.getElementById("sortOrder");
+    const categoryElement = document.getElementById("category");
+    const brandElement = document.getElementById("brand");
+
+    sortByElement.addEventListener("change", updateURL);
+    sortOrderElement.addEventListener("change", updateURL);
+    categoryElement.addEventListener("change", updateURL);
+    brandElement.addEventListener("change", updateURL);
+});
+
+
+</script>

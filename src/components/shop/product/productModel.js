@@ -180,27 +180,30 @@ class ProductModel {
         }
     }
 
-    static async amountOfSoldProducts(productId) {
-        try {
-            // Calculate the total quantity of items sold for delivered orders
-            const amount = await order_items.sum("quantity", {
-                include: [
-                    {
-                        model: sequelize.models.orders, // Assuming the orders model is correctly defined
-                        where: { order_status: "deliveried" },
-                        required: true,
-                    },
-                ],
-                where: { product_id: productId },
-            });
-            return amount;
-        } catch (error) {
-            throw error; // Ensure the error propagates properly
-        }
-    }
-
     static async getAllProducts({ limit, offset, order }) {
         try {
+            // Mặc định sắp xếp theo "id" nếu không có điều kiện sắp xếp
+            const defaultOrder = [["id", "ASC"]];
+            
+            // Xác định điều kiện sắp xếp (bao gồm sold_quantity)
+            let sortingOrder;
+            if (order && order[0][0] === "sold_quantity") {
+                sortingOrder = [
+                    [
+                        sequelize.literal(`(
+                            SELECT COALESCE(SUM(order_items.quantity), 0) 
+                            FROM order_items
+                            INNER JOIN orders ON orders.order_id = order_items.order_id
+                            WHERE order_items.product_id = Product.id
+                            AND orders.order_status = 'Delivered'
+                        )`),
+                        order[0][1] || "ASC" // Sắp xếp ASC hoặc DESC
+                    ],
+                ];
+            } else {
+                sortingOrder = order || defaultOrder;
+            }
+    
             // Lấy danh sách sản phẩm từ bảng Product kèm thông tin từ bảng Shop
             const { rows, count } = await Product.findAndCountAll({
                 include: [
@@ -228,13 +231,13 @@ class ProductModel {
                             SELECT COALESCE(SUM(order_items.quantity), 0) 
                             FROM order_items
                             INNER JOIN orders ON orders.order_id = order_items.order_id
-                            WHERE order_items.product_id = shop.id
+                            WHERE order_items.product_id = Product.id
                             AND orders.order_status = 'Delivered'
                         )`),
                         "sold_quantity"
                     ], // Thêm trường số lượng đã bán
                 ],
-                order: order || [["id", "ASC"]],
+                order: sortingOrder,
                 limit: limit || 8,
                 offset: offset || 0,
             });

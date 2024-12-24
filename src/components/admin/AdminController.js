@@ -219,12 +219,18 @@ class AdminController {
             const page = parseInt(req.query.page) || 1; // Trang hiện tại (mặc định là 1)
             const limit = 8; // Số lượng sản phẩm mỗi trang
             const offset = (page - 1) * limit; // Vị trí bắt đầu
+            const { search, sortBy, sortOrder, category, brand } = req.query;
     
             // Gọi phương thức để lấy sản phẩm
+            const sortingOrder = 
+            sortBy === "sold_quantity" 
+                ? [[sortBy || "id", sortOrder || "ASC"]] // Sắp xếp theo sold_quantity
+                : [["Shop", sortBy || "id", sortOrder || "ASC"]]; // Sắp xếp theo bảng Shop
+        
             const { rows: products, count: totalProducts } = await Product.getAllProducts({
                 limit,
                 offset,
-                order: [["id", "ASC"]],
+                order: sortingOrder,
             });
     
             const totalPages = Math.ceil(totalProducts / limit); // Tổng số trang
