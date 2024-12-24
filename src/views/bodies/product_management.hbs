@@ -42,6 +42,7 @@
           <th class="border border-gray-300 px-4 py-2">Size</th>
           <th class="border border-gray-300 px-4 py-2">Brand</th>
           <th class="border border-gray-300 px-4 py-2">Image</th>
+          <th class="border border-gray-300 px-4 py-2">Sold</th>
           <th class="border border-gray-300 px-4 py-2">Actions</th>
         </tr>
       </thead>
@@ -57,6 +58,7 @@
           <td class="border border-gray-300 px-4 py-2">
             <img src="/public/images/products/{{Shop.imageFileName}}" alt="{{Shop.product_name}}" class="w-16 h-16 object-cover rounded">
           </td>
+          <td class="border border-gray-300 px-4 py-2">{{sold_quantity}}</td>
           <td class="border border-gray-300 px-4 py-2 flex justify-center">
             <form id="deleteForm-{{id}}" action="/admin/products/delete/{{id}}" method="POST" class="inline">
               <button type="button" onclick="confirmDelete({{id}})" class="text-red-600 hover:text-red-800">Delete</button>

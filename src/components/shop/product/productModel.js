@@ -180,6 +180,25 @@ class ProductModel {
         }
     }
 
+    static async amountOfSoldProducts(productId) {
+        try {
+            // Calculate the total quantity of items sold for delivered orders
+            const amount = await order_items.sum("quantity", {
+                include: [
+                    {
+                        model: sequelize.models.orders, // Assuming the orders model is correctly defined
+                        where: { order_status: "deliveried" },
+                        required: true,
+                    },
+                ],
+                where: { product_id: productId },
+            });
+            return amount;
+        } catch (error) {
+            throw error; // Ensure the error propagates properly
+        }
+    }
+
     static async getAllProducts({ limit, offset, order }) {
         try {
             // Lấy danh sách sản phẩm từ bảng Product kèm thông tin từ bảng Shop
@@ -187,26 +206,50 @@ class ProductModel {
                 include: [
                     {
                         model: Shop, // Kết hợp bảng Shop
-                        attributes: ["product_name", "price", "category", "size", "color", "brand", "rating", "imageFileName"],
+                        attributes: [
+                            "product_name", 
+                            "price", 
+                            "category", 
+                            "size", 
+                            "color", 
+                            "brand", 
+                            "rating", 
+                            "imageFileName"
+                        ],
                         required: true, // Chỉ lấy sản phẩm có thông tin trong bảng Shop
                     },
                 ],
-                attributes: ["id", "description", "product_status"], // Các trường từ bảng Product
+                attributes: [
+                    "id",
+                    "description",
+                    "product_status",
+                    [
+                        sequelize.literal(`(
+                            SELECT COALESCE(SUM(order_items.quantity), 0) 
+                            FROM order_items
+                            INNER JOIN orders ON orders.order_id = order_items.order_id
+                            WHERE order_items.product_id = shop.id
+                            AND orders.order_status = 'Delivered'
+                        )`),
+                        "sold_quantity"
+                    ], // Thêm trường số lượng đã bán
+                ],
                 order: order || [["id", "ASC"]],
                 limit: limit || 8,
                 offset: offset || 0,
             });
     
             // Chuyển đổi dữ liệu
-            return { 
-                rows: rows.map((product) => product.toJSON()), 
-                count 
+            return {
+                rows: rows.map((product) => product.toJSON()),
+                count,
             };
         } catch (error) {
             throw error;
         }
     }
     
+
 }
 
 module.exports = ProductModel;
