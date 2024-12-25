@@ -17,21 +17,27 @@
                 </div>
 
                 <img onclick="openUpdateModal()" src="/public/images/pencil-icon.svg" alt=""
-                    class="h-8 w-8 border rounded-full p-1">
+                    class="h-8 w-8 border rounded-full p-1 cursor-pointer group-hover:scale-120">
                 <div id="updateModal"
                     class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50 hidden">
                     <div class="bg-white rounded-lg shadow-lg w-96 p-6">
                         <h3 class="text-xl font-semibold mb-2 text-center">Update Information</h3>
-                        <form method="post" action="/user/profile">
+                        <form id="update-form" method="post" action="/user/profile">
                             <input type="hidden" id="input_userID" name="userID" value="{{userInfo.userID}}" />
 
-                            <label class="block text-sm font-medium">Full Name</label>
-                            <input type="text" id="input_fullname" name="fullname"
-                                class="w-full p-2 mb-4 border rounded" required />
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium">Full Name</label>
+                                <input type="text" id="input_fullname" name="fullname" class="w-full p-2 border rounded"
+                                    required />
+                                <span id="fullname-error" class="text-red-500 text-sm"></span>
+                            </div>
 
-                            <label class="block text-sm font-medium">Phone</label>
-                            <input type="text" id="input_phone" name="phone" class="w-full p-2 mb-4 border rounded"
-                                required />
+                            <div class=" mb-4">
+                                <label class="block text-sm font-medium">Phone</label>
+                                <input type="text" id="input_phone" name="phone" class="w-full p-2 border rounded"
+                                    required />
+                                <span id="phone-error" class="text-red-500 text-sm"></span>
+                            </div>
 
                             <label class="block text-sm font-medium">Gender</label>
                             <select name="gender" id="input_gender" class="w-full p-2 mb-4 border rounded">
@@ -134,7 +140,6 @@
             selectElement.appendChild(option);
         }
     }
-
     function openUpdateModal() {
         document.getElementById("input_fullname").value = document.getElementById("fullname").innerText;
         document.getElementById("input_phone").value = document.getElementById("phone").innerText;
@@ -145,4 +150,43 @@
     function closeUpdateModal() {
         document.getElementById("updateModal").classList.add("hidden");
     }
+
+    const fullnameField = document.getElementById("input_fullname");
+    const phoneField = document.getElementById("input_phone");
+
+    const fullnameError = document.getElementById("fullname-error");
+    const phoneError = document.getElementById("phone-error");
+
+    fullnameField.addEventListener("blur", () => {
+        const fullname = fullnameField.value.trim();
+        fullnameError.textContent = "";
+        if (!(/^[A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*(?:[ ][A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*)*$/.test(fullname))) {
+            fullnameError.textContent = "Please enter a valid name";
+        }
+    });
+    phoneField.addEventListener("blur", () => {
+        const phone = phoneField.value.trim();
+        phoneError.textContent = "";
+        if (!(/^(?:\+84|0)[3-9][0-9]{8}$/.test(phone))) {
+            phoneError.textContent = "Please enter a valid phone number";
+        }
+    });
+    document.getElementById("update-form").addEventListener("submit", (event) => {
+        const fullname = fullnameField.value.trim();
+        const phone = phoneField.value.trim();
+        var canSubmit = true;
+        fullnameError.textContent = "";
+        phoneError.textContent = "";
+        if (!(/^[A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*(?:[ ][A-ZÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ][a-zàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]*)*$/.test(fullname))) {
+            fullnameError.textContent = "Please enter a valid name";
+            canSubmit = false;
+        }
+        if (!(/^(?:\+84|0)[3-9][0-9]{8}$/.test(phone))) {
+            phoneError.textContent = "Please enter a valid phone number";
+            canSubmit = false;
+        }
+        if (!canSubmit) {
+            event.preventDefault();
+        }
+    });
 </script>
