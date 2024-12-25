@@ -62,6 +62,33 @@ class UserInfoModel {
             throw error;
         }
     }
+
+    static async updateUserInfo(info) {
+        try {
+            const { userID, fullname, phone, gender, dob, address } = info;
+
+            await UserInfo.update(
+                {
+                    fullname,
+                    phone,
+                    dob,
+                    gender,
+                    address,
+                },
+                {
+                    where: { userID }, // Điều kiện cập nhật
+                },
+            );
+
+            const userInfo = await UserInfo.findOne({
+                where: { userID: userID },
+            });
+
+            return userInfo;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 module.exports = UserInfoModel;
