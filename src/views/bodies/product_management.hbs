@@ -14,7 +14,7 @@
     <!-- Filter and Search Controls -->
     <div class="mb-6">
       <form action="/admin/products" method="GET" class="flex space-x-4">
-         <h1 class="text-2xl pt-2 font-semibold text-gray-800 mb-2 capitalize flex items-center">Filter:</h1>
+        <h1 class="text-2xl pt-2 font-semibold text-gray-800 mb-2 capitalize flex items-center">Filter:</h1>
         <select id="category" name="category" class="px-4 py-2 border border-gray-300 rounded-lg">
           <option value="">All Categories</option>
           <option value="Men">Men</option>
@@ -34,19 +34,87 @@
 
         <h1 class="text-2xl pt-2 font-semibold text-gray-800 mb-2 capitalize flex items-center">Sort:</h1>
         <select id="sortBy" name="sortBy" class="px-4 py-2 border border-gray-300 rounded-lg">
-          <option value="id" {{#if (eq sortBy 'id')}}selected{{/if}}>ID</option>
-          <option value="price" {{#if (eq sortBy 'price')}}selected{{/if}}>Price</option>
+          <option value="id">ID</option>
+          <option value="price">Price</option>
           <option value="sold_quantity" {{#if (eq sortBy 'sold_quantity')}}selected{{/if}}>Sold</option>
         </select>
 
         <select id="sortOrder" name="sortOrder" class="px-4 py-2 border border-gray-300 rounded-lg">
-          <option value="asc" {{#if (eq sortOrder 'asc')}}selected{{/if}}>Ascending</option>
-          <option value="desc" {{#if (eq sortOrder 'desc')}}selected{{/if}}>Descending</option>
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
         </select>
 
-        <input id="search" type="text" name="search" placeholder="Search by Keyword" class="px-4 py-2 border border-gray-300 rounded-lg" value="{{search}}">
-        
+        <input id="search" type="text" name="search" placeholder="Search by Keyword" class="px-4 py-2 border border-gray-300 rounded-lg">
         <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Search</button>
+        <button type="button" onclick="window.location.href = '/admin/products'" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">Clear</button>
+        <div class="flex-grow"></div>
+        <button id="add_product_btn" type="button" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Add Product</button>
+      </form>
+    </div>
+
+    <!-- Add Product Form (Hidden by Default) -->
+    <div id="product_form" class="hidden mt-6 bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-semibold mb-4 text-gray-800">Create a New Product</h2>
+      <form action="/admin/products/add" method="POST" enctype="multipart/form-data" class="space-y-4">
+        <div>
+          <label for="product_name" class="block text-sm font-medium text-gray-700">Product Name</label>
+          <input type="text" id="product_name" name="product_name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+        </div>
+        <div>
+          <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
+          <input type="number" id="price" name="price" step="0.01" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+        </div>
+        <div>
+          <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+          <textarea id="description" name="description" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea>
+        </div>
+        <div>
+          <label for="photos" class="block text-sm font-medium text-gray-700">Upload Main Product Photos</label>
+          <input type="file" id="photos" name="photos[]" multiple accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+        </div>
+        <div>
+          <label for="sub_image" class="block text-sm font-medium text-gray-700">Upload Sub Product Photos</label>
+          <button id="toggle_sub_images" type="button" class="mt-2 text-sm text-blue-600 hover:underline">Add Sub Images</button>
+          
+          <!-- Hidden Sub Image Inputs -->
+          <div id="sub_image_inputs" class="hidden space-y-2 mt-2">
+            <input type="file" id="sub_image" name="sub_image[]" multiple accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <input type="file" id="sub_image" name="sub_image[]" multiple accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <input type="file" id="sub_image" name="sub_image[]" multiple accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <input type="file" id="sub_image" name="sub_image[]" multiple accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+          </div>
+        </div>
+        <div>
+          <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+          <select id="category" name="category" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <option value="Men">Men</option>
+            <option value="Women">Women</option>
+          </select>
+        </div>
+        <div>
+          <label for="brand" class="block text-sm font-medium text-gray-700">Brand</label>
+          <select id="brand" name="brand" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <option value="Nike">Nike</option>
+            <option value="Adidas">Adidas</option>
+            <option value="Puma">Puma</option>
+            <option value="Zara">Zara</option>
+            <option value="Lacoste">Lacoste</option>
+            <option value="Gucci">Gucci</option>
+            <option value="Clarks">Clarks</option>
+          </select>
+        </div>
+        <div>
+          <label for="status" class="block text-sm font-medium text-gray-700">Product Status</label>
+          <select id="status" name="status" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <option value="in_stock">On Stock</option>
+            <option value="out_of_stock">Out of Stock</option>
+            <option value="suspend">Suspend</option>
+          </select>
+        </div>
+        <div class="flex justify-end">
+          <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Add</button>
+          <button type="button" onclick="document.getElementById('product_form').classList.add('hidden')" class="ml-4 px-6 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">Cancel</button>
+        </div>
       </form>
     </div>
 
@@ -83,9 +151,6 @@
               <button type="button" onclick="confirmDelete({{id}})" class="text-red-600 hover:text-red-800">Delete</button>
             </form>
             <button class="pl-4">
-              <a href="#" onclick="showProductDetails({{id}})" class="text-blue-600 hover:underline">Details</a>
-            </button>
-            <button class="pl-4">
               <a href="/admin/products/update/{{id}}" class="text-green-600 hover:underline">Update</a>
             </button>
           </td>
@@ -113,6 +178,17 @@
   </main>
 </body>
 <script>
+    // Toggle visibility of Sub Image Inputs
+  document.getElementById('toggle_sub_images').addEventListener('click', function () {
+    const subImageInputs = document.getElementById('sub_image_inputs');
+    subImageInputs.classList.toggle('hidden');
+  });
+  // Toggle visibility of Add Product Form
+  document.getElementById('add_product_btn').addEventListener('click', function () {
+    const productForm = document.getElementById('product_form');
+    productForm.classList.toggle('hidden');
+  });
+
   function goToPage(page) {
     const urlParams = new URLSearchParams(window.location.search);
     urlParams.set('page', page); // Cập nhật trang
