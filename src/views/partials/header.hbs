@@ -120,16 +120,22 @@
                 </div>
             </div>
             {{#if user}}
-            <div class="flex items-center">
+            <div class="flex items-center justify-start">
                 <span class="text-white mr-4">Hi,
                     {{user.dataValues.email}}</span>
-                <div id="user-wrapper" class="relative group">
+                <div id="user-wrapper" class="relative group inline-block">
                     <a href="/user/profile">
                         <img src="/public/images/person-icon.png" alt="User Avatar"
                             class="h-6 w-6 group-hover:scale-120 cursor-pointer" />
                     </a>
+                    <!-- Dropdown -->
+                    <div id="user-dropdown"
+                        class="absolute right-0 mt-4 w-40 bg-white shadow-lg rounded hidden group-hover:block">
+                        <a href="/user/change-password" class="block px-4 py-2 text-sm hover:text-primary border">Change
+                            password</a>
+                        <a href="/user/logout" class="block px-4 py-2 text-sm hover:text-primary">Logout</a>
+                    </div>
                 </div>
-                <a href="/user/logout" class="block px-4 py-2 text-sm text-white hover:text-primary">Logout</a>
             </div>
             {{else}}
             <a href="/user/register"

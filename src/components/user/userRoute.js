@@ -15,8 +15,10 @@ router.get("/register/activate/:token", userController.activateAccount);
 // Route đăng nhập
 router.get("/login", authController.loginPage);
 router.post("/login", authController.login);
-router.use("/login", authRouter);
 router.get("/logout", authController.logout);
+
+// Route đăng nhập bằng Google
+router.use("/login", authRouter);
 
 // Route quên mật khẩu
 router.post("/login/identity", userController.identity);
