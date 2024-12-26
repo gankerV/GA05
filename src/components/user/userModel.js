@@ -56,6 +56,22 @@ class UserModel {
         return User; // Getter cho đối tượng User
     }
 
+    static async updatePassword(id, { oldPassword, newPassword }) {
+        try {
+            const user = await User.findOne({ where: { id } });
+            const isMatch = await bcryptjs.compare(oldPassword, user.password);
+
+            if (!isMatch) return false;
+
+            user.password = await bcryptjs.hash(newPassword, 10);
+            user.save();
+
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     static async saveUser(account) {
         try {
             const {

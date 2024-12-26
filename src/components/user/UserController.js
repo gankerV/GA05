@@ -2,9 +2,32 @@ const User = require("./userModel");
 const nodemailer = require("nodemailer");
 const bcryptjs = require("bcryptjs");
 const crypto = require("crypto");
+const UserModel = require("./userModel");
 
 class UserController {
-    // [GET] '/user/register'
+    changePasswordPage(req, res) {
+        res.render("change_password");
+    }
+
+    async changePassword(req, res) {
+        const userID = req.session.passport.user;
+        const { "Old Password": oldPassword, "New Password": newPassword } =
+            req.body;
+
+        const isSuccess = await UserModel.updatePassword(userID, {
+            oldPassword,
+            newPassword,
+        });
+
+        if (!isSuccess) {
+            return res.render("change_password", {
+                errorMessage: "Wrong old password",
+            });
+        }
+
+        res.redirect("/user/login");
+    }
+
     register(req, res) {
         res.render("register");
     }

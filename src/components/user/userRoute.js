@@ -24,6 +24,10 @@ router.use("/login", authRouter);
 router.post("/login/identity", userController.identity);
 router.use("/login/identity", userController.findEmail);
 
+// Route đổi mật khẩu
+router.post("/change-password", userController.changePassword);
+router.use("/change-password", userController.changePasswordPage);
+
 router.use("/profile", ensureAuthenticated, profileRouter);
 router.use("/cart", ensureAuthenticated, cartRouter);
 
