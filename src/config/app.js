@@ -1,5 +1,6 @@
 const createError = require("http-errors");
 const express = require("express");
+const fs = require("fs");
 const path = require("path");
 const handlebars = require("express-handlebars");
 const port = process.env.PORT || 3000;
@@ -65,6 +66,18 @@ Handlebars.registerHelper("isEqual", function (a, b) {
 });
 Handlebars.registerHelper("isLessThan", function (a, b) {
     return a < b;
+});
+Handlebars.registerHelper("checkImage", function (filePath) {
+    const absolutePath = path.join(__dirname, "../..", "public", filePath);
+
+    // Kiểm tra xem ảnh có tồn tại trong thư mục không
+    if (fs.existsSync(absolutePath)) {
+        console.log("Đúng");
+        return true;
+    } else {
+        console.log("Sai");
+        return false;
+    }
 });
 
 // Cấu hình express

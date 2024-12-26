@@ -1,6 +1,28 @@
 const UserInfoModel = require("./profileModel");
 
 class ProfileController {
+    async updateAvatar(req, res) {
+        try {
+            const fileName = req.file.filename;
+            const userID = req.query.userID;
+            await UserInfoModel.UserInfo.update(
+                {
+                    avatar: fileName,
+                },
+                { where: { userID } },
+            );
+
+            const result = {
+                success: true,
+                imageUrl: `/public/images/user_images/${fileName}`,
+            };
+
+            res.json(result);
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async index(req, res) {
         try {
             const userID = req.session.passport.user;

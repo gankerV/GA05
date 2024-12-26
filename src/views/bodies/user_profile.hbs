@@ -12,8 +12,28 @@
             <div class="flex flex-row w-full justify-between items-center px-4">
                 <p></p>
                 <div class="flex items-center">
-                    <img class="w-10 h-10 rounded-full" src="../../../public/images/cat-image4.jpg" alt="User Avatar">
+                    <!-- Ảnh đại diện -->
+                    <img id="user-avatar" class="w-14 h-14 rounded-full cursor-pointer"
+                        src="/public/images/user_images/{{userInfo.userID}}.jpg" alt="User Avatar">
                     <p class="ml-3 text-lg font-medium">{{user.dataValues.email}}</p>
+                </div>
+
+                <!-- Avatar Modal -->
+                <div id="avatar-modal"
+                    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+                    <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+                        <h2 class="text-xl font-semibold mb-4">Edit Avatar</h2>
+                        <img id="preview-avatar" class="w-64 h-64 rounded-full mx-auto mb-4"
+                            src="/public/images/user_images/{{userInfo.userID}}.jpg" alt="Preview Avatar">
+                        <input type="file" id="upload-avatar"
+                            class="block w-full text-sm text-gray-900 border border-gray-300 cursor-pointer focus:outline-none">
+                        <div class="flex justify-end mt-4">
+                            <button id="cancel-button"
+                                class="px-4 py-2 text-gray-600 bg-gray-200 rounded hover:bg-gray-300 mr-2">Cancel</button>
+                            <button id="save-button"
+                                class="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">Save</button>
+                        </div>
+                    </div>
                 </div>
 
                 <img onclick="openUpdateModal()" src="/public/images/pencil-icon.svg" alt=""
@@ -188,5 +208,68 @@
         if (!canSubmit) {
             event.preventDefault();
         }
+    });
+
+    // Xem và sử avatar
+    document.addEventListener('DOMContentLoaded', () => {
+        const avatarImg = document.getElementById('user-avatar');
+        const modal = document.getElementById('avatar-modal');
+        const uploadInput = document.getElementById('upload-avatar');
+        const previewAvatar = document.getElementById('preview-avatar');
+        const cancelButton = document.getElementById('cancel-button');
+        const saveButton = document.getElementById('save-button');
+        const userID = document.getElementById("input_userID").value;
+
+        // Hiển thị modal khi bấm vào ảnh
+        avatarImg.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+        });
+
+        // Xử lý chọn ảnh
+        uploadInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewAvatar.src = e.target.result; // Hiển thị ảnh được chọn
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Đóng modal
+        cancelButton.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+
+        saveButton.addEventListener('click', async () => {
+            const file = uploadInput.files[0];
+            if (!file) {
+                alert("Please select an image.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('avatar', file);
+
+            try {
+                const response = await fetch(`/user/profile/api/update-avatar?userID=${userID}`, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    avatarImg.src = `${result.imageUrl}?timestamp=${Date.now()}`;
+                    const userAvatar = document.getElementById("header-user-avatar");
+                    userAvatar.src = avatarImg.src;
+                } else {
+                    alert('Failed to save avatar.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+            modal.classList.add('hidden');
+        });
     });
 </script>

@@ -98,8 +98,9 @@ CREATE TABLE user_info (
     fullname VARCHAR(50),
     phone VARCHAR(15),
     dob DATE,
-    gender ENUM("Male", "Female", "Other"),
+    gender ENUM('Male', 'Female', 'Other'),
     address VARCHAR(255),
+    avatar VARCHAR(10),
     FOREIGN KEY (userID) REFERENCES users(id) ON DELETE CASCADE
 );
 

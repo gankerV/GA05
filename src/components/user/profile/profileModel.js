@@ -31,6 +31,10 @@ const UserInfo = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true,
         },
+        avatar: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
     },
     {
         tableName: "user_info",
