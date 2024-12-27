@@ -253,6 +253,32 @@ class ProductModel {
         }
     }
     
+    static async create({ product_name, price, category, brand, size, color, rating, description, image }) {
+        try {
+            // Tạo một sản phẩm mới
+            const product = await Product.create({
+                description,
+                product_status: "In Stock",
+                Shop: {
+                    product_name,
+                    price,
+                    category,
+                    brand,
+                    size,
+                    color,
+                    rating,
+                    imageFileName: image,
+                },
+            }, {
+                include: [Shop], // Bao gồm thông tin từ bảng Shop
+            });
+    
+            // Trả về thông tin sản phẩm
+            return product.toJSON();
+        } catch (error) {
+            throw error;
+        }
+    }
 
 }
 

@@ -1,5 +1,5 @@
-const { User } = require("../user/userModel"); // Adjust the path as needed
-const Product = require("../shop/product/productModel"); // Adjust the path as needed
+const { User } = require("../user/userModel"); 
+const Product = require("../shop/product/productModel"); 
 const Sequelize = require("sequelize");
 
 allUser = [];
@@ -214,6 +214,7 @@ class AdminController {
         }
     }
     
+    // [GET] '/admin/products'
     async getAllProducts(req, res) {
         try {
             const page = parseInt(req.query.page) || 1; // Trang hiện tại (mặc định là 1)
@@ -279,6 +280,50 @@ class AdminController {
         }
     }    
     
+   // [POST] '/admin/products/add'
+    async createProduct(req, res) {
+        const { product_name, price, category, brand, size, color, rating, description } = req.body;
+        const image = req.file; // Multer sẽ lưu file vào `req.file`
+        
+        try {
+            // Xử lý hình ảnh
+            let imageFileName = null;
+            if (image) {
+                imageFileName = image.filename; // Lấy tên file từ Multer
+            }
+        
+            // Tạo sản phẩm mới
+            const product = await Product.create({
+                product_name,
+                price,
+                category,
+                brand,
+                size,
+                color,
+                rating,
+                description,
+                image: imageFileName, // Lưu tên file vào cơ sở dữ liệu
+            });
+
+            // Trả về phản hồi thành công
+            res.redirect("/admin/products");
+        } catch (error) {
+            console.error("Error creating product:", error);
+            res.status(500).json({ message: "Internal Server Error" });
+        }
+    }
+
+    // [GET] '/admin/orders'
+    async getAllOrders(req, res) {
+        try {
+            // Trả về giao diện với dữ liệu
+            res.render("order_management");
+        } catch (error) {
+            console.error("Error fetching orders:", error);
+            res.status(500).json({ message: "Internal Server Error" });
+        }
+    }
+
 }
 
 module.exports = new AdminController();

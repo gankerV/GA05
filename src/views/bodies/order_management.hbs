@@ -1,0 +1,65 @@
+<div class="container mx-auto my-8 px-4">
+  <!-- Title -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-semibold">User Orders</h1>
+  </div>
+
+  <!-- Orders Table -->
+  <table class="min-w-full border-collapse border border-gray-300">
+    <thead>
+      <tr class="bg-gray-200">
+        <th class="border border-gray-300 px-4 py-2">Order ID</th>
+        <th class="border border-gray-300 px-4 py-2">User ID</th>
+        <th class="border border-gray-300 px-4 py-2">Order Date</th>
+        <th class="border border-gray-300 px-4 py-2">Order Status</th>
+        <th class="border border-gray-300 px-4 py-2">Total Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Duyệt qua danh sách orders -->
+      {{#each orders}}
+      <tr class="hover:bg-gray-100">
+        <td class="border border-gray-300 px-4 py-2">{{order_id}}</td>
+        <td class="border border-gray-300 px-4 py-2">{{user_id}}</td>
+        <td class="border border-gray-300 px-4 py-2">{{formatDate order_date}}</td>
+        <td class="border border-gray-300 px-4 py-2">
+          <span class="px-2 py-1 text-sm font-semibold rounded-lg {{getStatusClass order_status}}">
+            {{order_status}}
+          </span>
+        </td>
+        <td class="border border-gray-300 px-4 py-2">${{total_amount}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+
+<script>
+  // Helper để định dạng ngày
+  Handlebars.registerHelper("formatDate", function (dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  });
+
+  // Helper để gán class cho trạng thái
+  Handlebars.registerHelper("getStatusClass", function (status) {
+    switch (status) {
+      case "Pending":
+        return "bg-yellow-200 text-yellow-800";
+      case "Shipped":
+        return "bg-blue-200 text-blue-800";
+      case "Delivered":
+        return "bg-green-200 text-green-800";
+      case "Cancelled":
+        return "bg-red-200 text-red-800";
+      default:
+        return "bg-gray-200 text-gray-800";
+    }
+  });
+</script>

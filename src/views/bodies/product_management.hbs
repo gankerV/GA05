@@ -55,7 +55,7 @@
     <!-- Add Product Form (Hidden by Default) -->
     <div id="product_form" class="hidden mt-6 bg-white p-6 rounded-lg shadow-lg">
       <h2 class="text-2xl font-semibold mb-4 text-gray-800">Create a New Product</h2>
-      <form action="/admin/products/add" method="POST" enctype="multipart/form-data" class="space-y-4">
+      <form action="/admin/products/add" method="POST"  enctype="multipart/form-data" class="space-y-4">
         <div>
           <label for="product_name" class="block text-sm font-medium text-gray-700">Product Name</label>
           <input type="text" id="product_name" name="product_name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
@@ -66,11 +66,11 @@
         </div>
         <div>
           <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-          <textarea id="description" name="description" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea>
+          <input id="description" name="description" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg"t>
         </div>
         <div>
-          <label for="photos" class="block text-sm font-medium text-gray-700">Upload Main Product Photos</label>
-          <input type="file" id="photos" name="photos[]" multiple accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <label for="photos" class="block text-sm font-medium text-gray-700">Upload Main Product Photos</label>
+            <input type="file" id="photos" name="photos" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
         </div>
         <div>
           <label for="sub_image" class="block text-sm font-medium text-gray-700">Upload Sub Product Photos</label>
@@ -101,6 +101,30 @@
             <option value="Lacoste">Lacoste</option>
             <option value="Gucci">Gucci</option>
             <option value="Clarks">Clarks</option>
+          </select>
+        </div>
+        <div>
+          <label for="size" class="block text-sm font-medium text-gray-700">Size</label>
+          <select id="size" name="size" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+            <option value="XXL">XXL</option>
+          </select>
+        </div>
+        <div>
+          <label for="color" class="block text-sm font-medium text-gray-700">Color</label>
+          <input type="text" id="color" name="color" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+        </div>
+        <div>
+          <label for="rating" class="block text-sm font-medium text-gray-700">Rating</label>
+          <select id="rating" name="rating" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <option value="1">1 Star</option>
+            <option value="2">2 Stars</option>
+            <option value="3">3 Stars</option>
+            <option value="4">4 Stars</option>
+            <option value="5">5 Stars</option>
           </select>
         </div>
         <div>
