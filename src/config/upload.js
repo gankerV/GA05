@@ -6,7 +6,7 @@ const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         let dir;
         // Kiểm tra loại ảnh và quyết định thư mục lưu trữ
-        if (file.fieldname === 'photos') {
+        if (file.fieldname === 'photos' || file.fieldname === 'sub_image1' || file.fieldname === 'sub_image2' || file.fieldname === 'sub_image3' || file.fieldname === 'sub_image4') {
             dir = path.join(__dirname, "../../public/images/products/"); // Thư mục lưu ảnh sản phẩm
         } else {
             dir = path.join(__dirname, "../../public/images/user_images/"); // Thư mục lưu ảnh người dùng
@@ -14,9 +14,9 @@ const storage = multer.diskStorage({
         cb(null, dir);
     },
     filename: (req, file, cb) => {
-        const userID = req.query.userID || "default";
+        const userID = req.query.userID || Date.now() || "default";
         const ext = path.extname(file.originalname);
-        const fileName = `${userID}${ext}`;
+        const fileName = `${userID}-${Date.now()}${ext}`;  // Thêm dấu thời gian để tránh trùng lặp
         cb(null, fileName);
     },
 });

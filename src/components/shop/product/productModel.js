@@ -28,6 +28,29 @@ const Product = sequelize.define(
 );
 Product.belongsTo(Shop, { foreignKey: "id", targetKey: "id" });
 
+const SubImage = sequelize.define("SubImage", {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
+    shop_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    imageFileName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+}, {
+    timestamps: false, // Disable automatic timestamps (`createdAt` and `updatedAt`)
+    tableName: "sub_images", // Name of the table in the database
+});
+
+// Define associations
+Shop.hasMany(SubImage, { foreignKey: "shop_id", as: "subImages" });
+SubImage.belongsTo(Shop, { foreignKey: "shop_id", targetKey: "id" });
+
 const Review = sequelize.define(
     "review",
     {
@@ -242,7 +265,7 @@ class ProductModel {
                 limit: limit || 8,     // Giới hạn số lượng kết quả mỗi trang
                 offset: offset || 0,   // Vị trí bắt đầu của dữ liệu
             });
-    
+            
             // Chuyển đổi dữ liệu
             return {
                 rows: rows.map((product) => product.toJSON()), // Chuyển các đối tượng Sequelize thành JSON
@@ -253,32 +276,57 @@ class ProductModel {
         }
     }
     
-    static async create({ product_name, price, category, brand, size, color, rating, description, image }) {
+    static async create({ product_name, price, category, brand, size, color, rating, description, product_status ,image, subImageFileNames }) {
+        let transaction;
         try {
-            // Tạo một sản phẩm mới
+            // Bắt đầu giao dịch (transaction) để đảm bảo tính toàn vẹn dữ liệu
+            transaction = await sequelize.transaction();
+    
+            // Tạo một bản ghi trong bảng shop
+            const shop = await Shop.create({
+                product_name,
+                price,
+                category,
+                brand,
+                size,
+                color,
+                rating,
+                imageFileName: image,  // Tên ảnh chính
+            }, { transaction });
+    
+            // Tạo một bản ghi trong bảng product và liên kết với bảng shop thông qua shop_id
             const product = await Product.create({
                 description,
-                product_status: "In Stock",
-                Shop: {
-                    product_name,
-                    price,
-                    category,
-                    brand,
-                    size,
-                    color,
-                    rating,
-                    imageFileName: image,
-                },
-            }, {
-                include: [Shop], // Bao gồm thông tin từ bảng Shop
-            });
+                product_status,
+                id: shop.id, // Liên kết với shop
+            }, { transaction });
+
+            // Nếu có ảnh phụ (subImages), thêm chúng vào bảng sub_images
+            if (subImageFileNames && subImageFileNames.length > 0) {
+
+                const subImageData = subImageFileNames.map(image => ({
+                    imageFileName: image,   // Tên file ảnh phụ
+                    shop_id: shop.id,      // Liên kết ảnh phụ với shop
+                }));
     
-            // Trả về thông tin sản phẩm
-            return product.toJSON();
+                // Thêm nhiều ảnh phụ vào bảng sub_images
+                await SubImage.bulkCreate(subImageData, { transaction });
+            }
+    
+            // Commit giao dịch
+            await transaction.commit();
+    
+            // Trả về thông tin sản phẩm bao gồm thông tin từ bảng shop
+            return {
+                product: product.toJSON(),
+                shop: shop.toJSON(),
+            };
         } catch (error) {
+            // Nếu có lỗi, rollback giao dịch
+            await transaction.rollback();
             throw error;
         }
-    }
+    }    
 
 }
 

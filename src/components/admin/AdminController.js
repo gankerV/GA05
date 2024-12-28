@@ -280,18 +280,30 @@ class AdminController {
         }
     }    
     
-   // [POST] '/admin/products/add'
+    // [POST] '/admin/products/add'
     async createProduct(req, res) {
-        const { product_name, price, category, brand, size, color, rating, description } = req.body;
-        const image = req.file; // Multer sẽ lưu file vào `req.file`
-        
+        const { product_name, price, category, brand, size, color, rating, description, product_status } = req.body;
+        const photos = req.files.photos; // Multer sẽ lưu ảnh chính vào `req.files.photos`
+        const subImage1 = req.files.sub_image1; // Ảnh phụ 1
+        const subImage2 = req.files.sub_image2; // Ảnh phụ 2
+        const subImage3 = req.files.sub_image3; // Ảnh phụ 3
+        const subImage4 = req.files.sub_image4; // Ảnh phụ 4 
+
         try {
-            // Xử lý hình ảnh
+            // Xử lý hình ảnh chính (photos)
             let imageFileName = null;
-            if (image) {
-                imageFileName = image.filename; // Lấy tên file từ Multer
+            if (photos && photos.length > 0) {
+                imageFileName = photos[0].filename; // Lấy tên file ảnh chính (chỉ có một ảnh)
             }
-        
+            
+            let subImageFileNames = [];
+
+            if (subImage1 && subImage1.length > 0) subImageFileNames.push(subImage1[0].filename);
+            if (subImage2 && subImage2.length > 0) subImageFileNames.push(subImage2[0].filename);
+            if (subImage3 && subImage3.length > 0) subImageFileNames.push(subImage3[0].filename);
+            if (subImage4 && subImage4.length > 0) subImageFileNames.push(subImage4[0].filename);
+            // Xử lý ảnh phụ (sub_image)
+
             // Tạo sản phẩm mới
             const product = await Product.create({
                 product_name,
@@ -302,7 +314,9 @@ class AdminController {
                 color,
                 rating,
                 description,
-                image: imageFileName, // Lưu tên file vào cơ sở dữ liệu
+                product_status,
+                image: imageFileName, // Lưu tên file ảnh chính vào cơ sở dữ liệu
+                subImageFileNames, // Lưu mảng tên file ảnh phụ vào cơ sở dữ liệu
             });
 
             // Trả về phản hồi thành công

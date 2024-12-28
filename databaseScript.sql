@@ -42,6 +42,13 @@ CREATE TABLE product (
     FOREIGN KEY (id) REFERENCES shop(id)   
 );
 
+create table sub_images(
+	id INT AUTO_INCREMENT PRIMARY KEY, 
+	shop_id INT,
+	imageFileName VARCHAR(255),
+    foreign key (shop_id) references shop(id)
+);
+
 -- Thêm dữ liệu mẫu vào bảng Product
 INSERT INTO product (id, description, product_status) VALUES
 (1, 'This is a classic T-shirt made from soft cotton fabric, providing a comfortable fit. Perfect for casual outings or lounging.', 'In Stock'),
@@ -115,3 +122,48 @@ CREATE TABLE cart (
     FOREIGN KEY (product_id) REFERENCES shop(id) -- Ràng buộc khóa ngoại tới bảng shop
         ON DELETE CASCADE                       -- Xóa mục trong giỏ khi sản phẩm bị xóa
 );
+
+CREATE TABLE orders (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,  -- ID của đơn hàng
+    user_id INT NOT NULL,                     -- ID người dùng (liên kết với bảng users)
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Ngày giờ tạo đơn hàng
+    order_status ENUM('Pending', 'Shipped', 'Delivered', 'Cancelled') DEFAULT 'Pending', -- Trạng thái đơn hàng
+    total_amount DECIMAL(10, 2) NOT NULL,      -- Tổng giá trị đơn hàng
+    shipping_address VARCHAR(255) NOT NULL,    -- Địa chỉ giao hàng
+    payment_status ENUM('Paid', 'Unpaid') DEFAULT 'Unpaid', -- Trạng thái thanh toán
+    payment_method ENUM('Credit Card', 'PayPal', 'Cash On Delivery') DEFAULT 'Cash On Delivery', -- Phương thức thanh toán
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, -- Liên kết với bảng users
+    INDEX (user_id),                           -- Tạo chỉ mục cho `user_id` để tăng tốc truy vấn
+    INDEX (order_status),                      -- Tạo chỉ mục cho `order_status` nếu cần
+    INDEX (order_date)                         -- Tạo chỉ mục cho `order_date` nếu cần
+);
+
+CREATE TABLE order_items (
+    order_item_id INT AUTO_INCREMENT PRIMARY KEY,  -- ID của mục trong đơn hàng
+    order_id INT NOT NULL,                         -- ID đơn hàng (liên kết với bảng orders)
+    product_id INT NOT NULL,                       -- ID sản phẩm (liên kết với bảng products)
+    quantity INT NOT NULL,                         -- Số lượng sản phẩm trong đơn hàng
+    price DECIMAL(10, 2) NOT NULL,                 -- Giá sản phẩm tại thời điểm đặt hàng
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,  -- Liên kết với bảng orders
+    FOREIGN KEY (product_id) REFERENCES shop(id) ON DELETE CASCADE,      -- Liên kết với bảng sản phẩm (products)
+    INDEX (order_id),                             -- Tạo chỉ mục cho `order_id` để tăng tốc truy vấn
+    INDEX (product_id)                            -- Tạo chỉ mục cho `product_id` để tăng tốc truy vấn
+);
+
+-- Dữ liệu mẫu cho bảng orders
+INSERT INTO orders (user_id, order_status, total_amount, shipping_address, payment_status, payment_method) VALUES
+(1, 'Pending', 100.00, '123 Main St, City, Country', 'Unpaid', 'Cash On Delivery'),
+(2, 'Shipped', 250.00, '456 Oak St, City, Country', 'Paid', 'Credit Card'),
+(3, 'Delivered', 150.50, '789 Pine St, City, Country', 'Paid', 'PayPal'),
+(1, 'Cancelled', 300.75, '123 Main St, City, Country', 'Unpaid', 'Cash On Delivery'),
+(2, 'Pending', 70.50, '456 Oak St, City, Country', 'Unpaid', 'Cash On Delivery');
+
+INSERT INTO order_items (order_id, product_id, quantity, price)
+VALUES 
+(1, 1, 2, 100.00),  -- Đơn hàng 1, sản phẩm 1 (Blue womens suit), số lượng 2, giá 100.00
+(1, 3, 1, 200.99),  -- Đơn hàng 1, sản phẩm 3 (Yellow mens suit), số lượng 1, giá 200.99
+(2, 4, 1, 250.00),  -- Đơn hàng 2, sản phẩm 4 (Red dress), số lượng 1, giá 250.00
+(2, 10, 2, 150.00), -- Đơn hàng 2, sản phẩm 10 (Brown leather shoes), số lượng 2, giá 150.00
+(3, 2, 1, 150.50),  -- Đơn hàng 3, sản phẩm 2 (White shirt with long sleeves), số lượng 1, giá 150.50
+(3, 9, 1, 500.00);  -- Đơn hàng 3, sản phẩm 9 (Black formal suit), số lượng 1, giá 500.00
+
