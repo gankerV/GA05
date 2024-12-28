@@ -20,7 +20,7 @@
         <!-- Sort by -->
         <select name="sortBy" class="px-4 py-2 border border-gray-300 rounded-lg">
           <option value="id" {{#if (eq sortBy "id")}}selected{{/if}}>ID</option>
-          <option value="name" {{#if (eq sortBy "name")}}selected{{/if}}>Name</option>
+          <option value="fullname" {{#if (eq sortBy "fullname")}}selected{{/if}}>Full Name</option>
           <option value="email" {{#if (eq sortBy "email")}}selected{{/if}}>Email</option>
           <option value="registration_time" {{#if (eq sortBy "registration_time")}}selected{{/if}}>Registration Time</option>
         </select>
@@ -40,7 +40,7 @@
       <thead>
           <tr class="bg-gray-200">
               <th class="border border-gray-300 px-4 py-2">ID</th>
-              <th class="border border-gray-300 px-4 py-2">Name</th>
+              <th class="border border-gray-300 px-4 py-2">Full Name</th>
               <th class="border border-gray-300 px-4 py-2">Email</th>
               <th class="border border-gray-300 px-4 py-2">Access</th>
               <th class="border border-gray-300 px-4 py-2">Registration Time</th>
@@ -51,7 +51,7 @@
           {{#each users}}
           <tr class="hover:bg-gray-100">
               <td class="border border-gray-300 px-4 py-2">{{this.id}}</td>
-              <td class="border border-gray-300 px-4 py-2">{{this.name}}</td>
+              <td class="border border-gray-300 px-4 py-2">{{this.UserInfo.fullname}}</td>
               <td class="border border-gray-300 px-4 py-2">{{this.email}}</td>
               <td class="border border-gray-300 px-4 py-2">
                   {{#if this.access}}
@@ -64,12 +64,12 @@
               <td class="border border-gray-300 px-4 py-2 flex justify-center">
                   {{#if this.access}}
                     <form id="banForm-{{this.id}}" action="/admin/users/status/{{this.id}}" method="POST" class="inline">
-                      <input type="hidden" name="status" value="banned">
+                      <input type="hidden" name="status" value="ban">
                       <button type="button" onclick="confirmBan({{this.id}})" class="text-red-600 hover:text-red-800">Ban</button>
                     </form>
                   {{else}}
                     <form id="unbanForm-{{this.id}}" action="/admin/users/status/{{this.id}}" method="POST" class="inline">
-                      <input type="hidden" name="status" value="active">
+                      <input type="hidden" name="status" value="unban">
                       <button type="button" onclick="confirmUnban({{this.id}})" class="text-green-600 hover:text-green-800">Unban</button>
                     </form>
                   {{/if}}
@@ -131,19 +131,26 @@
     window.location.search = urlParams.toString(); // Chuyển hướng với query string mới
   }
 
-  // Hiển thị modal và tải dữ liệu người dùng
+    // Hiển thị modal và tải dữ liệu người dùng
   function showUserDetails(userId) {
     // Lấy thông tin người dùng từ server bằng AJAX
     fetch(`/admin/users/${userId}`)
       .then(response => response.json())
       .then(data => {
+        // Kiểm tra nếu data.UserInfo có dữ liệu
+        const userInfo = data.UserInfo || {}; // Default to empty object if no user info
+        
         // Cập nhật nội dung modal với thông tin người dùng
         const userDetails = document.getElementById('userDetails');
         userDetails.innerHTML = `
-          <p><strong>Name:</strong> ${data.name}</p>
+          <p><strong>Name:</strong> ${userInfo.fullname || 'N/A'}</p>
           <p><strong>Email:</strong> ${data.email}</p>
-          <p><strong>Registration Time:</strong> ${data.registration_time}</p>
+          <p><strong>Registration Time:</strong> ${new Date(data.registration_time).toLocaleString()}</p>
           <p><strong>Status:</strong> ${data.access ? 'Active' : 'Banned'}</p>
+          <p><strong>Phone:</strong> ${userInfo.phone || 'N/A'}</p>
+          <p><strong>Date of Birth:</strong> ${userInfo.dob ? new Date(userInfo.dob).toLocaleDateString() : 'N/A'}</p>
+          <p><strong>Gender:</strong> ${userInfo.gender || 'N/A'}</p>
+          <p><strong>Address:</strong> ${userInfo.address || 'N/A'}</p>
         `;
         
         // Hiển thị modal

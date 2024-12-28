@@ -61,12 +61,18 @@ class AdminController {
             if (search) {
                 whereCondition[Sequelize.Op.or] = [
                     { email: { [Sequelize.Op.like]: `%${search}%` } },
+                    { '$UserInfo.fullname$': { [Sequelize.Op.like]: `%${search}%` } }
                 ];
             }
-
+            
             // Cấu hình sắp xếp (mặc định là theo `id`)
-            const order = [[sortBy || 'id', sortOrder === 'desc' ? 'DESC' : 'ASC']];
-
+            const order = [
+                [
+                    Sequelize.col(sortBy === 'fullname' ? 'UserInfo.fullname' : sortBy || 'id'), 
+                    sortOrder === 'desc' ? 'DESC' : 'ASC'
+                ]
+            ];
+            
             // Lấy danh sách người dùng với các điều kiện tìm kiếm, lọc, phân trang, và sắp xếp
             const { count, rows: users } = await User.findAndCountAll({
                 attributes: ["id", "email", "access", "registration_time"], // Chọn các trường cần thiết
@@ -74,6 +80,12 @@ class AdminController {
                 limit,
                 offset,
                 order, // Điều kiện sắp xếp
+                include:[
+                    {
+                        model: profileModel.UserInfo,
+                        attributes: ["fullname", "phone", "dob", "gender", "address"],
+                    }
+                ]
             });
 
             // Tính tổng số trang
@@ -192,6 +204,10 @@ class AdminController {
         try {
         const user = await User.findByPk(userId, {
             attributes: ['id', 'email', 'access', 'registration_time'],
+            include: {
+                model: profileModel.UserInfo,
+                attributes: ['fullname', 'phone', 'dob', 'gender', 'address', 'avatar'],
+            },
         });
     
         if (!user) {
@@ -209,9 +225,9 @@ class AdminController {
     async updateUserStatus(req, res) {
         const userId = req.params.id;
         const adminID = req.user ? req.user.dataValues.id : null;
-
+        
         const { status } = req.body; // Trạng thái mới: 'banned' hoặc 'active'
-    
+        console.log(status);
         try {
         // Tìm người dùng theo ID
         const user = await User.findByPk(userId);
@@ -225,9 +241,9 @@ class AdminController {
         }
         
         // Cập nhật trạng thái người dùng
-        if (status === 'banned') {
+        if (status === 'ban') {
             user.access = false; // Đánh dấu người dùng là bị cấm
-        } else if (status === 'active') {
+        } else if (status === 'unban') {
             user.access = true; // Đánh dấu người dùng là hoạt động
         }
     
