@@ -93,6 +93,10 @@ class UserInfoModel {
             throw error;
         }
     }
+
+    static getUserInfo(userID) {
+        return UserInfo.findOne({ where: { userID } });
+    }
 }
 
 module.exports = UserInfoModel;

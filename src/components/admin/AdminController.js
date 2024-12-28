@@ -1,5 +1,6 @@
 const { User } = require("../user/userModel"); 
 const Product = require("../shop/product/productModel"); 
+const profileModel = require("../user/profile/profileModel");
 const Sequelize = require("sequelize");
 
 allUser = [];
@@ -14,14 +15,14 @@ class AdminController {
     // [GET] '/admin'
     async index(req, res) {
         try {
-            // Kiểm tra nếu user đã đăng nhập và có thông tin
+            //Kiểm tra nếu user đã đăng nhập và có thông tin
             if (!req.user || !req.user.id) {
                 return res.status(403).render("404", { message: "Access denied. You are not logged in." });
             }
             
             const userId = req.user.id;
             
-            // Tìm thông tin người dùng admin từ database
+            //Tìm thông tin người dùng admin từ database
             const user = await User.findByPk(userId); // Giả sử bạn có model User để truy vấn
             if (!user || !user.is_admin) {
                 return res.status(403).render("404", { message: "Access denied. You are not an admin." });
@@ -59,7 +60,6 @@ class AdminController {
             // Nếu có tham số search, tìm kiếm theo tên hoặc email
             if (search) {
                 whereCondition[Sequelize.Op.or] = [
-                    { name: { [Sequelize.Op.like]: `%${search}%` } },
                     { email: { [Sequelize.Op.like]: `%${search}%` } },
                 ];
             }
@@ -69,7 +69,7 @@ class AdminController {
 
             // Lấy danh sách người dùng với các điều kiện tìm kiếm, lọc, phân trang, và sắp xếp
             const { count, rows: users } = await User.findAndCountAll({
-                attributes: ["id", "email", "name", "access", "registration_time"], // Chọn các trường cần thiết
+                attributes: ["id", "email", "access", "registration_time"], // Chọn các trường cần thiết
                 where: whereCondition, // Điều kiện lọc
                 limit,
                 offset,
@@ -100,24 +100,39 @@ class AdminController {
     // [GET] '/admin/profile/:id'
     async getAccountProfile(req, res) {
         const userId = req.params.id;
-    
+
         try {
-            // Tìm người dùng theo ID
+            // Tìm người dùng theo ID từ bảng `users`
             const user = await User.findByPk(userId);
-    
+
             // Kiểm tra nếu không tìm thấy người dùng
             if (!user) {
-                return res.status(404).render("error", { message: "User not found" });
+                return res.status(404).render("404", { message: "Người dùng không tồn tại" });
             }
-    
-            // Chuyển đổi user sang đối tượng JavaScript thông thường
+
+            // Tìm thông tin chi tiết của người dùng từ bảng `user_info`
+            const profile = await profileModel.getUserInfo(user.dataValues.id);
+
+            // Kiểm tra nếu không tìm thấy thông tin chi tiết
+            if (!profile) {
+                return res.status(404).render("404", { message: "Không tìm thấy thông tin chi tiết người dùng" });
+            }
+
+            // Chuẩn bị dữ liệu người dùng kèm theo thông tin chi tiết
             const userData = {
                 id: user.id,
-                name: user.name,
                 email: user.email,
-                profilePicture: user.profilePicture || "/default-avatar.png", // Dùng ảnh mặc định nếu không có
+                registration_time: user.registration_time,
+                avatar: profile.avatar || "/default-avatar.png", // Ảnh đại diện (nếu không có thì dùng ảnh mặc định)
+                profile: {
+                    fullname: profile.fullname,
+                    phone: profile.phone,
+                    gender: profile.gender,
+                    dob: profile.dob,
+                    address: profile.address,
+                },
             };
-    
+
             // Render giao diện admin profile với dữ liệu người dùng
             res.render("admin_profile", {
                 title: "Admin Profile",
@@ -125,32 +140,44 @@ class AdminController {
             });
         } catch (error) {
             console.error("Error fetching account profile:", error);
-            res.status(500).render("error", { message: "Internal Server Error" });
+            res.status(500).render("404", { message: "Lỗi hệ thống" });
         }
-    }    
+    }
 
     // [POST] '/admin/profile/update/:id'
     async updateAccountProfile(req, res) {
         const userId = req.params.id;
-        const { name, email } = req.body;
-
+        const {email, fullname, phone, gender, dob, address } = req.body;
 
         try {
-            // Find the user by ID
+            // Tìm người dùng theo ID
             const user = await User.findByPk(userId);
 
             if (!user) {
                 return res.status(404).render("error", { message: "User not found" });
             }
 
-            // Update the user details
-            user.name = name || user.name;
+            // Cập nhật thông tin cơ bản của người dùng
             user.email = email || user.email;
 
-            // Save the updated user data
+            // Lưu thông tin cập nhật của người dùng
             await user.save();
 
-            // Redirect to the profile page or a success page
+            // Cập nhật thông tin chi tiết của người dùng (UserInfo)
+            const updatedProfile = await profileModel.updateUserInfo({
+                userID: user.id,
+                fullname,
+                phone,
+                gender,
+                dob,
+                address,
+            });
+
+            if (!updatedProfile) {
+                return res.status(404).render("error", { message: "Failed to update user profile" });
+            }
+
+            // Chuyển hướng đến trang hồ sơ
             res.redirect(`/admin/profile/${user.id}`);
         } catch (error) {
             console.error("Error updating account profile:", error);
@@ -164,7 +191,7 @@ class AdminController {
         
         try {
         const user = await User.findByPk(userId, {
-            attributes: ['id', 'name', 'email', 'access', 'registration_time'],
+            attributes: ['id', 'email', 'access', 'registration_time'],
         });
     
         if (!user) {
