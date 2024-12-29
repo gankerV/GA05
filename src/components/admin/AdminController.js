@@ -226,8 +226,7 @@ class AdminController {
         const userId = req.params.id;
         const adminID = req.user ? req.user.dataValues.id : null;
         
-        const { status } = req.body; // Trạng thái mới: 'banned' hoặc 'active'
-        console.log(status);
+        const { status } = req.body; 
         try {
         // Tìm người dùng theo ID
         const user = await User.findByPk(userId);

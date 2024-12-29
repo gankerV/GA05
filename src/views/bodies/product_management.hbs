@@ -62,7 +62,16 @@
         </div>
         <div>
           <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
-          <input type="number" id="price" name="price" step="0.01" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+          <input
+            type="number"
+            id="price"
+            name="price"
+            step="0.01"
+            required
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            min="0.01"
+          />
+          <p id="priceError" class="text-red-500 text-sm hidden">Please enter a valid price greater than 0.</p>
         </div>
         <div>
           <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
@@ -115,7 +124,19 @@
         </div>
         <div>
           <label for="color" class="block text-sm font-medium text-gray-700">Color</label>
-          <input type="text" id="color" name="color" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+          <select id="color" name="color" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <option value="Black">Black</option>
+            <option value="White">White</option>
+            <option value="Red">Red</option>
+            <option value="Blue">Blue</option>
+            <option value="Green">Green</option>
+            <option value="Yellow">Yellow</option>
+            <option value="Purple">Purple</option>
+            <option value="Orange">Orange</option>
+            <option value="Pink">Pink</option>
+            <option value="Brown">Brown</option>
+            <option value="Gray">Gray</option>
+          </select>
         </div>
         <div>
           <label for="rating" class="block text-sm font-medium text-gray-700">Rating</label>
@@ -202,6 +223,20 @@
   </main>
 </body>
 <script>
+
+  // Verify user input for price
+    document.getElementById("price").addEventListener("input", function () {
+    const price = parseFloat(this.value);
+    const errorElement = document.getElementById("priceError");
+
+    if (isNaN(price) || price <= 0) {
+      errorElement.classList.remove("hidden");
+      this.classList.add("border-red-500");
+    } else {
+      errorElement.classList.add("hidden");
+      this.classList.remove("border-red-500");
+    }
+  });
     // Toggle visibility of Sub Image Inputs
   document.getElementById('toggle_sub_images').addEventListener('click', function () {
     const subImageInputs = document.getElementById('sub_image_inputs');
