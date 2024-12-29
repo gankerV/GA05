@@ -41,8 +41,8 @@ passport.use(
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             callbackURL:
-                "https://ga05-1.onrender.com/user/login/google/callback",
-            // "http://localhost:3000/user/login/google/callback",
+                // "https://ga05-1.onrender.com/user/login/google/callback",
+                "http://localhost:3000/user/login/google/callback",
         },
         async (accessToken, refreshToken, profile, done) => {
             // Lưu thông tin người dùng vào cơ sở dữ liệu hoặc session
