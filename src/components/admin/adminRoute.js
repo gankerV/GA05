@@ -18,6 +18,13 @@ router.post("/products/add", upload.fields([
     { name: 'sub_image3', maxCount: 1 },
     { name: 'sub_image4', maxCount: 1 },
 ]), admin.createProduct);
+router.post("/products/update/:id", upload.fields([
+    { name: 'photos', maxCount: 1 }, // Chỉ cho phép một ảnh chính
+    { name: 'sub_image1', maxCount: 1 },
+    { name: 'sub_image2', maxCount: 1 },
+    { name: 'sub_image3', maxCount: 1 },
+    { name: 'sub_image4', maxCount: 1 },
+]), admin.updateProduct);
 router.use("/products", admin.getAllProducts);
 
 router.get("/orders", admin.getAllOrders);

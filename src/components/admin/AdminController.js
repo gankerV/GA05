@@ -369,6 +369,56 @@ class AdminController {
         }
     }
 
+    // [POST] '/admin/products/update/:id'
+    async updateProduct(req, res) {
+        const productId = req.params.id;
+        const { product_name, price, category, brand, size, color, rating, description, product_status } = req.body;
+        const { photos, sub_image1, sub_image2, sub_image3, sub_image4 } = req.files;
+
+        try {
+            // Tìm sản phẩm theo ID
+            const product = await Product.findByPk(productId);
+
+            if (!product) {
+                return res.status(404).json({ message: "Product not found" });
+            }
+
+            // Xử lý hình ảnh chính (photos)
+            let imageFileName = product.image;
+            if (photos && photos.length > 0) {
+                imageFileName = photos[0].filename;
+            }
+
+            // Xử lý ảnh phụ
+            let subImageFileNames = product.subImageFileNames || [];
+            if (sub_image1 && sub_image1.length > 0) subImageFileNames[0] = sub_image1[0].filename;
+            if (sub_image2 && sub_image2.length > 0) subImageFileNames[1] = sub_image2[0].filename;
+            if (sub_image3 && sub_image3.length > 0) subImageFileNames[2] = sub_image3[0].filename;
+            if (sub_image4 && sub_image4.length > 0) subImageFileNames[3] = sub_image4[0].filename;
+
+            // Cập nhật thông tin sản phẩm
+            product.product_name = product_name;
+            product.price = price;
+            product.category = category;
+            product.brand = brand;
+            product.size = size;
+            product.color = color;
+            product.rating = rating;
+            product.description = description;
+            product.product_status = product_status;
+            product.image = imageFileName;
+            product.subImageFileNames = subImageFileNames;
+
+            // Lưu thay đổi vào cơ sở dữ liệu
+            await product.save();
+
+            res.redirect("/admin/products");
+        } catch (error) {
+            console.error("Error updating product:", error);
+            res.status(500).json({ message: "Internal Server Error" });
+        }
+    }
+    
     // [GET] '/admin/orders'
     async getAllOrders(req, res) {
         try {
