@@ -1,6 +1,8 @@
 const { DataTypes, Sequelize } = require("sequelize");
 const { Op } = require("sequelize");
 const sequelize = require("../../config/dataConfig");
+const fs = require("fs");
+const path = require("path");
 
 const Shop = sequelize.define(
     "Shop",
@@ -121,6 +123,86 @@ class ShopModel {
             throw error;
         }
     }
+
+    /**
+     * Truy vấn chi tiết sản phẩm theo ID
+     * @param {Number} productId - ID của sản phẩm
+     * @returns {Object} Chi tiết sản phẩm
+     */
+    static async updateShop(productId, productData) {
+        try {
+            // Tìm sản phẩm theo ID
+            const shop = await Shop.findByPk(productId);
+
+            // Nếu không tìm thấy sản phẩm
+            if (!shop) {
+                return null;
+            }
+             // Kiểm tra và xóa file ảnh nếu có trong dữ liệu cập nhật
+            if (productData.imageFileName === null && shop.imageFileName) {
+                const imagePath = path.join(
+                    __dirname,
+                    "..",
+                    "..",
+                    "..",
+                    "public",
+                    "images",
+                    "products",
+                    shop.imageFileName
+                );
+                fs.unlinkSync(imagePath); // Xóa file ảnh một cách đồng bộ
+            }
+
+            // Cập nhật thông tin sản phẩm
+            await shop.update(productData);
+
+            return shop;
+        } catch (error) {
+            throw error;
+        }
+    }    
+
+    static async deleteShop(productId) {
+        try {
+            // Tìm sản phẩm trong Shop theo ID
+            const shop = await Shop.findByPk(productId);
+    
+            // Nếu không tìm thấy sản phẩm
+            if (!shop) {
+                return null;
+            }
+    
+            // Xóa file ảnh nếu có
+            if (shop.imageFileName) {
+                const imagePath = path.join(
+                    __dirname,
+                    "..",
+                    "..",
+                    "..",
+                    "public",
+                    "images",
+                    "products",
+                    shop.imageFileName
+                );
+    
+                try {
+                    // Xóa file ảnh
+                    fs.unlinkSync(imagePath); // Xóa đồng bộ
+                    console.log("Image file deleted successfully:", imagePath);
+                } catch (err) {
+                    console.error("Error deleting image file:", err);
+                }
+            }
+    
+            // Xóa bản ghi Shop
+            await shop.destroy(); // Xóa bản ghi Shop
+    
+            return shop;
+        } catch (error) {
+            throw error;
+        }
+    }
+    
 }
 
 module.exports = ShopModel;

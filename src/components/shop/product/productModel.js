@@ -328,6 +328,73 @@ class ProductModel {
         }
     }    
 
+    static async updateProduct(productId, productData) {
+        let transaction;
+        try {
+            // Bắt đầu giao dịch (transaction) để đảm bảo tính toàn vẹn dữ liệu
+            transaction = await sequelize.transaction();
+    
+            // Tìm sản phẩm theo ID
+            const product = await Product.findByPk(productId, { transaction });
+    
+            // Nếu không tìm thấy sản phẩm
+            if (!product) {
+                return null;
+            }
+    
+            // Cập nhật thông tin sản phẩm
+            await product.update(productData, { transaction });
+    
+            // Cập nhật thông tin shop
+            await Shop.update(productData, {
+                where: { id: productId },
+                transaction,
+            });
+    
+            // Commit giao dịch
+            await transaction.commit();
+    
+            return product;
+        } catch (error) {
+            // Nếu có lỗi, rollback giao dịch
+            await transaction.rollback();
+            throw error;
+        }
+    }
+
+    static async deleteProduct(productId) {
+        let transaction;
+        try {
+            // Bắt đầu giao dịch (transaction) để đảm bảo tính toàn vẹn dữ liệu
+            transaction = await sequelize.transaction();
+    
+            // Tìm sản phẩm trong Product theo ID
+            const product = await Product.findByPk(productId, { transaction });
+    
+            // Nếu không tìm thấy sản phẩm
+            if (!product) {
+                return null;
+            }
+    
+            // Xóa các ảnh phụ trong bảng sub_images
+            await SubImage.destroy({
+                where: { shop_id: productId },
+                transaction,
+            });
+    
+            // Xóa bản ghi trong bảng Product
+            await Product.destroy({ where: { id: productId }, transaction });
+    
+            // Commit giao dịch
+            await transaction.commit();
+    
+            return product;
+        } catch (error) {
+            // Nếu có lỗi, rollback giao dịch
+            await transaction.rollback();
+            throw error;
+        }
+    }
 }
 
 module.exports = ProductModel;

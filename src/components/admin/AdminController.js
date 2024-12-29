@@ -1,5 +1,6 @@
 const { User } = require("../user/userModel"); 
 const Product = require("../shop/product/productModel"); 
+const Shop = require("../shop/shopModel");
 const profileModel = require("../user/profile/profileModel");
 const Sequelize = require("sequelize");
 
@@ -372,45 +373,42 @@ class AdminController {
     // [POST] '/admin/products/update/:id'
     async updateProduct(req, res) {
         const productId = req.params.id;
-        const { product_name, price, category, brand, size, color, rating, description, product_status } = req.body;
-        const { photos, sub_image1, sub_image2, sub_image3, sub_image4 } = req.files;
+        const { product_name, price, category, brand, size, delete_image, description, product_status } = req.body;
+        const { photos} = req.files;
 
         try {
-            // Tìm sản phẩm theo ID
-            const product = await Product.findByPk(productId);
+            // Chuẩn bị các trường để cập nhật
+            const updateFields = {};
 
-            if (!product) {
-                return res.status(404).json({ message: "Product not found" });
+            // Chỉ thêm các trường có giá trị vào updateFields
+            if (product_name) updateFields.product_name = product_name;
+            if (price) updateFields.price = price;
+            if (category) updateFields.category = category;
+            if (brand) updateFields.brand = brand;
+            if (size) updateFields.size = size;
+            if (description) updateFields.description = description;
+            if (product_status) updateFields.product_status = product_status;
+
+            // Nếu yêu cầu xóa ảnh
+            if (delete_image === "1") {
+                updateFields.imageFileName = null; // Đặt lại tên ảnh
             }
 
-            // Xử lý hình ảnh chính (photos)
-            let imageFileName = product.image;
+            // Nếu có ảnh mới được tải lên
             if (photos && photos.length > 0) {
-                imageFileName = photos[0].filename;
+                updateFields.imageFileName = photos[0].filename; // Lưu tên ảnh mới
             }
 
-            // Xử lý ảnh phụ
-            let subImageFileNames = product.subImageFileNames || [];
-            if (sub_image1 && sub_image1.length > 0) subImageFileNames[0] = sub_image1[0].filename;
-            if (sub_image2 && sub_image2.length > 0) subImageFileNames[1] = sub_image2[0].filename;
-            if (sub_image3 && sub_image3.length > 0) subImageFileNames[2] = sub_image3[0].filename;
-            if (sub_image4 && sub_image4.length > 0) subImageFileNames[3] = sub_image4[0].filename;
+            await Shop.updateShop(productId, updateFields);
 
-            // Cập nhật thông tin sản phẩm
-            product.product_name = product_name;
-            product.price = price;
-            product.category = category;
-            product.brand = brand;
-            product.size = size;
-            product.color = color;
-            product.rating = rating;
-            product.description = description;
-            product.product_status = product_status;
-            product.image = imageFileName;
-            product.subImageFileNames = subImageFileNames;
+            // Nếu sản phẩm có chi tiết trong bảng Product
+            if (description || product_status) {
+                const productUpdateFields = {};
+                if (description) productUpdateFields.description = description;
+                if (product_status) productUpdateFields.product_status = product_status;
 
-            // Lưu thay đổi vào cơ sở dữ liệu
-            await product.save();
+                await Product.updateProduct(productId, productUpdateFields);
+            }
 
             res.redirect("/admin/products");
         } catch (error) {
@@ -418,7 +416,26 @@ class AdminController {
             res.status(500).json({ message: "Internal Server Error" });
         }
     }
-    
+
+    // [POST] '/admin/products/delete/:id'
+    async deleteProduct(req, res) {
+        const productId = req.params.id;
+
+        try {
+            console.log("Deleting product:", productId);
+            // Xóa sản phẩm theo ID
+            await Product.deleteProduct(productId);
+
+            await Shop.deleteShop(productId);
+
+            // Trả về phản hồi thành công
+            res.redirect("/admin/products");
+        } catch (error) {
+            console.error("Error deleting product:", error);
+            res.status(500).json({ message: "Internal Server Error" });
+        }
+    }
+
     // [GET] '/admin/orders'
     async getAllOrders(req, res) {
         try {

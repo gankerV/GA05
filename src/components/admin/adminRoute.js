@@ -25,6 +25,7 @@ router.post("/products/update/:id", upload.fields([
     { name: 'sub_image3', maxCount: 1 },
     { name: 'sub_image4', maxCount: 1 },
 ]), admin.updateProduct);
+router.post("/products/delete/:id", admin.deleteProduct);
 router.use("/products", admin.getAllProducts);
 
 router.get("/orders", admin.getAllOrders);
