@@ -395,7 +395,7 @@
     button.addEventListener("click", function () {
       const productId = this.id.replace("update-button-", ""); // Lấy id sản phẩm từ nút
       const formContainer = document.getElementById(`product-update-container-${productId}`); // Form liên kết với sản phẩm
-      console.log(formContainer);
+
       // Hiện hoặc ẩn form liên quan
       if (formContainer.classList.contains("hidden")) {
         formContainer.classList.remove("hidden");

@@ -439,8 +439,13 @@ class AdminController {
     // [GET] '/admin/orders'
     async getAllOrders(req, res) {
         try {
-            // Trả về giao diện với dữ liệu
-            res.render("order_management");
+            // Fetch orders from your database or any data source
+            
+
+            const orders = await Order.find(); // Replace with your actual database call
+
+            // Render the 'order_management' view and pass the orders data to it
+            res.render("order_management", { orders });
         } catch (error) {
             console.error("Error fetching orders:", error);
             res.status(500).json({ message: "Internal Server Error" });

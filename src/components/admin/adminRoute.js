@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const upload = require('../../config/upload'); 
+const ordersRoute = require("../shop/orders/orderRoute");
 
 const admin = require("./AdminController");
 
@@ -28,7 +29,7 @@ router.post("/products/update/:id", upload.fields([
 router.post("/products/delete/:id", admin.deleteProduct);
 router.use("/products", admin.getAllProducts);
 
-router.get("/orders", admin.getAllOrders);
+router.use("/orders", ordersRoute);
 
 router.use("/", admin.index);
 
