@@ -1,5 +1,6 @@
 // OrderController.js
 const orderModel = require('./orderModel');
+const {User} = require('../../user/userModel');
 
 // [GET] /admin/orders
 class OrderController {
@@ -25,7 +26,7 @@ class OrderController {
             where: whereCondition,
             order: [["order_date", sortOrder || "DESC"]],
         });
-        
+
         // Chuyển đổi dữ liệu Sequelize thành dữ liệu thuần túy
         const plainOrders = orders.rows.map(order => order.get({ plain: true }));
         

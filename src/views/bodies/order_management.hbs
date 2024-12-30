@@ -60,17 +60,81 @@
         <td class="border border-gray-300 px-4 py-2">${{total_amount}}</td>
         <td class="border border-gray-300 px-4 py-2 text-center">
           <div class="flex justify-center space-x-4">
-            <a href="/admin/order/{{order_id}}" class="text-blue-600 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 px-3 py-1 rounded-lg transition-all duration-200">View</a>
-            <a href="/admin/order/edit/{{order_id}}" class="text-blue-600 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 px-3 py-1 rounded-lg transition-all duration-200">Change status</a>
+            <button 
+              class="text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 px-4 py-2 rounded-lg transition-all duration-200 transform hover:scale-105"
+              onclick="showOrderDetails({{order_id}},'{{user_id}}', '{{order_status}}', '{{order_date}}', {{total_amount}}, '{{shipping_address}}', '{{payment_status}}')">
+              View
+          </button>
+            <button 
+              onclick="openChangeStatusModal({{order_id}})" 
+              class="text-blue-600 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 px-3 py-1 rounded-lg transition-all duration-200">
+              Change status
+          </button>
           </div>
         </td>
       </tr>
+      
+      <!-- Phần tử ẩn chứa thông tin đơn hàng -->
+      <!-- Modal (ẩn khi chưa nhấn) -->
+      <div id="orderModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center hidden">
+          <div class="bg-white p-6 rounded-lg shadow-lg w-2/5 max-h-[80vh] overflow-auto relative">
+              <h3 class="text-xl font-semibold mb-4">Order Details</h3>
+              
+              <!-- Nút đóng ở góc trên bên phải -->
+              <button onclick="closeModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl font-semibold focus:outline-none">
+                  &times; <!-- Dấu "x" -->
+              </button>
+              
+              <p id="orderInfo"></p>
+          </div>
+      </div>
       {{/each}}
     </tbody>
   </table>
 </div>
 
 <script>
+ // Hiển thị thông tin đơn hàng trong modal
+  function showOrderDetails(orderId, user_id, order_status, order_date, total_amount, shipping_address, payment_status) {
+      // Giả lập lấy thông tin đơn hàng từ API hoặc dữ liệu đã có
+      const orderDetails = {
+          order_id: orderId,
+          user_id: user_id,
+          order_status: order_status,
+          order_date: order_date,
+          total_amount: total_amount,
+          shipping_address: shipping_address,
+          payment_status: payment_status
+      };
+      
+      // Tạo nội dung modal
+      const orderInfoElement = document.getElementById('orderInfo');
+      const orderModal = document.getElementById('orderModal');
+      
+      // Chuyển đổi thông tin đơn hàng thành chuỗi HTML
+      const orderDetailsHTML = `
+          <strong>Order ID:</strong> ${orderDetails.order_id}<br>
+          <strong>User ID:</strong> ${orderDetails.user_id}<br>
+          <strong>Status:</strong> ${orderDetails.order_status}<br>
+          <strong>Order Date:</strong> ${orderDetails.order_date}<br>
+          <strong>Total Amount:</strong> ${orderDetails.total_amount}<br>
+          <strong>Shipping Address:</strong> ${orderDetails.shipping_address}<br>
+          <strong>Payment Status:</strong> ${orderDetails.payment_status}
+      `;
+      
+      // Cập nhật thông tin vào modal
+      orderInfoElement.innerHTML = orderDetailsHTML;
+      
+      // Hiển thị modal
+      orderModal.classList.remove('hidden');
+  }
+
+  // Đóng modal
+  function closeModal() {
+      const orderModal = document.getElementById('orderModal');
+      orderModal.classList.add('hidden');
+  }
+
   // Function to get query parameters from the URL
   function getQueryParams() {
     const params = new URLSearchParams(window.location.search);

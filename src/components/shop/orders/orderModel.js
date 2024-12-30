@@ -1,6 +1,6 @@
 const { DataTypes, Sequelize } = require("sequelize");
 const sequelize = require("../../../config/dataConfig");
-const User = require('../../user/userModel');
+
 
 const Order = sequelize.define('Order', {
     order_id: {
@@ -41,8 +41,6 @@ const Order = sequelize.define('Order', {
     timestamps: false,
 });
 
-//Order.belongsTo(User, { foreignKey: 'user_id' });
-
 class OrderModel {
     // Get orders with pagination, filtering, and sorting
     async getOrders({ limit, offset, where, order }) {
@@ -59,30 +57,12 @@ class OrderModel {
         }
     }
 
-    // Get order by ID
-    async getOrderById(orderId) {
-        try {
-            return await Order.findOne({
-                where: { order_id: orderId },
-                include: [
-                    {
-                        model: User,
-                        attributes: ['id', 'username', 'email'],
-                    },
-                ],
-            });
-        } catch (error) {
-            console.error("Error fetching order:", error);
-            return null;
-        }
-    }
-
     // Update order status
-    async updateOrderStatus(orderId, status) {
+    async updateOrderStatus(userId, status) {
         try {
             const [updated] = await Order.update(
                 { order_status: status },
-                { where: { order_id: orderId } }
+                { where: { user_id: userId } }
             );
             return updated > 0; // Return true if update was successful
         } catch (error) {
@@ -90,6 +70,16 @@ class OrderModel {
             return false;
         }
     }
+
+    async getOrderById(id){
+        try {
+            return await Order.findOne({ where: { order_id: id } });
+        } catch (error) {
+            console.error("Error fetching order by ID:", error);
+            return null;
+        }
+    }
+
 }
 
 module.exports = OrderModel;
