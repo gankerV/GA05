@@ -61,19 +61,47 @@
         <td class="border border-gray-300 px-4 py-2 text-center">
           <div class="flex justify-center space-x-4">
             <button 
-              class="text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 px-4 py-2 rounded-lg transition-all duration-200 transform hover:scale-105"
+              class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
               onclick="showOrderDetails({{order_id}},'{{user_id}}', '{{order_status}}', '{{order_date}}', {{total_amount}}, '{{shipping_address}}', '{{payment_status}}')">
               View
-          </button>
+            </button>
+            <!-- Nút Update trạng thái đơn hàng -->
             <button 
-              onclick="openChangeStatusModal({{order_id}})" 
-              class="text-blue-600 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-500 px-3 py-1 rounded-lg transition-all duration-200">
-              Change status
-          </button>
+              id="update-status-{{order_id}}" 
+              class="update-status-button bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" 
+              data-order-id="{{order_id}}">
+              Update Status
+            </button>
           </div>
         </td>
       </tr>
-      
+
+      <!-- Modal -->
+      <div id="update-status-container-{{order_id}}" class="modal fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center">
+        <div class="modal-content bg-white p-6 rounded-lg shadow-lg w-96 max-w-full relative">
+          <!-- Nút đóng modal -->
+          <button onclick="closeUpdateModal({{order_id}})" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl font-semibold focus:outline-none">
+              &times; <!-- Dấu "x" -->
+          </button>
+          <!-- Form thay đổi trạng thái -->
+          <form action="/admin/orders/update_status/{{order_id}}" method="POST">
+            <input type="hidden" name="order_id" value="{{order_id}}">
+            <p>Order ID: {{order_id}}</p>
+            <label for="status" class="block text-gray-700 font-semibold mb-2">Order Status:</label>
+
+            <select name="status" id="status" class="border border-gray-300 rounded-lg px-4 py-2 w-full mb-4">
+              <!-- Tự động chọn trạng thái hiện tại của đơn hàng -->
+              <option value="Pending" {{#if (eq order_status "Pending")}}selected{{/if}}>Pending</option>
+              <option value="Shipped" {{#if (eq order_status "Shipped")}}selected{{/if}}>Shipped</option>
+              <option value="Delivered" {{#if (eq order_status "Delivered")}}selected{{/if}}>Delivered</option>
+              <option value="Cancelled" {{#if (eq order_status "Cancelled")}}selected{{/if}}>Cancelled</option>
+            </select>
+            
+            <button type="submit" class="bg-blue-600 ml-[180px] text-white px-4 py-2 rounded-lg hover:bg-blue-700">Update Status</button>
+          </form>
+        </div>
+      </div>
+
       <!-- Phần tử ẩn chứa thông tin đơn hàng -->
       <!-- Modal (ẩn khi chưa nhấn) -->
       <div id="orderModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center hidden">
@@ -94,6 +122,38 @@
 </div>
 
 <script>
+  // Lấy tất cả các nút Update với lớp 'update-status-button'
+  document.querySelectorAll('.update-status-button').forEach(button => {
+    // Thêm sự kiện click cho từng nút
+    button.addEventListener('click', function() {
+      // Lấy id của đơn hàng từ thuộc tính data-id
+      const orderId = this.dataset.orderId;
+      
+      // Hiển thị modal cập nhật trạng thái đơn hàng
+      const updateStatusContainer = document.getElementById(`update-status-container-${orderId}`);
+      if (updateStatusContainer) {
+        updateStatusContainer.classList.remove('hidden');
+      }
+    });
+  });
+
+  // Đóng modal
+  function closeUpdateModal(order_id) {
+    const updateStatusContainer = document.getElementById(`update-status-container-${order_id}`);
+    if (updateStatusContainer) {
+      updateStatusContainer.classList.add('hidden');
+    }
+  }
+
+  // Thêm sự kiện click vào tất cả các nút đóng modal
+  document.querySelectorAll('.close-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const orderId = this.closest('.modal').id.split('-').pop();  // Lấy orderId từ id của modal
+      closeModal(orderId);
+    });
+  });
+
+
  // Hiển thị thông tin đơn hàng trong modal
   function showOrderDetails(orderId, user_id, order_status, order_date, total_amount, shipping_address, payment_status) {
       // Giả lập lấy thông tin đơn hàng từ API hoặc dữ liệu đã có

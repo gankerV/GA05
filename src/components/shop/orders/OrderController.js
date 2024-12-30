@@ -42,6 +42,25 @@ class OrderController {
       }
   }
 
+    async updateOrderStatus(req, res){
+        const { order_id, status } = req.body;     // Nhận trạng thái từ form
+
+        try {
+            console.log('Updating order status:', order_id, status);
+            const order = new orderModel();
+            const singgleOrder = await order.getOrderById(order_id);  // Lấy đơn hàng từ DB
+            if (singgleOrder) {
+                singgleOrder.order_status = status;  // Cập nhật trạng thái
+                await singgleOrder.save();           // Lưu thay đổi
+                res.redirect('/admin/orders');      // Chuyển hướng về danh sách đơn hàng
+            } else {
+                res.status(404).json({ success: false, message: 'Order not found' });
+            }
+        } catch (error) {
+            console.error('Error updating order status:', error);
+            res.status(500).json({ success: false, message: 'Internal server error' });
+        }
+    }
 } 
 
 module.exports = new OrderController();
