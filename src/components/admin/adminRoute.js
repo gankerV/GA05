@@ -31,6 +31,8 @@ router.use("/products", admin.getAllProducts);
 
 router.use("/orders", ordersRoute);
 
+router.get('/reports', admin.getAllReports);
+
 router.use("/", admin.index);
 
 module.exports = router;

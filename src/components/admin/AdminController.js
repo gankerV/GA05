@@ -2,8 +2,9 @@ const { User } = require("../user/userModel");
 const Product = require("../shop/product/productModel"); 
 const Shop = require("../shop/shopModel");
 const profileModel = require("../user/profile/profileModel");
+const orderModel = require("../shop/orders/orderModel");
 const Sequelize = require("sequelize");
-
+const order = new orderModel();
 allUser = [];
 user_per_page = 10;
 
@@ -436,21 +437,40 @@ class AdminController {
         }
     }
 
-    // [GET] '/admin/orders'
-    async getAllOrders(req, res) {
+    // [GET] '/admin/reports'
+    async getAllReports(req, res) {
         try {
-            // Fetch orders from your database or any data source
-            
+            const time_range = req.query.time_range || "day"; // Mặc định là báo cáo theo ngày
+            const order = new orderModel();
+            // Gọi hàm lấy doanh thu theo ngày
+            if (time_range === "day") {
+                const revenueByDate = await order.getRevenueByDate();
+                console.log(revenueByDate);
+                const topRevenueProducts = await order.getTopRevenueProducts();
+                res.render("report_management", { revenueData: revenueByDate
+                    , topProducts: topRevenueProducts
+                    });
+            } else if (time_range === "week") {
+                // Gọi hàm lấy doanh thu theo tuần
+                const revenueByWeek = await order.getRevenueByWeek();
+                const topRevenueProducts = await order.getTopRevenueProducts();
+                res.render("report_management", { revenueData: revenueByWeek, topProducts: topRevenueProducts });
+            } else if (time_range === "month") {
+                // Gọi hàm lấy doanh thu theo tháng
+                const revenueByMonth = await order.getRevenueByMonth();
+                const topRevenueProducts = await order.getTopRevenueProducts();
+                res.render("report_management", { revenueData: revenueByMonth, topProducts: topRevenueProducts });
+            } else {
+                res.status(400).send("Invalid time range");
+            }
 
-            const orders = await Order.find(); // Replace with your actual database call
-
-            // Render the 'order_management' view and pass the orders data to it
-            res.render("order_management", { orders });
         } catch (error) {
-            console.error("Error fetching orders:", error);
-            res.status(500).json({ message: "Internal Server Error" });
+            console.error("Error fetching reports:", error);
+            res.status(500).send("Internal Server Error");
         }
     }
+
+    
 
 }
 
