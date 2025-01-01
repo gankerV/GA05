@@ -1,6 +1,7 @@
 const passport = require("../../../config/passportConfig");
 
-const AuthController = {
+const 
+AuthController = {
     // Đăng nhập qua Google
     googleAuth: passport.authenticate("google", {
         scope: ["profile", "email"],
