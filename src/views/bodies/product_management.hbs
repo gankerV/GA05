@@ -1,0 +1,511 @@
+<body class="bg-gray-100 min-h-screen">
+  <!-- Main Content -->
+  <main class="container mx-auto my-8 px-4">
+    <!-- Navigation -->
+    <div class="mb-4">
+      <a href="/admin/dashboard" class="text-blue-600 hover:underline">Back to Dashboard</a>
+    </div>
+
+    <!-- Title -->
+    <div class="mb-6">
+      <h1 class="text-2xl font-semibold">Product Management</h1>
+    </div>
+
+    <!-- Filter and Search Controls -->
+    <div class="mb-6">
+      <form action="/admin/products" method="GET" class="flex space-x-4">
+        <h1 class="text-2xl pt-2 font-semibold text-gray-800 mb-2 capitalize flex items-center">Filter:</h1>
+        <select id="category" name="category" class="px-4 py-2 border border-gray-300 rounded-lg">
+          <option value="">All Categories</option>
+          <option value="Men">Men</option>
+          <option value="Women">Women</option>
+        </select>
+
+        <select id="brand" name="brand" class="px-4 py-2 border border-gray-300 rounded-lg">
+          <option value="">All Brands</option>
+          <option value="Nike">Nike</option>
+          <option value="Adidas">Adidas</option>
+          <option value="Puma">Puma</option>
+          <option value="Zara">Zara</option>
+          <option value="Lacoste">Lacoste</option>
+          <option value="Gucci">Gucci</option>
+          <option value="Clarks">Clarks</option>
+        </select>
+
+        <h1 class="text-2xl pt-2 font-semibold text-gray-800 mb-2 capitalize flex items-center">Sort:</h1>
+        <select id="sortBy" name="sortBy" class="px-4 py-2 border border-gray-300 rounded-lg">
+          <option value="id">ID</option>
+          <option value="price">Price</option>
+          <option value="sold_quantity" {{#if (eq sortBy 'sold_quantity')}}selected{{/if}}>Sold</option>
+        </select>
+
+        <select id="sortOrder" name="sortOrder" class="px-4 py-2 border border-gray-300 rounded-lg">
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
+        </select>
+
+        <input id="search" type="text" name="search" placeholder="Search by Keyword" class="px-4 py-2 border border-gray-300 rounded-lg">
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Search</button>
+        <button type="button" onclick="window.location.href = '/admin/products'" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">Clear</button>
+        <div class="flex-grow"></div>
+        <button id="add_product_btn" type="button" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Add Product</button>
+      </form>
+    </div>
+
+    <!-- Add Product Form (Hidden by Default) -->
+    <div id="product_form" class="hidden mt-6 bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-semibold mb-4 text-gray-800">Create a New Product</h2>
+      <form action="/admin/products/add" method="POST"  enctype="multipart/form-data" class="space-y-4">
+        <div>
+          <label for="product_name" class="block text-sm font-medium text-gray-700">Product Name</label>
+          <input type="text" id="product_name" name="product_name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+        </div>
+        <div>
+          <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
+          <input
+            type="number"
+            id="price"
+            name="price"
+            step="0.01"
+            required
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+            min="0.01"
+          />
+          <p id="priceError" class="text-red-500 text-sm hidden">Please enter a valid price greater than 0.</p>
+        </div>
+        <div>
+          <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+          <input id="description" name="description" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg"t>
+        </div>
+        <div>
+            <label for="photos" class="block text-sm font-medium text-gray-700">Upload Main Product Photos</label>
+            <input type="file" id="photos" name="photos" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+        </div>
+        <div>
+          <label for="sub_image" class="block text-sm font-medium text-gray-700">Upload Sub Product Photos</label>
+          <button id="toggle_sub_images" type="button" class="mt-2 text-sm text-blue-600 hover:underline">Add Sub Images</button>
+          
+          <!-- Hidden Sub Image Inputs -->
+          <div id="sub_image_inputs" class="hidden space-y-2 mt-2">
+            <input type="file" id="sub_image" name="sub_image1" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <input type="file" id="sub_image" name="sub_image2" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <input type="file" id="sub_image" name="sub_image3" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <input type="file" id="sub_image" name="sub_image4" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+          </div>
+        </div>
+        <div>
+          <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+          <select id="category" name="category" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <option value="Men">Men</option>
+            <option value="Women">Women</option>
+          </select>
+        </div>
+        <div>
+          <label for="brand" class="block text-sm font-medium text-gray-700">Brand</label>
+          <select id="brand" name="brand" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <option value="Nike">Nike</option>
+            <option value="Adidas">Adidas</option>
+            <option value="Puma">Puma</option>
+            <option value="Zara">Zara</option>
+            <option value="Lacoste">Lacoste</option>
+            <option value="Gucci">Gucci</option>
+            <option value="Clarks">Clarks</option>
+          </select>
+        </div>
+        <div>
+          <label for="size" class="block text-sm font-medium text-gray-700">Size</label>
+          <select id="size" name="size" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+            <option value="XXL">XXL</option>
+          </select>
+        </div>
+        <div>
+          <label for="color" class="block text-sm font-medium text-gray-700">Color</label>
+          <select id="color" name="color" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <option value="Black">Black</option>
+            <option value="White">White</option>
+            <option value="Red">Red</option>
+            <option value="Blue">Blue</option>
+            <option value="Green">Green</option>
+            <option value="Yellow">Yellow</option>
+            <option value="Purple">Purple</option>
+            <option value="Orange">Orange</option>
+            <option value="Pink">Pink</option>
+            <option value="Brown">Brown</option>
+            <option value="Gray">Gray</option>
+          </select>
+        </div>
+        <div>
+          <label for="rating" class="block text-sm font-medium text-gray-700">Rating</label>
+          <select id="rating" name="rating" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <option value="1">1 Star</option>
+            <option value="2">2 Stars</option>
+            <option value="3">3 Stars</option>
+            <option value="4">4 Stars</option>
+            <option value="5">5 Stars</option>
+          </select>
+        </div>
+        <div>
+          <label for="status" class="block text-sm font-medium text-gray-700">Product Status</label>
+          <select id="status" name="status" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+            <option value="in_stock">On Stock</option>
+            <option value="out_of_stock">Out of Stock</option>
+            <option value="suspend">Suspend</option>
+          </select>
+        </div>
+        <div class="flex justify-end">
+          <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Add</button>
+          <button type="button" onclick="document.getElementById('product_form').classList.add('hidden')" class="ml-4 px-6 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">Cancel</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Product Table -->
+    <table class="min-w-full border-collapse border border-gray-300">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="border border-gray-300 px-4 py-2">ID</th>
+          <th class="border border-gray-300 px-4 py-2">Product Name</th>
+          <th class="border border-gray-300 px-4 py-2">Price</th>
+          <th class="border border-gray-300 px-4 py-2">Category</th>
+          <th class="border border-gray-300 px-4 py-2">Size</th>
+          <th class="border border-gray-300 px-4 py-2">Brand</th>
+          <th class="border border-gray-300 px-4 py-2">Image</th>
+          <th class="border border-gray-300 px-4 py-2">Sold</th>
+          <th class="border border-gray-300 px-4 py-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each products}}
+        <tr class="hover:bg-gray-100">
+          <td class="border border-gray-300 px-4 py-2">{{id}}</td>
+          <td class="border border-gray-300 px-4 py-2">{{Shop.product_name}}</td>
+          <td class="border border-gray-300 px-4 py-2">${{Shop.price}}</td>
+          <td class="border border-gray-300 px-4 py-2">{{Shop.category}}</td>
+          <td class="border border-gray-300 px-4 py-2">{{Shop.size}}</td>
+          <td class="border border-gray-300 px-4 py-2">{{Shop.brand}}</td>
+          <td class="border border-gray-300 px-4 py-2">
+            <img src="/public/images/products/{{Shop.imageFileName}}" alt="{{Shop.product_name}}" class="w-16 h-16 object-cover rounded">
+          </td>
+          <td class="border border-gray-300 px-4 py-2">{{sold_quantity}}</td>
+          <td class="border border-gray-300 px-4 py-2 flex justify-center">
+            <!-- Delete Button -->
+            <form id="deleteForm-{{id}}" action="/admin/products/delete/{{id}}" method="POST" class="inline">
+              <button type="button" onclick="showDeleteModal({{id}})" class="text-red-600 hover:underline">Delete</button>
+            </form>
+            <button id="update-button-{{id}}" class="ml-4 text-green-600 hover:underline">
+              Update
+            </button>
+          </td>
+        </tr>
+        <div id="product-update-container-{{id}}" class="p-4 border border-black hidden">
+          <h1 class="text-2xl font-semibold mb-4 text-gray-800">Update Product</h1>
+          <form action="/admin/products/update/{{id}}" method="POST" enctype="multipart/form-data" class="space-y-4">
+              <!-- Tên sản phẩm -->
+              <div>
+                <label for="product_name" class="block text-sm font-medium text-gray-700">Product Name</label>
+                <input 
+                  type="text" 
+                  id="product_name" 
+                  name="product_name" 
+                  value="{{Shop.product_name}}" 
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                  onfocus="clearPlaceholder(this)" 
+                  onblur="restorePlaceholder(this)">
+              </div>
+              <!-- Ảnh sản phẩm -->
+              <div>
+                <h2 class="text-xs font-semibold mt-2 text-gray-800">Current main image</h2>
+                <div class="mb-4">
+                  <!-- Current Image -->
+                  <img src="/public/images/products/{{Shop.imageFileName}}" alt="{{Shop.product_name}}" class="w-16 h-16 object-cover rounded mb-1">
+                  <!-- Delete Image Button -->
+                  <select name="delete_image" class="text-sm px-2 py-2 border border-gray-300 rounded-lg">
+                    <option value="0">Keep/Change Current Image</option>
+                    <option value="1">Delete Current Image</option>
+                  </select>
+                </div>
+
+                <label for="photos" class="block text-sm font-medium text-gray-700 mt-4">Change Main Product Photo</label>
+                <input 
+                  type="file" 
+                  id="photos" 
+                  name="photos" 
+                  accept="image/*" 
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+              </div>
+              <!-- Giá sản phẩm -->
+              <div>
+                <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
+                <input 
+                  type="number" 
+                  id="price" 
+                  name="price" 
+                  step="0.01" 
+                  value="{{Shop.price}}" 
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg" 
+                  onfocus="clearPlaceholder(this)" 
+                  onblur="restorePlaceholder(this)">
+                  <p id="priceUpdateError" class="text-red-500 text-sm hidden">Please enter a valid price greater than 0.</p>
+              </div>
+              <!-- Danh mục sản phẩm -->
+              <div>
+                <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+                <select 
+                  id="category" 
+                  name="category" 
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                  <option value="Men" {{#if (eq Shop.category "Men")}}selected{{/if}}>Men</option>
+                  <option value="Women" {{#if (eq Shop.category "Women")}}selected{{/if}}>Women</option>
+                </select>
+              </div>
+              <!-- Kích thước -->
+              <div>
+                <label for="size" class="block text-sm font-medium text-gray-700">Size</label>
+                <select 
+                  id="size" 
+                  name="size" 
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                  <option value="S" {{#if (eq Shop.size "S")}}selected{{/if}}>S</option>
+                  <option value="M" {{#if (eq Shop.size "M")}}selected{{/if}}>M</option>
+                  <option value="L" {{#if (eq Shop.size "L")}}selected{{/if}}>L</option>
+                  <option value="XL" {{#if (eq Shop.size "XL")}}selected{{/if}}>XL</option>
+                  <option value="XXL" {{#if (eq Shop.size "XXL")}}selected{{/if}}>XXL</option>
+                </select>
+              </div>
+
+              <!-- Thương hiệu -->
+              <div>
+                <label for="brand" class="block text-sm font-medium text-gray-700">Brand</label>
+                <select 
+                  id="brand" 
+                  name="brand" 
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                  <option value="Nike" {{#if (eq Shop.brand "Nike")}}selected{{/if}}>Nike</option>
+                  <option value="Adidas" {{#if (eq Shop.brand "Adidas")}}selected{{/if}}>Adidas</option>
+                  <option value="Puma" {{#if (eq Shop.brand "Puma")}}selected{{/if}}>Puma</option>
+                  <option value="Zara" {{#if (eq Shop.brand "Zara")}}selected{{/if}}>Zara</option>
+                  <option value="Lacoste" {{#if (eq Shop.brand "Lacoste")}}selected{{/if}}>Lacoste</option>
+                  <option value="Gucci" {{#if (eq Shop.brand "Gucci")}}selected{{/if}}>Gucci</option>
+                  <option value="Clarks" {{#if (eq Shop.brand "Clarks")}}selected{{/if}}>Clarks</option>
+                </select>
+              </div>
+              <!-- Mô tả sản phẩm -->
+              <div>
+                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                <textarea 
+                  id="description" 
+                  name="description" 
+                  rows="3" 
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg">{{description}}</textarea>
+              </div>
+              <!-- Trạng thái sản phẩm -->
+              <div>
+                <label for="product_status" class="block text-sm font-medium text-gray-700">Product Status</label>
+                <select 
+                  id="product_status" 
+                  name="product_status" 
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                  <option value="In Stock" {{#if (eq product_status "In Stock")}}selected{{/if}}>In Stock</option>
+                  <option value="Out Of Stock" {{#if (eq product_status "Out Of Stock")}}selected{{/if}}>Out Of Stock</option>
+                </select>
+              </div>
+
+              <div class="m-4 flex justify-end">
+                <!-- Nút cancel -->
+                <button type="button" onclick="document.getElementById('product-update-container-{{id}}').classList.add('hidden')" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">Cancel</button>
+                <!-- Nút update -->
+                <button type="submit" class="ml-5 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Update Product</button>
+              </div>
+            </form>
+        </div>
+        <!-- Delete Confirmation Modal -->
+        <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center hidden">
+          <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
+            <h2 class="text-lg font-semibold mb-4">Are you sure you want to delete this product?</h2>
+            <div class="flex justify-end space-x-4">
+              <button id="cancelDelete" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">Cancel</button>
+              <button id="confirmDelete" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Delete</button>
+            </div>
+          </div>
+        </div>
+        {{/each}}
+      </tbody>
+    </table>
+
+   <!-- Pagination -->
+    <div class="flex justify-center mt-4 space-x-2">
+      {{#if (gt currentPage 1)}}
+        <a href="#" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400" onclick="goToPage({{subtract currentPage 1}})">Previous</a>
+      {{/if}}
+
+      {{#each (range 1 totalPages)}}
+        <a href="#" class="px-4 py-2 {{#if (eq this ../currentPage)}}bg-blue-600 text-white{{else}}bg-gray-300 hover:bg-gray-400{{/if}} rounded" onclick="goToPage({{this}})">
+          {{this}}
+        </a>
+      {{/each}}
+
+      {{#if (lt currentPage totalPages)}}
+        <a href="#" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400" onclick="goToPage({{add currentPage 1}})">Next</a>
+      {{/if}}
+    </div>
+  </main>
+</body>
+<script>
+
+  let productIdToDelete = null;
+
+  // Show modal and set the product ID to delete
+  function showDeleteModal(productId) {
+    productIdToDelete = productId; // Set the product ID to be deleted
+    document.getElementById('deleteModal').classList.remove('hidden'); // Show modal
+  }
+
+  // Cancel the deletion and hide modal
+  document.getElementById('cancelDelete').addEventListener('click', function() {
+    document.getElementById('deleteModal').classList.add('hidden'); // Hide modal
+  });
+
+  // Confirm deletion
+  document.getElementById('confirmDelete').addEventListener('click', function() {
+    // Submit the delete form using the stored product ID
+    const deleteForm = document.getElementById(`deleteForm-${productIdToDelete}`);
+    deleteForm.submit(); // Submit the form to delete the product
+    document.getElementById('deleteModal').classList.add('hidden'); // Hide modal after deletion
+  });
+  function clearPlaceholder(input) {
+    // Nếu giá trị mặc định trùng với giá trị trong input, hãy xóa nó
+    if (input.value === input.defaultValue) {
+      input.value = '';
+    }
+  }
+
+  function restorePlaceholder(input) {
+    // Nếu người dùng không nhập gì, khôi phục lại giá trị mặc định
+    if (input.value === '') {
+      input.value = input.defaultValue;
+    }
+  }
+
+  // Lấy tất cả các nút Update
+  document.querySelectorAll("[id^='update-button-']").forEach(button => {
+    button.addEventListener("click", function () {
+      const productId = this.id.replace("update-button-", ""); // Lấy id sản phẩm từ nút
+      const formContainer = document.getElementById(`product-update-container-${productId}`); // Form liên kết với sản phẩm
+
+      // Hiện hoặc ẩn form liên quan
+      if (formContainer.classList.contains("hidden")) {
+        formContainer.classList.remove("hidden");
+        // Cuộn đến form
+        formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        formContainer.classList.add("hidden");
+      }
+    });
+  });
+
+// Verify user input for price (sử dụng cho cả form thêm và cập nhật)
+  document.querySelectorAll("[id^='price']").forEach(input => {
+    input.addEventListener("input", function () {
+      const price = parseFloat(this.value);
+      const errorElement = this.nextElementSibling; // Giả sử bạn đặt lỗi ngay sau input
+
+      if (isNaN(price) || price <= 0) {
+        errorElement.classList.remove("hidden");
+        this.classList.add("border-red-500");
+      } else {
+        errorElement.classList.add("hidden");
+        this.classList.remove("border-red-500");
+      }
+    });
+  });
+    // Toggle visibility of Sub Image Inputs
+  document.getElementById('toggle_sub_images').addEventListener('click', function () {
+    const subImageInputs = document.getElementById('sub_image_inputs');
+    subImageInputs.classList.toggle('hidden');
+  });
+  // Toggle visibility of Add Product Form
+  document.getElementById('add_product_btn').addEventListener('click', function () {
+    const productForm = document.getElementById('product_form');
+    productForm.classList.toggle('hidden');
+  });
+
+  function goToPage(page) {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('page', page); // Cập nhật trang
+    window.location.search = urlParams.toString(); // Chuyển hướng với query string mới
+  }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    
+    // Lấy giá trị từ URL
+    const brand = params.get("brand");
+    const sortBy = params.get("sortBy");
+    const sortOrder = params.get("sortOrder");
+    const category = params.get("category");
+    const search = params.get("search");
+
+    // Gán giá trị cho dropdown category
+    if (category) {
+        const categoryElement = document.getElementById("category");
+        categoryElement.value = category;
+    }
+
+    // Gán giá trị cho dropdown brand
+    if (brand) {
+        const brandElement = document.getElementById("brand");
+        brandElement.value = brand;
+    }
+
+    // Gán giá trị cho dropdown sortBy
+    if (sortBy) {
+        const sortByElement = document.getElementById("sortBy");
+        sortByElement.value = sortBy;
+    }
+
+    // Gán giá trị cho dropdown sortOrder
+    if (sortOrder) {
+        const sortOrderElement = document.getElementById("sortOrder");
+        sortOrderElement.value = sortOrder;
+    }
+
+    // Gán giá trị cho ô search
+    if (search) {
+        const searchElement = document.getElementById("search");
+        searchElement.value = search;
+    }
+
+    // Hàm cập nhật URL và tải lại trang
+    const updateURL = () => {
+        const params = new URLSearchParams(window.location.search);
+
+        // Cập nhật giá trị query
+        params.set("sortBy", sortByElement.value);
+        params.set("sortOrder", sortOrderElement.value);
+        params.set("category", categoryElement.value);
+        params.set("brand", brandElement.value);
+        params.set("search", searchElement.value); // Đảm bảo trường search cũng được thêm vào URL
+
+        // Load lại trang với URL mới
+        window.location.search = params.toString();
+    };
+
+    // Lắng nghe sự kiện `change` trên sortBy, sortOrder, category, brand và search
+    const sortByElement = document.getElementById("sortBy");
+    const sortOrderElement = document.getElementById("sortOrder");
+    const categoryElement = document.getElementById("category");
+    const brandElement = document.getElementById("brand");
+    const searchElement = document.getElementById("search");
+
+    sortByElement.addEventListener("change", updateURL);
+    sortOrderElement.addEventListener("change", updateURL);
+    categoryElement.addEventListener("change", updateURL);
+    brandElement.addEventListener("change", updateURL);
+});
+
+
+</script>

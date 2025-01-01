@@ -28,6 +28,29 @@ const Product = sequelize.define(
 );
 Product.belongsTo(Shop, { foreignKey: "id", targetKey: "id" });
 
+const SubImage = sequelize.define("SubImage", {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+    },
+    shop_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    imageFileName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+}, {
+    timestamps: false, // Disable automatic timestamps (`createdAt` and `updatedAt`)
+    tableName: "sub_images", // Name of the table in the database
+});
+
+// Define associations
+Shop.hasMany(SubImage, { foreignKey: "shop_id", as: "subImages" });
+SubImage.belongsTo(Shop, { foreignKey: "shop_id", targetKey: "id" });
+
 const Review = sequelize.define(
     "review",
     {
@@ -176,6 +199,199 @@ class ProductModel {
                 currentPage: parseInt(page, 10),
             };
         } catch (error) {
+            throw error;
+        }
+    }
+
+    static async getAllProducts({ limit, offset, whereConditions, order }) {
+        try {
+            // Mặc định sắp xếp theo "id" nếu không có điều kiện sắp xếp
+            const defaultOrder = [["id", "ASC"]];
+            
+            // Xác định điều kiện sắp xếp (bao gồm sold_quantity)
+            let sortingOrder;
+            if (order && order[0][0] === "sold_quantity") {
+                sortingOrder = [
+                    [
+                        sequelize.literal(`(
+                            SELECT COALESCE(SUM(order_items.quantity), 0)
+                            FROM order_items
+                            INNER JOIN orders ON orders.order_id = order_items.order_id
+                            WHERE order_items.product_id = Product.id
+                            AND orders.order_status = 'Delivered'
+                        )`),
+                        order[0][1] || "ASC" // Sắp xếp ASC hoặc DESC
+                    ]
+                ];
+            } else {
+                sortingOrder = order || defaultOrder;
+            }
+    
+            // Lấy danh sách sản phẩm từ bảng Product kèm thông tin từ bảng Shop
+            const { rows, count } = await Product.findAndCountAll({
+                include: [
+                    {
+                        model: Shop, // Kết hợp bảng Shop
+                        attributes: [
+                            "product_name", 
+                            "price", 
+                            "category", 
+                            "size", 
+                            "color", 
+                            "brand", 
+                            "rating", 
+                            "imageFileName"
+                        ],
+                        required: true, // Chỉ lấy sản phẩm có thông tin trong bảng Shop
+                    }
+                ],
+                attributes: [
+                    "id",
+                    "description",
+                    "product_status",
+                    [
+                        sequelize.literal(`(
+                            SELECT COALESCE(SUM(order_items.quantity), 0)
+                            FROM order_items
+                            INNER JOIN orders ON orders.order_id = order_items.order_id
+                            WHERE order_items.product_id = Product.id
+                            AND orders.order_status = 'Delivered'
+                        )`),
+                        "sold_quantity"
+                    ], // Thêm trường số lượng đã bán
+                ],
+                where: whereConditions, // Lọc theo điều kiện
+                order: sortingOrder,   // Sắp xếp theo điều kiện
+                limit: limit || 8,     // Giới hạn số lượng kết quả mỗi trang
+                offset: offset || 0,   // Vị trí bắt đầu của dữ liệu
+            });
+            
+            // Chuyển đổi dữ liệu
+            return {
+                rows: rows.map((product) => product.toJSON()), // Chuyển các đối tượng Sequelize thành JSON
+                count, // Tổng số sản phẩm
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+    
+    static async create({ product_name, price, category, brand, size, color, rating, description, product_status ,image, subImageFileNames }) {
+        let transaction;
+        try {
+            // Bắt đầu giao dịch (transaction) để đảm bảo tính toàn vẹn dữ liệu
+            transaction = await sequelize.transaction();
+    
+            // Tạo một bản ghi trong bảng shop
+            const shop = await Shop.create({
+                product_name,
+                price,
+                category,
+                brand,
+                size,
+                color,
+                rating,
+                imageFileName: image,  // Tên ảnh chính
+            }, { transaction });
+    
+            // Tạo một bản ghi trong bảng product và liên kết với bảng shop thông qua shop_id
+            const product = await Product.create({
+                description,
+                product_status,
+                id: shop.id, // Liên kết với shop
+            }, { transaction });
+
+            // Nếu có ảnh phụ (subImages), thêm chúng vào bảng sub_images
+            if (subImageFileNames && subImageFileNames.length > 0) {
+
+                const subImageData = subImageFileNames.map(image => ({
+                    imageFileName: image,   // Tên file ảnh phụ
+                    shop_id: shop.id,      // Liên kết ảnh phụ với shop
+                }));
+    
+                // Thêm nhiều ảnh phụ vào bảng sub_images
+                await SubImage.bulkCreate(subImageData, { transaction });
+            }
+    
+            // Commit giao dịch
+            await transaction.commit();
+    
+            // Trả về thông tin sản phẩm bao gồm thông tin từ bảng shop
+            return {
+                product: product.toJSON(),
+                shop: shop.toJSON(),
+            };
+        } catch (error) {
+            // Nếu có lỗi, rollback giao dịch
+            await transaction.rollback();
+            throw error;
+        }
+    }    
+
+    static async updateProduct(productId, productData) {
+        let transaction;
+        try {
+            // Bắt đầu giao dịch (transaction) để đảm bảo tính toàn vẹn dữ liệu
+            transaction = await sequelize.transaction();
+    
+            // Tìm sản phẩm theo ID
+            const product = await Product.findByPk(productId, { transaction });
+    
+            // Nếu không tìm thấy sản phẩm
+            if (!product) {
+                return null;
+            }
+    
+            // Cập nhật thông tin sản phẩm
+            await product.update(productData, { transaction });
+    
+            // Cập nhật thông tin shop
+            await Shop.update(productData, {
+                where: { id: productId },
+                transaction,
+            });
+    
+            // Commit giao dịch
+            await transaction.commit();
+    
+            return product;
+        } catch (error) {
+            // Nếu có lỗi, rollback giao dịch
+            await transaction.rollback();
+            throw error;
+        }
+    }
+
+    static async deleteProduct(productId) {
+        let transaction;
+        try {
+            // Bắt đầu giao dịch (transaction) để đảm bảo tính toàn vẹn dữ liệu
+            transaction = await sequelize.transaction();
+    
+            // Tìm sản phẩm trong Product theo ID
+            const product = await Product.findByPk(productId, { transaction });
+    
+            // Nếu không tìm thấy sản phẩm
+            if (!product) {
+                return null;
+            }
+    
+            // Xóa các ảnh phụ trong bảng sub_images
+            await SubImage.destroy({
+                where: { shop_id: productId },
+                transaction,
+            });
+    
+            // Xóa bản ghi trong bảng Product
+            await Product.destroy({ where: { id: productId }, transaction });
+    
+            // Commit giao dịch
+            await transaction.commit();
+    
+            return product;
+        } catch (error) {
+            // Nếu có lỗi, rollback giao dịch
+            await transaction.rollback();
             throw error;
         }
     }

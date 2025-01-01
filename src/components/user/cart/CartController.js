@@ -37,14 +37,20 @@ class CartController {
                     .json({ error: "User ID and Product ID are required." });
             }
 
-            const addedProduct = await CartModel.addToCart(userId, product_id, quantity || 1);
+            const addedProduct = await CartModel.addToCart(
+                userId,
+                product_id,
+                quantity || 1,
+            );
             return res.status(201).json({
                 message: "Product added to cart successfully.",
                 cartItem: addedProduct,
             });
         } catch (error) {
             console.error("Error adding product to cart:", error);
-            return res.status(500).json({ error: "Failed to add product to cart." });
+            return res
+                .status(500)
+                .json({ error: "Failed to add product to cart." });
         }
     }
 
@@ -75,6 +81,10 @@ class CartController {
             console.error("Error clearing cart:", error);
             return res.status(500).json({ error: "Failed to clear cart." });
         }
+    }
+
+    checkout(req, res) {
+        res.render("checkout");
     }
 }
 

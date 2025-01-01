@@ -20,6 +20,18 @@ const User = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true,
         },
+        access: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true,
+        },
+        registration_time: {
+            type: DataTypes.DATE,
+            defaultValue: Sequelize.NOW,
+        },
+        is_admin: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
         is_google: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
@@ -42,6 +54,22 @@ const User = sequelize.define(
 class UserModel {
     static get User() {
         return User; // Getter cho đối tượng User
+    }
+
+    static async updatePassword(id, { oldPassword, newPassword }) {
+        try {
+            const user = await User.findOne({ where: { id } });
+            const isMatch = await bcryptjs.compare(oldPassword, user.password);
+
+            if (!isMatch) return false;
+
+            user.password = await bcryptjs.hash(newPassword, 10);
+            user.save();
+
+            return true;
+        } catch (error) {
+            throw error;
+        }
     }
 
     static async saveUser(account) {
@@ -71,6 +99,8 @@ class UserModel {
                 activation_token: activationToken, // Lưu token
             });
 
+            const user = User.findOne({ where: { email: Email } });
+
             return activationToken; // Trả về token để gửi email
         } catch (error) {
             throw error;
@@ -91,6 +121,28 @@ class UserModel {
 
             // Cập nhật trạng thái tài khoản
             user.is_active = true;
+            user.activation_token = null; // Xóa token sau khi kích hoạt
+            await user.save();
+
+            return true;
+        } catch (error) {
+            console.error("Lỗi kích hoạt tài khoản:", error);
+            throw error;
+        }
+    }
+
+    static async resetPasswordByToken(token) {
+        try {
+            // Tìm người dùng với activation_token khớp
+            const user = await User.findOne({
+                where: {
+                    activation_token: token,
+                    is_active: true,
+                },
+            });
+
+            if (!user) return false;
+
             user.activation_token = null; // Xóa token sau khi kích hoạt
             await user.save();
 

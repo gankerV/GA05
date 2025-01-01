@@ -116,11 +116,14 @@ async function fetchProducts(page) {
         const urlParams = new URLSearchParams(window.location.search);
         const productName = urlParams.get("product_name") || "";
         const filters = {
-            category: urlParams.get("category") || ""
+            category: urlParams.get("category") || "",
         };
 
         // Sử dụng hàm createQueryString để xây dựng query string
-        const queryString = createQueryString(productName, { ...filters, page });
+        const queryString = createQueryString(productName, {
+            ...filters,
+            page,
+        });
 
         // Fetch dữ liệu từ API
         const response = await fetch(`/shop/api?${queryString}`);
@@ -236,7 +239,7 @@ function attachAddToCartEvents() {
     });
 }
 
-// Hàm xóa cart 
+// Hàm xóa cart
 document.addEventListener("DOMContentLoaded", function () {
     // Attach event listener to the "Empty Cart" button
     const emptyCartButton = document.getElementById("empty-cart-btn");
@@ -249,16 +252,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
 async function emptyCart() {
     try {
-        const response = await fetch("http://localhost:3000/user/cart/clear-product", {
-            method: 'DELETE',
-        });
+        const response = await fetch(
+            "http://localhost:3000/user/cart/clear-product",
+            {
+                method: "DELETE",
+            },
+        );
 
         if (response.ok) {
-            alert('Cart emptied successfully!');
-            window.location.reload();  // Reload the page to reflect changes
+            alert("Cart emptied successfully!");
+            window.location.reload(); // Reload the page to reflect changes
         } else {
             const errorData = await response.json();
-            alert(`Failed to empty cart: ${errorData.message || 'Unknown error'}`);
+            alert(
+                `Failed to empty cart: ${errorData.message || "Unknown error"}`,
+            );
         }
     } catch (error) {
         console.error("Error emptying the cart:", error);
@@ -334,24 +342,29 @@ document.addEventListener("DOMContentLoaded", function () {
     const cartDropdown = cartIcon.querySelector(".group-hover\\:block");
 
     cartIcon.addEventListener("mouseenter", function () {
-        clearTimeout(cartIcon.__timer);
         cartDropdown.classList.remove("hidden");
     });
 
     cartIcon.addEventListener("mouseleave", function () {
-        cartIcon.__timer = setTimeout(() => {
+        setTimeout(() => {
             cartDropdown.classList.add("hidden");
-        }, 1300);
+        }, 500);
+    });
+});
+
+// user
+document.addEventListener("DOMContentLoaded", function () {
+    const userWrapper = document.getElementById("user-wrapper");
+    const userDropdown = document.getElementById("user-dropdown");
+
+    userWrapper.addEventListener("mouseenter", function () {
+        userDropdown.classList.remove("hidden");
     });
 
-    cartDropdown.addEventListener("mouseenter", function () {
-        clearTimeout(cartIcon.__timer);
-    });
-
-    cartDropdown.addEventListener("mouseleave", function () {
-        cartIcon.__timer = setTimeout(() => {
-            cartDropdown.classList.add("hidden");
-        }, 1300);
+    userWrapper.addEventListener("mouseleave", function () {
+        setTimeout(() => {
+            userDropdown.classList.add("hidden");
+        }, 500);
     });
 });
 

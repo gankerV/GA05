@@ -2,28 +2,29 @@
 <section id="register-login-page" class="bg-white py-16">
     <div class="container mx-auto px-4">
         <div class="flex flex-col md:flex-row justify-center">
-            <div class="md:w-1/2 bg-white rounded-lg shadow-md p-4 md:p-10 md:m-10">
+            <div class="md:w-1/3 bg-white rounded-lg shadow-md p-4 md:p-10 md:m-10">
                 <h2 class="text-2xl font-semibold mb-4">Register</h2>
                 <form method="post" action="/user/register">
                     <div class="mb-3">
                         <label for="register-email" class="block">Email</label>
                         <input type="email" id="register-email"
-                            class="w-full px-3 py-1 border focus:border-transparent rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
+                            class="w-full px-3 py-1 border-2 focus:border-transparent rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
                             name="Email" required />
                         <span id="email-error" class="text-red-500 text-sm"></span>
                     </div>
                     <div class="mb-3">
                         <label for="register-password" class="block">Password</label>
                         <input type="password" id="register-password"
-                            class="w-full px-3 py-1 border focus:border-transparent rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
+                            class="w-full px-3 py-1 border-2 focus:border-transparent rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
                             name="Password" required />
+                        <span id="password-error" class="text-red-500 text-sm"></span>
                     </div>
                     <div class="mb-3">
                         <label for="register-confirm-password" class="block">Confirm Password</label>
                         <input type="password" id="register-confirm-password"
-                            class="w-full px-3 py-1 border focus:border-transparent rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
+                            class="w-full px-3 py-1 border-2 focus:border-transparent rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
                             name="Confirm Password" required />
-                        <span id="password-error" class="text-red-500 text-sm"></span>
+                        <span id="confirm-password-error" class="text-red-500 text-sm"></span>
                     </div>
                     <button type="submit"
                         class="bg-primary text-white border border-primary hover:bg-transparent hover:text-primary py-2 px-3 rounded-full w-full">
@@ -42,6 +43,7 @@
         const confirmPasswordField = document.getElementById("register-confirm-password");
         const emailError = document.getElementById("email-error");
         const passwordError = document.getElementById("password-error");
+        const confirmPasswordError = document.getElementById("confirm-password-error");
 
         // Kiểm tra email khi rời khỏi trường
         emailField.addEventListener("blur", async () => {
@@ -61,14 +63,25 @@
             }
         });
 
+        passwordField.addEventListener("blur", () => {
+            const password = passwordField.value.trim();
+            passwordError.textContent = "";
+            if (!(/^(?=.*[A-Za-z])(?=.*\d)/.test(password))) {
+                passwordError.textContent = "Password must include letters and numbers.";
+            }
+            if (password.length < 5) {
+                passwordError.textContent = "Password must be at least 5 letters.";
+            }
+        })
+
         // Kiểm tra confirm password khi rời khỏi trường
         confirmPasswordField.addEventListener("blur", () => {
             const password = passwordField.value.trim();
             const confirmPassword = confirmPasswordField.value.trim();
-            passwordError.textContent = "";
+            confirmPasswordError.textContent = "";
 
             if (password !== confirmPassword) {
-                passwordError.textContent = "Passwords do not match.";
+                confirmPasswordError.textContent = "Passwords do not match.";
             }
         });
 
@@ -82,7 +95,7 @@
             if (emailError.textContent || passwordError.textContent || password !== confirmPassword) {
                 event.preventDefault();
                 if (!emailError.textContent && password !== confirmPassword) {
-                    passwordError.textContent = "Passwords do not match.";
+                    confirmPasswordError.textContent = "Passwords do not match.";
                 }
             }
         });

@@ -1,0 +1,207 @@
+<body class="bg-gray-100 min-h-screen">
+  <!-- Main Content -->
+  <main class="container mx-auto my-8 px-4">
+    <!-- Navigation -->
+    <div class="mb-4">
+      <a href="/admin/dashboard" class="text-blue-600 hover:underline">Back to Dashboard</a>
+    </div>
+
+    <!-- Title -->
+    <div class="mb-6">
+      <h1 class="text-2xl font-semibold">User Management</h1>
+    </div>
+
+    <!-- Filter and Sort Controls -->
+    <div class="mb-6">
+      <form action="/admin/users" method="GET" class="flex space-x-4">
+        <!-- Search by Name and Email -->
+        <input type="text" name="search" placeholder="Search by Name or Email" class="px-4 py-2 border border-gray-300 rounded-lg" value="{{search}}">
+        
+        <!-- Sort by -->
+        <select name="sortBy" class="px-4 py-2 border border-gray-300 rounded-lg">
+          <option value="id" {{#if (eq sortBy "id")}}selected{{/if}}>ID</option>
+          <option value="fullname" {{#if (eq sortBy "fullname")}}selected{{/if}}>Full Name</option>
+          <option value="email" {{#if (eq sortBy "email")}}selected{{/if}}>Email</option>
+          <option value="registration_time" {{#if (eq sortBy "registration_time")}}selected{{/if}}>Registration Time</option>
+        </select>
+        
+        <!-- Sort Order -->
+        <select name="sortOrder" class="px-4 py-2 border border-gray-300 rounded-lg">
+          <option value="asc" {{#if (eq sortOrder "asc")}}selected{{/if}}>Ascending</option>
+          <option value="desc" {{#if (eq sortOrder "desc")}}selected{{/if}}>Descending</option>
+        </select>
+
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Apply</button>
+      </form>
+    </div>
+
+    <!-- User Table -->
+    <table class="min-w-full border-collapse border border-gray-300">
+      <thead>
+          <tr class="bg-gray-200">
+              <th class="border border-gray-300 px-4 py-2">ID</th>
+              <th class="border border-gray-300 px-4 py-2">Full Name</th>
+              <th class="border border-gray-300 px-4 py-2">Email</th>
+              <th class="border border-gray-300 px-4 py-2">Access</th>
+              <th class="border border-gray-300 px-4 py-2">Registration Time</th>
+              <th class="border border-gray-300 px-4 py-2">Actions</th>
+          </tr>
+      </thead>
+      <tbody>
+          {{#each users}}
+          <tr class="hover:bg-gray-100">
+              <td class="border border-gray-300 px-4 py-2">{{this.id}}</td>
+              <td class="border border-gray-300 px-4 py-2">{{this.UserInfo.fullname}}</td>
+              <td class="border border-gray-300 px-4 py-2">{{this.email}}</td>
+              <td class="border border-gray-300 px-4 py-2">
+                  {{#if this.access}}
+                      Yes
+                  {{else}}
+                      No
+                  {{/if}}
+              </td>
+              <td class="border border-gray-300 px-4 py-2">{{this.registration_time}}</td>
+              <td class="border border-gray-300 px-4 py-2 flex justify-center">
+                  {{#if this.access}}
+                    <form id="banForm-{{this.id}}" action="/admin/users/status/{{this.id}}" method="POST" class="inline">
+                      <input type="hidden" name="status" value="ban">
+                      <button type="button" onclick="confirmBan({{this.id}})" class="text-red-600 hover:text-red-800">Ban</button>
+                    </form>
+                  {{else}}
+                    <form id="unbanForm-{{this.id}}" action="/admin/users/status/{{this.id}}" method="POST" class="inline">
+                      <input type="hidden" name="status" value="unban">
+                      <button type="button" onclick="confirmUnban({{this.id}})" class="text-green-600 hover:text-green-800">Unban</button>
+                    </form>
+                  {{/if}}
+
+                  <!-- Confirmation Modal -->
+                  <div id="confirmationModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center">
+                    <div class="bg-white rounded-lg p-6 max-w-md w-full">
+                      <button class="absolute top-4 right-4 text-gray-600 text-xl" onclick="closeModal()">&times;</button>
+                      <h2 class="text-xl font-semibold mb-4">Are you sure?</h2>
+                      <p id="confirmationMessage" class="mb-4">Are you sure you want to perform this action?</p>
+                      <div class="flex justify-end">
+                        <button onclick="closeModal()" class="px-4 py-2 bg-gray-300 rounded mr-2">Cancel</button>
+                        <button id="confirmButton" onclick="submitForm()" class="px-4 py-2 bg-blue-600 text-white rounded">Confirm</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button class="pl-4">
+                    <a href="#" onclick="showUserDetails('{{this.id}}')" class="text-blue-600 hover:underline">Details</a>
+                  </button>
+                  <!-- Modal -->
+                  <div id="userModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center">
+                    <div class="bg-white rounded-lg p-6 max-w-md w-full">
+                      <button class="absolute top-4 right-4 text-gray-600 text-xl" onclick="closeModal()">&times;</button>
+                      <h2 class="text-xl font-semibold mb-4">User Details</h2>
+                      <div id="userDetails"></div>
+                    </div>
+                  </div>
+              </td>
+          </tr>
+          {{/each}}
+      </tbody>
+    </table>
+
+<!-- Pagination -->
+    <div class="flex justify-center mt-4 space-x-2">
+      {{#if (gt currentPage 1)}}
+        <a href="#" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400" onclick="goToPage({{subtract currentPage 1}})">Previous</a>
+      {{/if}}
+
+      {{#each (range 1 totalPages)}}
+        <a href="#" class="px-4 py-2 {{#if (eq this ../currentPage)}}bg-blue-600 text-white{{else}}bg-gray-300 hover:bg-gray-400{{/if}} rounded" onclick="goToPage({{this}})">
+          {{this}}
+        </a>
+      {{/each}}
+
+      {{#if (lt currentPage totalPages)}}
+        <a href="#" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400" onclick="goToPage({{add currentPage 1}})">Next</a>
+      {{/if}}
+    </div>
+  </main>
+</body>
+
+<script>
+
+  function goToPage(page) {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('page', page); // Cập nhật trang
+    window.location.search = urlParams.toString(); // Chuyển hướng với query string mới
+  }
+
+    // Hiển thị modal và tải dữ liệu người dùng
+  function showUserDetails(userId) {
+    // Lấy thông tin người dùng từ server bằng AJAX
+    fetch(`/admin/users/${userId}`)
+      .then(response => response.json())
+      .then(data => {
+        // Kiểm tra nếu data.UserInfo có dữ liệu
+        const userInfo = data.UserInfo || {}; // Default to empty object if no user info
+        
+        // Cập nhật nội dung modal với thông tin người dùng
+        const userDetails = document.getElementById('userDetails');
+        userDetails.innerHTML = `
+          <p><strong>Name:</strong> ${userInfo.fullname || 'N/A'}</p>
+          <p><strong>Email:</strong> ${data.email}</p>
+          <p><strong>Registration Time:</strong> ${new Date(data.registration_time).toLocaleString()}</p>
+          <p><strong>Status:</strong> ${data.access ? 'Active' : 'Banned'}</p>
+          <p><strong>Phone:</strong> ${userInfo.phone || 'N/A'}</p>
+          <p><strong>Date of Birth:</strong> ${userInfo.dob ? new Date(userInfo.dob).toLocaleDateString() : 'N/A'}</p>
+          <p><strong>Gender:</strong> ${userInfo.gender || 'N/A'}</p>
+          <p><strong>Address:</strong> ${userInfo.address || 'N/A'}</p>
+        `;
+        
+        // Hiển thị modal
+        document.getElementById('userModal').classList.remove("hidden");
+      })
+      .catch(error => console.error('Error fetching user details:', error));
+  }
+
+  // Đóng modal khi nhấn vào nút đóng
+  function closeModal() {
+    document.getElementById('userModal').classList.add("hidden");
+  }
+
+  let currentFormId = null;
+
+  function confirmBan(userId) {
+    currentFormId = `banForm-${userId}`;
+    document.getElementById('confirmationMessage').innerText = `Are you sure you want to ban user with ID ${userId}?`;
+    document.getElementById('confirmationModal').classList.remove("hidden");
+  }
+
+  function confirmUnban(userId) {
+    currentFormId = `unbanForm-${userId}`;
+    document.getElementById('confirmationMessage').innerText = `Are you sure you want to unban user with ID ${userId}?`;
+    document.getElementById('confirmationModal').classList.remove("hidden");
+  }
+
+  function closeModal() {
+    document.getElementById('confirmationModal').classList.add("hidden");
+  }
+
+  function submitForm() {
+    const form = document.getElementById(currentFormId);
+    form.submit(); // Submit the form after confirmation
+    closeModal();
+  }
+
+  // Đóng modal khi nhấn ngoài modal
+  window.onclick = function(event) {
+    const confirmationModal = document.getElementById('confirmationModal');
+    const userModal = document.getElementById('userModal');
+
+    // Kiểm tra nếu người dùng nhấn ngoài userModal
+    if (event.target === userModal) {
+      userModal.classList.add("hidden"); // Đóng modal thông tin người dùng
+    }
+
+        // Kiểm tra nếu người dùng nhấn ngoài confirmationModal
+    if (event.target === confirmationModal) {
+      closeModal(); // Đóng modal xác nhận
+    }
+  };
+
+</script>

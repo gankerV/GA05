@@ -1,0 +1,235 @@
+<div class="container mx-auto my-8 px-4">
+    <!-- Navigation -->
+  <div class="mb-4">
+    <a href="/admin/dashboard" class="text-blue-600 hover:underline">Back to Dashboard</a>
+  </div>
+  <!-- Title -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-semibold">User Orders</h1>
+  </div>
+  <form action="/admin/orders" method="GET" id="filterForm">
+    <!-- Filter and Sort Controls -->
+    <div class="flex justify-between items-center space-x-6 bg-gray-100 p-2 rounded-lg shadow-md">
+      <!-- Filter by Status -->
+      <div class="flex items-center space-x-2">
+        <label for="statusFilter" class="text-gray-700 font-semibold">Filter by Status:</label>
+        <select id="statusFilter" name="status" class="border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="">All</option>
+          <option value="pending">Pending</option>
+          <option value="shipped">Shipped</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+
+      <!-- Sort by Order Date -->
+      <div class="flex items-center space-x-2">
+        <label for="sortOrder" class="text-gray-700 font-semibold">Sort by Order Date:</label>
+        <select id="sortOrder" name="sortOrder" class="border border-gray-300 rounded-lg px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
+        </select>
+      </div>
+    </div>
+  </form>
+
+  <!-- Orders Table -->
+  <table class="min-w-full border-collapse border border-gray-300">
+    <thead>
+      <tr class="bg-gray-200">
+        <th class="border border-gray-300 px-4 py-2">Order ID</th>
+        <th class="border border-gray-300 px-4 py-2">User ID</th>
+        <th class="border border-gray-300 px-4 py-2">Order Date</th>
+        <th class="border border-gray-300 px-4 py-2">Order Status</th>
+        <th class="border border-gray-300 px-4 py-2">Total Amount</th>
+        <th class="border border-gray-300 px-4 py-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Duyệt qua danh sách orders -->
+      {{#each orders}}
+      <tr class="hover:bg-gray-100">
+        <td class="border border-gray-300 px-4 py-2">{{order_id}}</td>
+        <td class="border border-gray-300 px-4 py-2">{{user_id}}</td>
+        <td class="border border-gray-300 px-4 py-2">{{order_date}}</td>
+        <td class="border border-gray-300 px-4 py-2">
+          <span class="px-2 py-1 text-sm font-semibold rounded-lg {{order_status}}">
+            {{order_status}}
+          </span>
+        </td>
+        <td class="border border-gray-300 px-4 py-2">${{total_amount}}</td>
+        <td class="border border-gray-300 px-4 py-2 text-center">
+          <div class="flex justify-center space-x-4">
+            <button 
+              class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+              onclick="showOrderDetails({{order_id}},'{{user_id}}', '{{order_status}}', '{{order_date}}', {{total_amount}}, '{{shipping_address}}', '{{payment_status}}')">
+              View
+            </button>
+            <!-- Nút Update trạng thái đơn hàng -->
+            <button 
+              id="update-status-{{order_id}}" 
+              class="update-status-button bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600" 
+              data-order-id="{{order_id}}">
+              Update Status
+            </button>
+          </div>
+        </td>
+      </tr>
+
+      <!-- Modal -->
+      <div id="update-status-container-{{order_id}}" class="modal fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center">
+        <div class="modal-content bg-white p-6 rounded-lg shadow-lg w-96 max-w-full relative">
+          <!-- Nút đóng modal -->
+          <button onclick="closeUpdateModal({{order_id}})" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl font-semibold focus:outline-none">
+              &times; <!-- Dấu "x" -->
+          </button>
+          <!-- Form thay đổi trạng thái -->
+          <form action="/admin/orders/update_status/{{order_id}}" method="POST">
+            <input type="hidden" name="order_id" value="{{order_id}}">
+            <p>Order ID: {{order_id}}</p>
+            <label for="status" class="block text-gray-700 font-semibold mb-2">Order Status:</label>
+
+            <select name="status" id="status" class="border border-gray-300 rounded-lg px-4 py-2 w-full mb-4">
+              <!-- Tự động chọn trạng thái hiện tại của đơn hàng -->
+              <option value="Pending" {{#if (eq order_status "Pending")}}selected{{/if}}>Pending</option>
+              <option value="Shipped" {{#if (eq order_status "Shipped")}}selected{{/if}}>Shipped</option>
+              <option value="Delivered" {{#if (eq order_status "Delivered")}}selected{{/if}}>Delivered</option>
+              <option value="Cancelled" {{#if (eq order_status "Cancelled")}}selected{{/if}}>Cancelled</option>
+            </select>
+            
+            <button type="submit" class="bg-blue-600 ml-[180px] text-white px-4 py-2 rounded-lg hover:bg-blue-700">Update Status</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Phần tử ẩn chứa thông tin đơn hàng -->
+      <!-- Modal (ẩn khi chưa nhấn) -->
+      <div id="orderModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center hidden">
+          <div class="bg-white p-6 rounded-lg shadow-lg w-2/5 max-h-[80vh] overflow-auto relative">
+              <h3 class="text-xl font-semibold mb-4">Order Details</h3>
+              
+              <!-- Nút đóng ở góc trên bên phải -->
+              <button onclick="closeModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl font-semibold focus:outline-none">
+                  &times; <!-- Dấu "x" -->
+              </button>
+              
+              <p id="orderInfo"></p>
+          </div>
+      </div>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+
+<script>
+  // Lấy tất cả các nút Update với lớp 'update-status-button'
+  document.querySelectorAll('.update-status-button').forEach(button => {
+    // Thêm sự kiện click cho từng nút
+    button.addEventListener('click', function() {
+      // Lấy id của đơn hàng từ thuộc tính data-id
+      const orderId = this.dataset.orderId;
+      
+      // Hiển thị modal cập nhật trạng thái đơn hàng
+      const updateStatusContainer = document.getElementById(`update-status-container-${orderId}`);
+      if (updateStatusContainer) {
+        updateStatusContainer.classList.remove('hidden');
+      }
+    });
+  });
+
+  // Đóng modal
+  function closeUpdateModal(order_id) {
+    const updateStatusContainer = document.getElementById(`update-status-container-${order_id}`);
+    if (updateStatusContainer) {
+      updateStatusContainer.classList.add('hidden');
+    }
+  }
+
+  // Thêm sự kiện click vào tất cả các nút đóng modal
+  document.querySelectorAll('.close-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const orderId = this.closest('.modal').id.split('-').pop();  // Lấy orderId từ id của modal
+      closeModal(orderId);
+    });
+  });
+
+
+ // Hiển thị thông tin đơn hàng trong modal
+  function showOrderDetails(orderId, user_id, order_status, order_date, total_amount, shipping_address, payment_status) {
+      // Giả lập lấy thông tin đơn hàng từ API hoặc dữ liệu đã có
+      const orderDetails = {
+          order_id: orderId,
+          user_id: user_id,
+          order_status: order_status,
+          order_date: order_date,
+          total_amount: total_amount,
+          shipping_address: shipping_address,
+          payment_status: payment_status
+      };
+      
+      // Tạo nội dung modal
+      const orderInfoElement = document.getElementById('orderInfo');
+      const orderModal = document.getElementById('orderModal');
+      
+      // Chuyển đổi thông tin đơn hàng thành chuỗi HTML
+      const orderDetailsHTML = `
+          <strong>Order ID:</strong> ${orderDetails.order_id}<br>
+          <strong>User ID:</strong> ${orderDetails.user_id}<br>
+          <strong>Status:</strong> ${orderDetails.order_status}<br>
+          <strong>Order Date:</strong> ${orderDetails.order_date}<br>
+          <strong>Total Amount:</strong> ${orderDetails.total_amount}<br>
+          <strong>Shipping Address:</strong> ${orderDetails.shipping_address}<br>
+          <strong>Payment Status:</strong> ${orderDetails.payment_status}
+      `;
+      
+      // Cập nhật thông tin vào modal
+      orderInfoElement.innerHTML = orderDetailsHTML;
+      
+      // Hiển thị modal
+      orderModal.classList.remove('hidden');
+  }
+
+  // Đóng modal
+  function closeModal() {
+      const orderModal = document.getElementById('orderModal');
+      orderModal.classList.add('hidden');
+  }
+
+  // Function to get query parameters from the URL
+  function getQueryParams() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      status: params.get('status'),
+      sortOrder: params.get('sortOrder'),
+    };
+  }
+
+  // Set the values of the form fields based on the query parameters
+  function setFormValues() {
+    const queryParams = getQueryParams();
+
+    // Set the 'status' dropdown value
+    const statusSelect = document.getElementById('statusFilter');
+    if (queryParams.status) {
+      statusSelect.value = queryParams.status;
+    }
+
+    // Set the 'sortOrder' dropdown value
+    const sortOrderSelect = document.getElementById('sortOrder');
+    if (queryParams.sortOrder) {
+      sortOrderSelect.value = queryParams.sortOrder;
+    }
+  }
+
+  // Add event listener to submit form when the value of select changes
+  const filterForm = document.getElementById('filterForm');
+  const selects = filterForm.querySelectorAll('select');
+  selects.forEach(select => {
+    select.addEventListener('change', function() {
+      filterForm.submit(); // Submit the form when a select value changes
+    });
+  });
+
+  // Call the function to set form values on page load
+  setFormValues();
+</script>
