@@ -445,20 +445,19 @@ class AdminController {
             // Gọi hàm lấy doanh thu theo ngày
             if (time_range === "day") {
                 const revenueByDate = await order.getRevenueByDate();
-                console.log(revenueByDate);
-                const topRevenueProducts = await order.getTopRevenueProducts();
+                const topRevenueProducts = await order.getTopRevenueProductsByDate();
                 res.render("report_management", { revenueData: revenueByDate
                     , topProducts: topRevenueProducts
                     });
             } else if (time_range === "week") {
                 // Gọi hàm lấy doanh thu theo tuần
                 const revenueByWeek = await order.getRevenueByWeek();
-                const topRevenueProducts = await order.getTopRevenueProducts();
+                const topRevenueProducts = await order.getTopRevenueProductsByWeek();
                 res.render("report_management", { revenueData: revenueByWeek, topProducts: topRevenueProducts });
             } else if (time_range === "month") {
                 // Gọi hàm lấy doanh thu theo tháng
                 const revenueByMonth = await order.getRevenueByMonth();
-                const topRevenueProducts = await order.getTopRevenueProducts();
+                const topRevenueProducts = await order.getTopRevenueProductsByMonth();
                 res.render("report_management", { revenueData: revenueByMonth, topProducts: topRevenueProducts });
             } else {
                 res.status(400).send("Invalid time range");

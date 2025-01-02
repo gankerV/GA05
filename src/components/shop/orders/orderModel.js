@@ -198,7 +198,7 @@ class OrderModel {
         }
     }
 
-    async getTopRevenueProducts() {
+    async getTopRevenueProductsByDate() {
         try {
             const topProducts = await OrderItem.findAll({
                 attributes: [
@@ -215,6 +215,14 @@ class OrderModel {
                         attributes: ['product_name'], // Lấy tên sản phẩm từ bảng Shop
                         required: true, // Bắt buộc phải có thông tin từ bảng Shop
                     },
+                    {
+                        model: Order, // Mô hình Order
+                        as: 'order', // Alias được chỉ định trong quan hệ
+                        attributes: [], // Không lấy thông tin từ bảng Order
+                        where: { order_status: 'Delivered',
+                            order_date: sequelize.where(sequelize.fn('DATE', sequelize.col('order_date')), '=', sequelize.literal('CURRENT_DATE'))
+                         }, // Chỉ lấy thông tin từ các đơn hàng đã giao và trong hôm nay
+                    }
                 ],
                 group: ['OrderItem.product_id', 'shop.id'], // Nhóm theo product_id và shop.id
                 order: [[sequelize.literal('total_revenue'), 'DESC']], // Sắp xếp theo tổng doanh thu giảm dần
@@ -228,6 +236,84 @@ class OrderModel {
             return [];
         }
     }     
+
+    async getTopRevenueProductsByWeek() {
+        try {
+            const topProducts = await OrderItem.findAll({
+                attributes: [
+                    'product_id',
+                    [
+                        sequelize.fn('SUM', sequelize.literal('quantity * OrderItem.price')),
+                        'total_revenue',
+                    ],
+                ],
+                include: [
+                    {
+                        model: Shop, // Mô hình Shop
+                        as: 'shop', // Alias được chỉ định trong quan hệ
+                        attributes: ['product_name'], // Lấy tên sản phẩm từ bảng Shop
+                        required: true, // Bắt buộc phải có thông tin từ bảng Shop
+                    },
+                    {
+                        model: Order, // Mô hình Order
+                        as: 'order', // Alias được chỉ định trong quan hệ
+                        attributes: [], // Không lấy thông tin từ bảng Order
+                        where: { order_status: 'Delivered',
+                            order_date: sequelize.where(sequelize.fn('WEEK', sequelize.col('order_date')), '=', sequelize.literal('WEEK(CURRENT_DATE())'))
+                         }, // Chỉ lấy thông tin từ các đơn hàng đã giao và trong tuần này
+                    }
+                ],
+                group: ['OrderItem.product_id', 'shop.id'], // Nhóm theo product_id và shop.id
+                order: [[sequelize.literal('total_revenue'), 'DESC']], // Sắp xếp theo tổng doanh thu giảm dần
+                limit: 5, // Lấy tối đa 5 sản phẩm
+                raw: false, // Sử dụng raw: false để có thể truy cập vào quan hệ
+            });
+    
+            return topProducts;
+        } catch (error) {
+            console.error("Error fetching top revenue products:", error);
+            return [];
+        }
+    }
+
+    async getTopRevenueProductsByMonth() {
+        try {
+            const topProducts = await OrderItem.findAll({
+                attributes: [
+                    'product_id',
+                    [
+                        sequelize.fn('SUM', sequelize.literal('quantity * OrderItem.price')),
+                        'total_revenue',
+                    ],
+                ],
+                include: [
+                    {
+                        model: Shop, // Mô hình Shop
+                        as: 'shop', // Alias được chỉ định trong quan hệ
+                        attributes: ['product_name'], // Lấy tên sản phẩm từ bảng Shop
+                        required: true, // Bắt buộc phải có thông tin từ bảng Shop
+                    },
+                    {
+                        model: Order, // Mô hình Order
+                        as: 'order', // Alias được chỉ định trong quan hệ
+                        attributes: [], // Không lấy thông tin từ bảng Order
+                        where: { order_status: 'Delivered',
+                            order_date: sequelize.where(sequelize.fn('MONTH', sequelize.col('order_date')), '=', sequelize.literal('MONTH(CURRENT_DATE())'))
+                         }, // Chỉ lấy thông tin từ các đơn hàng đã giao và trong tháng này
+                    }
+                ],
+                group: ['OrderItem.product_id', 'shop.id'], // Nhóm theo product_id và shop.id
+                order: [[sequelize.literal('total_revenue'), 'DESC']], // Sắp xếp theo tổng doanh thu giảm dần
+                limit: 5, // Lấy tối đa 5 sản phẩm
+                raw: false, // Sử dụng raw: false để có thể truy cập vào quan hệ
+            });
+    
+            return topProducts;
+        } catch (error) {
+            console.error("Error fetching top revenue products:", error);
+            return [];
+        }
+    }
 
 }
 
