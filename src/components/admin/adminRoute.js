@@ -9,9 +9,6 @@ router.get("/users", admin.getAllAccounts);
 router.get("/users/:id", admin.getAccountDetails);
 router.post("/users/status/:id", admin.updateUserStatus);
 
-router.get("/profile/:id", admin.getAccountProfile);
-router.post("/profile/update/:id", admin.updateAccountProfile);
-
 router.post("/products/add", upload.fields([
     { name: 'photos', maxCount: 1 }, // Chỉ cho phép một ảnh chính
     { name: 'sub_image1', maxCount: 1 },
