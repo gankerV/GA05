@@ -140,6 +140,11 @@
                     </div>
                 </div>
             </div>
+            <!-- admin site -->
+            {{#if user.dataValues.is_admin}}
+            <a href="/admin/dashboard"
+                class="bg-black border border-primary text-primary hover:bg-primary hover:text-white font-semibold px-4 py-2 rounded-full inline-block">Admin site</a>
+            {{/if}}
             {{else}}
             <a href="/user/register"
                 class="bg-primary border border-primary hover:bg-transparent text-white hover:text-primary font-semibold px-4 py-2 rounded-full inline-block">Register</a>
