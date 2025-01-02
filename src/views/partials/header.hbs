@@ -70,7 +70,7 @@
             </div>
             {{#if user}}
             <div class="flex items-center justify-start">
-                <span class="text-white mr-4">Hi, 
+                <span class="text-white mr-4">Hi,
                     {{#if user.dataValues.email}}{{user.dataValues.email}}{{else}}{{user.email}}{{/if}}
                 </span>
 
@@ -94,11 +94,13 @@
             <!-- admin site -->
             {{#if user.dataValues.is_admin}}
             <a href="/admin/dashboard"
-                class="bg-black border border-primary text-primary hover:bg-primary hover:text-white font-semibold px-4 py-2 rounded-full inline-block">Admin site</a>
+                class="bg-black border border-primary text-primary hover:bg-primary hover:text-white font-semibold px-4 py-2 rounded-full inline-block">Admin
+                site</a>
             {{/if}}
-            {{#if user.is_admin}}
+            {{#if user.dataValues.is_admin}}
             <a href="/admin/dashboard"
-                class="bg-black border border-primary text-primary hover:bg-primary hover:text-white font-semibold px-4 py-2 rounded-full inline-block">Admin site</a>
+                class="bg-black border border-primary text-primary hover:bg-primary hover:text-white font-semibold px-4 py-2 rounded-full inline-block">Admin
+                site</a>
             {{/if}}
             {{else}}
             <a href="/user/register"

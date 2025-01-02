@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const ensureAuthenticated = require("./auth/authModel");
+const AuthModel = require("./auth/authModel");
 const userController = require("./UserController");
 const authController = require("./auth/AuthController");
 const cartRouter = require("./cart/cartRoute");
@@ -28,7 +28,7 @@ router.use("/login/identity", userController.findEmail);
 router.post("/change-password", userController.changePassword);
 router.use("/change-password", userController.changePasswordPage);
 
-router.use("/profile", ensureAuthenticated, profileRouter);
-router.use("/cart", ensureAuthenticated, cartRouter);
+router.use("/profile", AuthModel.userAuthenticated, profileRouter);
+router.use("/cart", AuthModel.userAuthenticated, cartRouter);
 
 module.exports = router;

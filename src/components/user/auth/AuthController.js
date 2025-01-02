@@ -42,9 +42,14 @@ const AuthController = {
             req.logIn(user, (err) => {
                 if (err) return next(err);
 
-                // Kiểm tra nếu có một URL trước đó trong session và chuyển hướng về đó
-                const redirectTo = req.session.returnTo || "/"; // Nếu không có URL trước đó, chuyển hướng về home
-                delete req.session.returnTo; // Xóa URL đã lưu sau khi đã chuyển hướng
+                var redirectTo;
+                if (user.is_admin) {
+                    redirectTo = "/admin";
+                } else {
+                    redirectTo = req.session.returnTo || "/"; // Nếu không có URL trước đó, chuyển hướng về home
+                }
+
+                delete req.session.returnTo;
                 res.redirect(redirectTo); // Chuyển hướng về trang yêu cầu
             });
         })(req, res, next); // Gọi hàm passport.authenticate
