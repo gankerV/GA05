@@ -1,4 +1,5 @@
-<!-- Footer -->
+{{#if user.dataValues.is_admin}}
+{{else}}
 <footer class="border-t border-gray-line">
     <!-- Top part -->
     <div class="container mx-auto px-4 py-10">
@@ -99,3 +100,4 @@
         </div>
     </div>
 </footer>
+{{/if}}

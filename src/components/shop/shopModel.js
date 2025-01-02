@@ -1,4 +1,4 @@
-const { DataTypes, Sequelize } = require("sequelize");
+const {Sequelize, DataTypes } = require("sequelize");
 const { Op } = require("sequelize");
 const sequelize = require("../../config/dataConfig");
 const fs = require("fs");

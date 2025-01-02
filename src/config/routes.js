@@ -3,13 +3,13 @@ const aboutRouter = require("../components/about/aboutRoute");
 const userRouter = require("../components/user/userRoute");
 const shopRouter = require("../components/shop/shopRoute");
 const contactRouter = require("../components/contact/contactRoute");
-const ensureAuthenticated = require("../components/user/auth/authModel");
+const AuthModel = require("../components/user/auth/authModel");
 const adminRouter = require("../components/admin/adminRoute");
 
 function route(app) {
-    app.get("/contact", ensureAuthenticated, contactRouter);
+    app.get("/contact", contactRouter);
     app.get("/about", aboutRouter);
-    app.use("/admin", adminRouter);
+    app.use("/admin", AuthModel.adminAuthenticated, adminRouter);
     app.use("/shop", shopRouter);
     app.use("/user", userRouter);
     app.get("/404", homeRouter);

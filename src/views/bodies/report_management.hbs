@@ -1,0 +1,73 @@
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto p-6">
+        <!-- Navigation -->
+        <div class="mb-4">
+            <a href="/admin/dashboard" class="text-blue-600 hover:underline">Back to Dashboard</a>
+        </div>
+        <h1 class="text-2xl font-bold mb-4">Revenue Report</h1>
+
+        <!-- Filter Section -->
+        <form action="/admin/reports" method="GET" id="time-range-form">
+            <div class="filters mb-6">
+                <label for="time-range" class="block text-lg font-medium mb-2">Select Time Range:</label>
+                <select id="time-range" name="time_range" class="p-2 border border-gray-300 rounded-md shadow-sm w-full max-w-sm" onchange="this.form.submit()">
+                    <option value="day" {{#if (eq time_range 'day')}}selected{{/if}}>Day</option>
+                    <option value="week" {{#if (eq time_range 'week')}}selected{{/if}}>Week</option>
+                    <option value="month" {{#if (eq time_range 'month')}}selected{{/if}}>Month</option>
+                </select>
+            </div>
+        </form>
+
+        <div class="report-section mb-8">
+            <h2 class="text-xl font-semibold mb-4">Total Revenue</h2>
+            <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="p-4 text-left font-medium text-gray-600">Date/Week/Month</th>
+                        <th class="p-4 text-left font-medium text-gray-600">Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each revenueData}}
+                    <tr class="border-b border-gray-200">
+                        <td class="p-4">{{this.date_or_period}}</td>
+                        <td class="p-4">${{this.revenue}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="report-section">
+            <h2 class="text-xl font-semibold mb-4">Top Revenue by Product</h2>
+            <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="p-4 text-left font-medium text-gray-600">Product</th>
+                        <th class="p-4 text-left font-medium text-gray-600">Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each topProducts}}
+                    <tr>
+                        <td class="p-4">{{this.dataValues.shop.dataValues.product_name}}</td>
+                        <td class="p-4">${{this.dataValues.total_revenue}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    const timeRange = params.get('time_range');
+    const timeRangeSelect = document.getElementById('time-range');
+    if (timeRange) {
+        timeRangeSelect.value = timeRange;
+    }
+});
+    
+</script>
