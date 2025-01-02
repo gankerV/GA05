@@ -1,5 +1,5 @@
-const { User } = require("../user/userModel"); 
-const Product = require("../shop/product/productModel"); 
+const { User } = require("../user/userModel");
+const Product = require("../shop/product/productModel");
 const Shop = require("../shop/shopModel");
 const profileModel = require("../user/profile/profileModel");
 const orderModel = require("../shop/orders/orderModel");
@@ -23,21 +23,24 @@ class AdminController {
             res.render("admin", {
                 title: "Admin Dashboard",
                 user: req.user,
-
             });
         } catch (error) {
             console.error("Error fetching admin:", error);
             // Xử lý lỗi khi không thể lấy thông tin admin
-            return res.status(500).render("404", { message: "Failed to fetch admin." });
+            return res
+                .status(500)
+                .render("404", { message: "Failed to fetch admin." });
         }
     }
 
-   // [GET] '/admin/profile/:id'
+    // [GET] '/admin/profile/:id'
     async getAccountProfile(req, res) {
         try {
             // Kiểm tra người dùng đã xác thực hay chưa
             if (!req.user || !req.user.dataValues) {
-                return res.status(401).render("404", { message: "Unauthorized access" });
+                return res
+                    .status(401)
+                    .render("404", { message: "Unauthorized access" });
             }
 
             const userId = req.user.dataValues.id;
@@ -47,9 +50,9 @@ class AdminController {
 
             // Kiểm tra nếu không tìm thấy thông tin chi tiết
             if (!profile) {
-                return res
-                    .status(404)
-                    .render("404", { message: "Không tìm thấy thông tin chi tiết người dùng" });
+                return res.status(404).render("404", {
+                    message: "Không tìm thấy thông tin chi tiết người dùng",
+                });
             }
 
             // Chuẩn bị dữ liệu người dùng kèm theo thông tin chi tiết
@@ -75,22 +78,25 @@ class AdminController {
             });
         } catch (error) {
             console.error("Error fetching account profile:", error);
-            res.status(500).render("404", { message: "Lỗi hệ thống. Vui lòng thử lại sau." });
+            res.status(500).render("404", {
+                message: "Lỗi hệ thống. Vui lòng thử lại sau.",
+            });
         }
     }
-
 
     // [POST] '/admin/profile/update/:id'
     async updateAccountProfile(req, res) {
         const userId = req.params.id;
-        const {email, fullname, phone, gender, dob, address } = req.body;
+        const { email, fullname, phone, gender, dob, address } = req.body;
 
         try {
             // Tìm người dùng theo ID
             const user = await User.findByPk(userId);
 
             if (!user) {
-                return res.status(404).render("error", { message: "User not found" });
+                return res
+                    .status(404)
+                    .render("error", { message: "User not found" });
             }
 
             // Cập nhật thông tin cơ bản của người dùng
@@ -110,14 +116,18 @@ class AdminController {
             });
 
             if (!updatedProfile) {
-                return res.status(404).render("error", { message: "Failed to update user profile" });
+                return res.status(404).render("error", {
+                    message: "Failed to update user profile",
+                });
             }
 
             // Chuyển hướng đến trang hồ sơ
             res.redirect(`/admin/profile/${user.id}`);
         } catch (error) {
             console.error("Error updating account profile:", error);
-            return res.status(500).render("error", { message: "Internal Server Error" });
+            return res
+                .status(500)
+                .render("error", { message: "Internal Server Error" });
         }
     }
 
@@ -137,18 +147,26 @@ class AdminController {
             if (search) {
                 whereCondition[Sequelize.Op.or] = [
                     { email: { [Sequelize.Op.like]: `%${search}%` } },
-                    { '$UserInfo.fullname$': { [Sequelize.Op.like]: `%${search}%` } }
+                    {
+                        "$UserInfo.fullname$": {
+                            [Sequelize.Op.like]: `%${search}%`,
+                        },
+                    },
                 ];
             }
-            
+
             // Cấu hình sắp xếp (mặc định là theo `id`)
             const order = [
                 [
-                    Sequelize.col(sortBy === 'fullname' ? 'UserInfo.fullname' : sortBy || 'id'), 
-                    sortOrder === 'desc' ? 'DESC' : 'ASC'
-                ]
+                    Sequelize.col(
+                        sortBy === "fullname"
+                            ? "UserInfo.fullname"
+                            : sortBy || "id",
+                    ),
+                    sortOrder === "desc" ? "DESC" : "ASC",
+                ],
             ];
-            
+
             // Lấy danh sách người dùng với các điều kiện tìm kiếm, lọc, phân trang, và sắp xếp
             const { count, rows: users } = await User.findAndCountAll({
                 attributes: ["id", "email", "access", "registration_time"], // Chọn các trường cần thiết
@@ -156,24 +174,30 @@ class AdminController {
                 limit,
                 offset,
                 order, // Điều kiện sắp xếp
-                include:[
+                include: [
                     {
                         model: profileModel.UserInfo,
-                        attributes: ["fullname", "phone", "dob", "gender", "address"],
-                    }
-                ]
+                        attributes: [
+                            "fullname",
+                            "phone",
+                            "dob",
+                            "gender",
+                            "address",
+                        ],
+                    },
+                ],
             });
 
             // Tính tổng số trang
             const totalPages = Math.ceil(count / limit);
 
             // Chuyển đổi Sequelize instances thành plain objects
-            const plainUsers = users.map(user => user.get({ plain: true }));
+            const plainUsers = users.map((user) => user.get({ plain: true }));
 
             // Render trang quản lý người dùng kèm thông tin phân trang
-            res.render("user_management", { 
-                users: plainUsers, 
-                currentPage: page, 
+            res.render("user_management", {
+                users: plainUsers,
+                currentPage: page,
                 totalPages,
                 search,
                 sortBy,
@@ -188,62 +212,71 @@ class AdminController {
     // [GET] '/admin/users/:id'
     async getAccountDetails(req, res) {
         const userId = req.params.id;
-        
+
         try {
-        const user = await User.findByPk(userId, {
-            attributes: ['id', 'email', 'access', 'registration_time'],
-            include: {
-                model: profileModel.UserInfo,
-                attributes: ['fullname', 'phone', 'dob', 'gender', 'address', 'avatar'],
-            },
-        });
-    
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-    
-        res.json(user);
+            const user = await User.findByPk(userId, {
+                attributes: ["id", "email", "access", "registration_time"],
+                include: {
+                    model: profileModel.UserInfo,
+                    attributes: [
+                        "fullname",
+                        "phone",
+                        "dob",
+                        "gender",
+                        "address",
+                        "avatar",
+                    ],
+                },
+            });
+
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
+
+            res.json(user);
         } catch (error) {
-        console.error("Error fetching user details:", error);
-        res.status(500).json({ message: "Internal Server Error" });
+            console.error("Error fetching user details:", error);
+            res.status(500).json({ message: "Internal Server Error" });
         }
     }
-  
+
     // [POST] '/admin/users/status/:id'
     async updateUserStatus(req, res) {
         const userId = req.params.id;
         const adminID = req.user ? req.user.dataValues.id : null;
-        
-        const { status } = req.body; 
-        try {
-        // Tìm người dùng theo ID
-        const user = await User.findByPk(userId);
-    
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
 
-        if (user.id === adminID) {
-            return res.status(400).json({ error: "You can't ban yourself" });
-        }
-        
-        // Cập nhật trạng thái người dùng
-        if (status === 'ban') {
-            user.access = false; // Đánh dấu người dùng là bị cấm
-        } else if (status === 'unban') {
-            user.access = true; // Đánh dấu người dùng là hoạt động
-        }
-    
-        await user.save(); // Lưu lại thay đổi
-    
-        // Trả về phản hồi thành công
-        res.redirect("/admin/users"); // Quay lại trang quản lý người dùng
+        const { status } = req.body;
+        try {
+            // Tìm người dùng theo ID
+            const user = await User.findByPk(userId);
+
+            if (!user) {
+                return res.status(404).json({ message: "User not found" });
+            }
+
+            if (user.id === adminID) {
+                return res
+                    .status(400)
+                    .json({ error: "You can't ban yourself" });
+            }
+
+            // Cập nhật trạng thái người dùng
+            if (status === "ban") {
+                user.access = false; // Đánh dấu người dùng là bị cấm
+            } else if (status === "unban") {
+                user.access = true; // Đánh dấu người dùng là hoạt động
+            }
+
+            await user.save(); // Lưu lại thay đổi
+
+            // Trả về phản hồi thành công
+            res.redirect("/admin/users"); // Quay lại trang quản lý người dùng
         } catch (error) {
-        console.error("Error updating user status:", error);
-        res.status(500).json({ message: "Internal Server Error" });
+            console.error("Error updating user status:", error);
+            res.status(500).json({ message: "Internal Server Error" });
         }
     }
-    
+
     // [GET] '/admin/products'
     async getAllProducts(req, res) {
         try {
@@ -251,53 +284,57 @@ class AdminController {
             const limit = 8; // Số lượng sản phẩm mỗi trang
             const offset = (page - 1) * limit; // Vị trí bắt đầu
             const { search, sortBy, sortOrder, category, brand } = req.query;
-    
+
             // Điều kiện lọc cơ bản
             const whereCondition = {};
-    
+
             // Lọc theo tên sản phẩm
             if (search) {
-                whereCondition["$Shop.product_name$"] = { [Sequelize.Op.like]: `%${search}%` }; // Tìm theo tên sản phẩm
+                whereCondition["$Shop.product_name$"] = {
+                    [Sequelize.Op.like]: `%${search}%`,
+                }; // Tìm theo tên sản phẩm
             }
-    
+
             // Lọc theo category (trong bảng Shop)
             if (category) {
                 whereCondition["$Shop.category$"] = category; // Sử dụng dấu $ để tham chiếu đến bảng Shop
             }
-    
+
             // Lọc theo brand (trong bảng Shop)
             if (brand) {
                 whereCondition["$Shop.brand$"] = brand; // Sử dụng dấu $ để tham chiếu đến bảng Shop
             }
-    
+
             // Điều kiện sắp xếp (sắp xếp theo sold_quantity nếu có)
-            const sortingOrder = sortBy === "sold_quantity"
-                ? [
-                    [
-                        Sequelize.literal(`(
+            const sortingOrder =
+                sortBy === "sold_quantity"
+                    ? [
+                          [
+                              Sequelize.literal(`(
                             SELECT COALESCE(SUM(order_items.quantity), 0)
                             FROM order_items
                             INNER JOIN orders ON orders.order_id = order_items.order_id
                             WHERE order_items.product_id = Product.id
                             AND orders.order_status = 'Delivered'
                         )`),
-                        sortOrder || "ASC" // Sắp xếp theo sold_quantity
-                    ]
-                ]
-                : [
-                    ["Shop", sortBy || "id", sortOrder || "ASC"] // Sắp xếp theo trường khác từ bảng Shop
-                ];
-    
+                              sortOrder || "ASC", // Sắp xếp theo sold_quantity
+                          ],
+                      ]
+                    : [
+                          ["Shop", sortBy || "id", sortOrder || "ASC"], // Sắp xếp theo trường khác từ bảng Shop
+                      ];
+
             // Gọi phương thức trong model để lấy dữ liệu sản phẩm
-            const { rows: products, count: totalProducts } = await Product.getAllProducts({
-                limit,
-                offset,
-                whereConditions: whereCondition, // Truyền điều kiện lọc
-                order: sortingOrder,
-            });
-    
+            const { rows: products, count: totalProducts } =
+                await Product.getAllProducts({
+                    limit,
+                    offset,
+                    whereConditions: whereCondition, // Truyền điều kiện lọc
+                    order: sortingOrder,
+                });
+
             const totalPages = Math.ceil(totalProducts / limit); // Tổng số trang
-    
+
             // Trả về giao diện với dữ liệu
             res.render("product_management", {
                 products,
@@ -308,16 +345,26 @@ class AdminController {
             console.error("Error fetching products:", error);
             res.status(500).json({ message: "Internal Server Error" });
         }
-    }    
-    
+    }
+
     // [POST] '/admin/products/add'
     async createProduct(req, res) {
-        const { product_name, price, category, brand, size, color, rating, description, product_status } = req.body;
+        const {
+            product_name,
+            price,
+            category,
+            brand,
+            size,
+            color,
+            rating,
+            description,
+            product_status,
+        } = req.body;
         const photos = req.files.photos; // Multer sẽ lưu ảnh chính vào `req.files.photos`
         const subImage1 = req.files.sub_image1; // Ảnh phụ 1
         const subImage2 = req.files.sub_image2; // Ảnh phụ 2
         const subImage3 = req.files.sub_image3; // Ảnh phụ 3
-        const subImage4 = req.files.sub_image4; // Ảnh phụ 4 
+        const subImage4 = req.files.sub_image4; // Ảnh phụ 4
 
         try {
             // Xử lý hình ảnh chính (photos)
@@ -325,13 +372,17 @@ class AdminController {
             if (photos && photos.length > 0) {
                 imageFileName = photos[0].filename; // Lấy tên file ảnh chính (chỉ có một ảnh)
             }
-            
+
             let subImageFileNames = [];
 
-            if (subImage1 && subImage1.length > 0) subImageFileNames.push(subImage1[0].filename);
-            if (subImage2 && subImage2.length > 0) subImageFileNames.push(subImage2[0].filename);
-            if (subImage3 && subImage3.length > 0) subImageFileNames.push(subImage3[0].filename);
-            if (subImage4 && subImage4.length > 0) subImageFileNames.push(subImage4[0].filename);
+            if (subImage1 && subImage1.length > 0)
+                subImageFileNames.push(subImage1[0].filename);
+            if (subImage2 && subImage2.length > 0)
+                subImageFileNames.push(subImage2[0].filename);
+            if (subImage3 && subImage3.length > 0)
+                subImageFileNames.push(subImage3[0].filename);
+            if (subImage4 && subImage4.length > 0)
+                subImageFileNames.push(subImage4[0].filename);
             // Xử lý ảnh phụ (sub_image)
 
             // Tạo sản phẩm mới
@@ -360,8 +411,17 @@ class AdminController {
     // [POST] '/admin/products/update/:id'
     async updateProduct(req, res) {
         const productId = req.params.id;
-        const { product_name, price, category, brand, size, delete_image, description, product_status } = req.body;
-        const { photos} = req.files;
+        const {
+            product_name,
+            price,
+            category,
+            brand,
+            size,
+            delete_image,
+            description,
+            product_status,
+        } = req.body;
+        const { photos } = req.files;
 
         try {
             // Chuẩn bị các trường để cập nhật
@@ -392,7 +452,8 @@ class AdminController {
             if (description || product_status) {
                 const productUpdateFields = {};
                 if (description) productUpdateFields.description = description;
-                if (product_status) productUpdateFields.product_status = product_status;
+                if (product_status)
+                    productUpdateFields.product_status = product_status;
 
                 await Product.updateProduct(productId, productUpdateFields);
             }
@@ -431,32 +492,38 @@ class AdminController {
             // Gọi hàm lấy doanh thu theo ngày
             if (time_range === "day") {
                 const revenueByDate = await order.getRevenueByDate();
-                const topRevenueProducts = await order.getTopRevenueProductsByDate();
-                res.render("report_management", { revenueData: revenueByDate
-                    , topProducts: topRevenueProducts
-                    });
+                const topRevenueProducts =
+                    await order.getTopRevenueProductsByDate();
+                res.render("report_management", {
+                    revenueData: revenueByDate,
+                    topProducts: topRevenueProducts,
+                });
             } else if (time_range === "week") {
                 // Gọi hàm lấy doanh thu theo tuần
                 const revenueByWeek = await order.getRevenueByWeek();
-                const topRevenueProducts = await order.getTopRevenueProductsByWeek();
-                res.render("report_management", { revenueData: revenueByWeek, topProducts: topRevenueProducts });
+                const topRevenueProducts =
+                    await order.getTopRevenueProductsByWeek();
+                res.render("report_management", {
+                    revenueData: revenueByWeek,
+                    topProducts: topRevenueProducts,
+                });
             } else if (time_range === "month") {
                 // Gọi hàm lấy doanh thu theo tháng
                 const revenueByMonth = await order.getRevenueByMonth();
-                const topRevenueProducts = await order.getTopRevenueProductsByMonth();
-                res.render("report_management", { revenueData: revenueByMonth, topProducts: topRevenueProducts });
+                const topRevenueProducts =
+                    await order.getTopRevenueProductsByMonth();
+                res.render("report_management", {
+                    revenueData: revenueByMonth,
+                    topProducts: topRevenueProducts,
+                });
             } else {
                 res.status(400).send("Invalid time range");
             }
-
         } catch (error) {
             console.error("Error fetching reports:", error);
             res.status(500).send("Internal Server Error");
         }
     }
-
-    
-
 }
 
 module.exports = new AdminController();
