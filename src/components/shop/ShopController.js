@@ -3,29 +3,31 @@ const Shop = require("./shopModel");
 
 // Biến toàn cục để lưu danh sách sản phẩm sau khi filter hoặc search
 let allProducts = [];
+const itemsPerPage = 6; // Số sản phẩm trên mỗi trang
 
 class ShopController {
     // [GET] '/shop'
     async index(req, res) {
         try {
-            // Nếu danh sách sản phẩm chưa được tải, truy vấn từ database
-            if (allProducts.length === 0) {
-                const { category, size, color, brand, rating, product_name } =
-                    req.query;
-
-                allProducts = await Shop.getProducts({
-                    category,
-                    size,
-                    color,
-                    brand,
-                    rating,
-                    product_name, // Tham số tìm kiếm
-                });
-            }
+            const page = parseInt(req.query.page, 10) || 1; // Trang hiện tại (mặc định là 1)
+            const { category, size, color, brand, rating, product_name } = req.query;
+            // Tính offset và limit
+            const offset = (page - 1) * itemsPerPage;
+            const limit = itemsPerPage;
+            
+            // luôn truy vấn dữ liệu ở lần đầu truy cập trang web
+            allProducts = await Shop.getProducts({
+                category,
+                size,
+                color,
+                brand,
+                rating,
+                product_name, // Tham số tìm kiếm
+            });
+            
 
             // Render tối đa 6 sản phẩm đầu tiên
-            const productsToRender = allProducts.slice(0, itemsPerPage);
-
+            const productsToRender = allProducts.slice(offset, offset + limit);
             res.render("shop", { shop: productsToRender });
         } catch (error) {
             console.error("Lỗi khi lấy sản phẩm:", error);
@@ -35,7 +37,7 @@ class ShopController {
 
     async pagination(req, res) {
         try {
-            
+            console.log(req.query);
             const page = parseInt(req.query.page, 10) || 1; // Trang hiện tại (mặc định là 1)
             const { category, size, color, brand, rating, product_name } = req.query;
             // Tính offset và limit

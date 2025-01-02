@@ -117,11 +117,15 @@ async function fetchProducts(page) {
         const productName = urlParams.get("product_name") || "";
         const filters = {
             category: urlParams.get("category") || "",
+            size: urlParams.get("size") || "",
+            color: urlParams.get("color") || "",
+            brand: urlParams.get("brand") || "",
+            rating: urlParams.get("rating") || "",
         };
 
         // Sử dụng hàm createQueryString để xây dựng query string
         const queryString = createQueryString(productName, {
-            ...filters,
+            ...currentFilters,
             page,
         });
 
@@ -135,6 +139,48 @@ async function fetchProducts(page) {
 
         // Hiển thị dữ liệu lên giao diện
         displayProducts(data.products);
+        displayPagination(data.currentPage, data.totalPages);
+
+        // Cập nhật URL với thông tin mới
+        history.replaceState(null, "", `/shop?${queryString}`);
+    } catch (error) {
+        console.error("Error fetching products:", error.message || error);
+    }
+}
+
+async function fetchPagination() { // giống hàm fetchProducts nhưng ko hiển thị sản phẩm vì lần render đầu tiên đã có, dùng để hiển thị phân trang 
+    try {
+        // Lấy thông tin lọc từ URL hiện tại
+        const urlParams = new URLSearchParams(window.location.search);
+        const productName = urlParams.get("product_name") || "";
+
+        if (Object.keys(currentFilters).length === 0) {
+            currentFilters = {
+                category: urlParams.get("category") || "",
+                size: urlParams.get("size") || "",
+                color: urlParams.get("color") || "",
+                brand: urlParams.get("brand") || "",
+                rating: urlParams.get("rating") || "",
+            };
+        }
+
+        const page = urlParams.get("page") || "1";
+
+        // Sử dụng hàm createQueryString để xây dựng query string
+        const queryString = createQueryString(productName, {
+            ...currentFilters,
+            page,
+        });
+        // Fetch dữ liệu từ API
+        const response = await fetch(`/shop/api?${queryString}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Hiển thị dữ liệu lên giao diện
+        //displayProducts(data.products);
         displayPagination(data.currentPage, data.totalPages);
 
         // Cập nhật URL với thông tin mới
@@ -333,7 +379,7 @@ function displayPagination(currentPage, totalPages) {
 // Hiển thị sản phẩm và phân trang
 document.addEventListener("DOMContentLoaded", () => {
     // Bắt đầu tải trang đầu tiên
-    fetchProducts(1);
+    fetchPagination();
 });
 
 /* cart */
