@@ -3,7 +3,6 @@ const Shop = require("./shopModel");
 
 // Biến toàn cục để lưu danh sách sản phẩm sau khi filter hoặc search
 let allProducts = [];
-const itemsPerPage = 6; // Số sản phẩm trên mỗi trang
 
 class ShopController {
     // [GET] '/shop'
