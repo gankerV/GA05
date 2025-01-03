@@ -37,7 +37,6 @@ class ShopController {
 
     async pagination(req, res) {
         try {
-            console.log(req.query);
             const page = parseInt(req.query.page, 10) || 1; // Trang hiện tại (mặc định là 1)
             const { category, size, color, brand, rating, product_name } = req.query;
             // Tính offset và limit

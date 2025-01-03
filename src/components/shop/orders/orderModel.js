@@ -88,6 +88,20 @@ OrderItem.belongsTo(Shop, {
 });
 
 class OrderModel {
+
+    constructor() {
+        this.Order = Order;
+        this.OrderItem = OrderItem;
+    }
+
+    static get Order() {
+        return Order;
+    }
+
+    static get OrderItem() {
+        return OrderItem;
+    }
+    
     // Get orders with pagination, filtering, and sorting
     async getOrders({ limit, offset, where, order }) {
         try {

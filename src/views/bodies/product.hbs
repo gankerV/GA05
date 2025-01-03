@@ -638,11 +638,13 @@
         // Lấy product_id từ HBS và quantity từ input
         const productId = "{{product.id}}"; // Assuming `product.id` is the unique identifier for the product
         const quantity = document.getElementById("quantity").value;
+        const price = parseFloat("{{product.Shop.price}}");
 
         // Tạo payload gửi tới server
         const payload = {
             product_id: productId,
-            quantity: parseInt(quantity)
+            quantity: parseInt(quantity),
+            price: price
         };
 
         // Gửi yêu cầu POST tới server
