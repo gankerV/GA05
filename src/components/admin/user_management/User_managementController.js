@@ -13,6 +13,51 @@ class User_managementController{
             const page = parseInt(req.query.page) || 1; // Trang hiện tại (mặc định là 1)
             const limit = 10; // Số lượng người dùng mỗi trang
             const offset = (page - 1) * limit; // Vị trí bắt đầu
+
+            // Lấy danh sách người dùng với các điều kiện tìm kiếm, lọc, phân trang, và sắp xếp
+            const { count, rows: users } = await User.findAndCountAll({
+                attributes: ["id", "email", "access", "registration_time"], // Chọn các trường cần thiết
+                limit,
+                offset,
+                include: [
+                    {
+                        model: profileModel.UserInfo,
+                        attributes: [
+                            "fullname",
+                            "phone",
+                            "dob",
+                            "gender",
+                            "address",
+                        ],
+                    },
+                ],
+            });
+
+            // Tính tổng số trang
+            const totalPages = Math.ceil(count / limit);
+
+            // Chuyển đổi Sequelize instances thành plain objects
+            const plainUsers = users.map((user) => user.get({ plain: true }));
+
+            // Render trang quản lý người dùng kèm thông tin phân trang
+            res.render("user_management", {
+                users: plainUsers,
+                currentPage: page,
+                totalPages,
+            });
+        } catch (error) {
+            console.error("Error fetching accounts:", error);
+            res.status(500).send("Internal Server Error");
+        }
+    }
+
+    // [GET] '/admin/users/api'
+    async getPagination(req, res) {
+        try {
+            // Lấy thông tin từ query params
+            const page = parseInt(req.query.page) || 1; // Trang hiện tại (mặc định là 1)
+            const limit = 10; // Số lượng người dùng mỗi trang
+            const offset = (page - 1) * limit; // Vị trí bắt đầu
             const { search, sortBy, sortOrder } = req.query;
 
             // Điều kiện lọc cơ bản
@@ -69,14 +114,12 @@ class User_managementController{
             // Chuyển đổi Sequelize instances thành plain objects
             const plainUsers = users.map((user) => user.get({ plain: true }));
 
-            // Render trang quản lý người dùng kèm thông tin phân trang
-            res.render("user_management", {
-                users: plainUsers,
+            // Nếu bạn muốn gửi kết quả dưới dạng JSON qua API
+            res.status(200).json({
                 currentPage: page,
                 totalPages,
-                search,
-                sortBy,
-                sortOrder,
+                totalUsers: count,
+                users: plainUsers, // Sequelize instances đã chuyển đổi
             });
         } catch (error) {
             console.error("Error fetching accounts:", error);

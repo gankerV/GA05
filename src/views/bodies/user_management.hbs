@@ -105,25 +105,76 @@
     </table>
 
 <!-- Pagination -->
-    <div class="flex justify-center mt-4 space-x-2">
-      {{#if (gt currentPage 1)}}
-        <a href="#" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400" onclick="goToPage({{subtract currentPage 1}})">Previous</a>
-      {{/if}}
+  <div class="flex justify-center mt-4 space-x-2" id="pagination_admin"></div>
 
-      {{#each (range 1 totalPages)}}
-        <a href="#" class="px-4 py-2 {{#if (eq this ../currentPage)}}bg-blue-600 text-white{{else}}bg-gray-300 hover:bg-gray-400{{/if}} rounded" onclick="goToPage({{this}})">
-          {{this}}
-        </a>
-      {{/each}}
-
-      {{#if (lt currentPage totalPages)}}
-        <a href="#" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400" onclick="goToPage({{add currentPage 1}})">Next</a>
-      {{/if}}
-    </div>
   </main>
 </body>
 
 <script>
+  // Hàm gửi yêu cầu AJAX để lấy dữ liệu người dùng theo trang
+  function fetchUsers(page) {
+    fetch(`/admin/users/api?page=${page}`)
+      .then(response => response.json())
+      .then(data => {
+        // Xóa nội dung cũ trong bảng
+        const tableBody = document.querySelector('table tbody');
+        tableBody.innerHTML = '';
+
+        // Hiển thị dữ liệu người dùng mới
+        data.users.forEach(user => {
+          const userInfo = user.UserInfo || {};
+          const row = `
+            <tr class="hover:bg-gray-100">
+              <td class="border border-gray-300 px-4 py-2">${user.id}</td>
+              <td class="border border-gray-300 px-4 py-2">${userInfo.fullname || 'N/A'}</td>
+              <td class="border border-gray-300 px-4 py-2">${user.email}</td>
+              <td class="border border-gray-300 px-4 py-2">${user.access ? 'Yes' : 'No'}</td>
+              <td class="border border-gray-300 px-4 py-2">${new Date(user.registration_time).toLocaleString()}</td>
+              <td class="border border-gray-300 px-4 py-2 flex justify-center">
+                ${
+                  user.access
+                    ? `<button onclick="confirmBan(${user.id})" class="text-red-600 hover:text-red-800">Ban</button>`
+                    : `<button onclick="confirmUnban(${user.id})" class="text-green-600 hover:text-green-800">Unban</button>`
+                }
+                <button class="pl-4">
+                  <a href="#" onclick="showUserDetails('${user.id}')" class="text-blue-600 hover:underline">Details</a>
+                </button>
+              </td>
+            </tr>
+          `;
+          tableBody.insertAdjacentHTML('beforeend', row);
+        });
+
+        // Cập nhật pagination
+        updatePagination(data.currentPage, data.totalPages);
+      })
+      .catch(error => console.error('Error fetching users:', error));
+  }
+
+  // Hàm cập nhật pagination
+  function updatePagination(currentPage, totalPages) {
+    const pagination = document.getElementById('pagination_admin');
+    pagination.innerHTML = '';
+
+    if (currentPage > 1) {
+      pagination.innerHTML += `<a href="#" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400" onclick="fetchUsers(${currentPage - 1})">Previous</a>`;
+    }
+
+    for (let i = 1; i <= totalPages; i++) {
+      pagination.innerHTML += `
+        <a href="#" class="px-4 py-2 ${i === currentPage ? 'bg-blue-600 text-white' : 'bg-gray-300 hover:bg-gray-400'} rounded" onclick="fetchUsers(${i})">
+          ${i}
+        </a>
+      `;
+    }
+
+    if (currentPage < totalPages) {
+      pagination.innerHTML += `<a href="#" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400" onclick="fetchUsers(${currentPage + 1})">Next</a>`;
+    }
+  }
+
+  // Tải dữ liệu trang đầu tiên khi trang load
+  document.addEventListener('DOMContentLoaded', () => fetchUsers(1));
 
   function goToPage(page) {
     const urlParams = new URLSearchParams(window.location.search);
