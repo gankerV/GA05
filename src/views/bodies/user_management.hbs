@@ -13,26 +13,38 @@
 
     <!-- Filter and Sort Controls -->
     <div class="mb-6">
-      <form action="/admin/users" method="GET" class="flex space-x-4">
+      <div class="flex space-x-4">
         <!-- Search by Name and Email -->
-        <input type="text" name="search" placeholder="Search by Name or Email" class="px-4 py-2 border border-gray-300 rounded-lg" value="{{search}}">
+        <input 
+          type="text" 
+          id="search-input" 
+          placeholder="Search by Name or Email" 
+          class="px-4 py-2 border border-gray-300 rounded-lg"
+          onkeyup="fetchUsers(1)"
+        >
         
         <!-- Sort by -->
-        <select name="sortBy" class="px-4 py-2 border border-gray-300 rounded-lg">
-          <option value="id" {{#if (eq sortBy "id")}}selected{{/if}}>ID</option>
-          <option value="fullname" {{#if (eq sortBy "fullname")}}selected{{/if}}>Full Name</option>
-          <option value="email" {{#if (eq sortBy "email")}}selected{{/if}}>Email</option>
-          <option value="registration_time" {{#if (eq sortBy "registration_time")}}selected{{/if}}>Registration Time</option>
+        <select 
+          id="sortBy-select" 
+          class="px-4 py-2 border border-gray-300 rounded-lg" 
+          onchange="fetchUsers(1)"
+        >
+          <option value="id">ID</option>
+          <option value="fullname">Full Name</option>
+          <option value="email">Email</option>
+          <option value="registration_time">Registration Time</option>
         </select>
         
         <!-- Sort Order -->
-        <select name="sortOrder" class="px-4 py-2 border border-gray-300 rounded-lg">
-          <option value="asc" {{#if (eq sortOrder "asc")}}selected{{/if}}>Ascending</option>
-          <option value="desc" {{#if (eq sortOrder "desc")}}selected{{/if}}>Descending</option>
+        <select 
+          id="sortOrder-select" 
+          class="px-4 py-2 border border-gray-300 rounded-lg" 
+          onchange="fetchUsers(1)"
+        >
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
         </select>
-
-        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Apply</button>
-      </form>
+      </div>
     </div>
 
     <!-- User Table -->
@@ -112,8 +124,21 @@
 
 <script>
   // Hàm gửi yêu cầu AJAX để lấy dữ liệu người dùng theo trang
-  function fetchUsers(page) {
-    fetch(`/admin/users/api?page=${page}`)
+    function fetchUsers(page = 1) {
+    // Lấy giá trị từ input và select
+    const search = document.getElementById('search-input').value;
+    const sortBy = document.getElementById('sortBy-select').value;
+    const sortOrder = document.getElementById('sortOrder-select').value;
+
+    // Tạo URL với các query params
+    const url = new URL('/admin/users/api', window.location.origin);
+    url.searchParams.set('page', page);
+    url.searchParams.set('search', search);
+    url.searchParams.set('sortBy', sortBy);
+    url.searchParams.set('sortOrder', sortOrder);
+
+    // Gửi yêu cầu AJAX
+    fetch(url)
       .then(response => response.json())
       .then(data => {
         // Xóa nội dung cũ trong bảng
