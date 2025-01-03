@@ -21,18 +21,23 @@
         <!-- Center section: Menu -->
         <nav class="hidden lg:flex md:flex-grow justify-center">
             <ul class="flex justify-center space-x-4 text-white">
-                <li><a href="/" class="hover:text-secondary font-semibold">Home</a></li>
-                <li><a href="/shop" class="hover:text-secondary font-semibold">Shop</a></li>
-                <li><a href="/about" class="hover:text-secondary font-semibold">About</a></li>
-                <li><a href="/contact" class="hover:text-secondary font-semibold">Contact</a></li>
                 {{#if user.dataValues.is_admin}}
-                <li><a href="/admin" class="hover:text-secondary font-semibold">Admin</a></li>
+                    <li><a href="/admin/users" class="hover:text-secondary font-semibold">Users management</a></li>
+                    <li><a href="/admin/products" class="hover:text-secondary font-semibold">Products management</a></li>
+                    <li><a href="/admin/orders" class="hover:text-secondary font-semibold">Orders management</a></li>
+                    <li><a href="/admin" class="hover:text-secondary font-semibold">Admin</a></li>
+                {{else}}
+                    <li><a href="/" class="hover:text-secondary font-semibold">Home</a></li>
+                    <li><a href="/shop" class="hover:text-secondary font-semibold">Shop</a></li>
+                    <li><a href="/about" class="hover:text-secondary font-semibold">About</a></li>
+                    <li><a href="/contact" class="hover:text-secondary font-semibold">Contact</a></li>
                 {{/if}}
             </ul>
         </nav>
 
         <!-- Right section: Buttons (for desktop) -->
         <div class="hidden lg:flex items-center space-x-4 relative">
+            {{#unless user.dataValues.is_admin}}
             <div class="relative group cart-wrapper">
                 <a href="/user/cart">
                     <img src="/public/images/cart-shopping.svg" alt="Cart"
@@ -71,6 +76,7 @@
                         to Cart</a>
                 </div>
             </div>
+            {{/unless}}
             {{#if user}}
             <div class="flex items-center justify-start">
                 <span class="text-white mr-4">Hi,
@@ -105,47 +111,10 @@
 </header>
 
 <!-- Mobile menu -->
-<nav id="mobile-menu-placeholder" class="mobile-menu hidden flex flex-col items-center space-y-8 lg:hidden">
+<nav id="mobile-menu-placeholder"
+    class="mobile-menu bg-white fixed w-full hidden flex flex-col items-center space-y-8 lg:hidden z-50">
     <ul class="w-full">
         <li><a href="/" class="hover:text-secondary font-bold block py-2">Home</a></li>
-
-        <!-- Men Dropdown -->
-        <li class="relative group" x-data="{ open: false }">
-            <a @click="open = !open; $event.preventDefault()"
-                class="hover:text-secondary font-bold block py-2 flex justify-center items-center cursor-pointer">
-                <span>Men</span>
-                <span @click.stop="open = !open">
-                    <i :class="open ? 'fas fa-chevron-up text-xs ml-2' : 'fas fa-chevron-down text-xs ml-2'"></i>
-                </span>
-            </a>
-            <ul class="mobile-dropdown-menu" x-show="open" x-transition class="space-y-2">
-                <li><a href="/shop" class="hover:text-secondary font-bold block pt-2 pb-3">Shop Men</a></li>
-                <li><a href="/shop" class="hover:text-secondary font-bold block py-2">Men item 1</a></li>
-                <li><a href="/shop" class="hover:text-secondary font-bold block py-2">Men item 2</a></li>
-                <li><a href="/shop" class="hover:text-secondary font-bold block py-2">Men item 3</a></li>
-            </ul>
-        </li>
-
-        <!-- Women Dropdown -->
-        <li class="relative group" x-data="{ open: false }">
-            <a @click="open = !open; $event.preventDefault()"
-                class="hover:text-secondary font-bold block py-2 flex justify-center items-center cursor-pointer">
-                <span>Women</span>
-                <span @click.stop="open = !open">
-                    <i :class="open ? 'fas fa-chevron-up text-xs ml-2' : 'fas fa-chevron-down text-xs ml-2'"></i>
-                </span>
-            </a>
-            <ul class="mobile-dropdown-menu" x-show="open" x-transition class="pl-4 space-y-2">
-                <li><a href="/shop" class="hover:text-secondary font-bold block py-2">Shop Women</a></li>
-                <li><a href="/shop" class="hover:text-secondary font-bold block py-2">Women item 1</a>
-                </li>
-                <li><a href="/shop" class="hover:text-secondary font-bold block py-2">Women item 2</a>
-                </li>
-                <li><a href="/shop" class="hover:text-secondary font-bold block py-2">Women item 3</a>
-                </li>
-            </ul>
-        </li>
-
         <li><a href="/shop" class="hover:text-secondary font-bold block py-2">Shop</a></li>
         <li><a href="/about" class="hover:text-secondary font-bold block py-2">About</a></li>
         <li><a href="/contact" class="hover:text-secondary font-bold block py-2">Contact</a></li>
@@ -158,6 +127,10 @@
         {{#if user}}
         <div class="flex flex-col">
             <span class="text-black">Hi, {{user.dataValues.email}}</span>
+            {{#if user.dataValues.is_google}}
+            {{else}}
+            <a href="/user/logout" class="block text-black hover:text-primary text-center underline">Change password</a>
+            {{/if}}
             <a href="/user/logout" class="block text-black hover:text-primary text-center underline">Logout</a>
         </div>
         {{else}}

@@ -151,19 +151,19 @@ CREATE TABLE order_items (
 );
 
 -- Dữ liệu mẫu cho bảng orders
-INSERT INTO orders (user_id, order_status, total_amount, shipping_address, payment_status, payment_method) VALUES
-(1, 'Pending', 100.00, '123 Main St, City, Country', 'Unpaid', 'Cash On Delivery'),
-(2, 'Shipped', 250.00, '456 Oak St, City, Country', 'Paid', 'Credit Card'),
-(3, 'Delivered', 150.50, '789 Pine St, City, Country', 'Paid', 'PayPal'),
-(1, 'Cancelled', 300.75, '123 Main St, City, Country', 'Unpaid', 'Cash On Delivery'),
-(2, 'Pending', 70.50, '456 Oak St, City, Country', 'Unpaid', 'Cash On Delivery');
+-- INSERT INTO orders (user_id, order_status, total_amount, shipping_address, payment_status, payment_method) VALUES
+-- (1, 'Pending', 100.00, '123 Main St, City, Country', 'Unpaid', 'Cash On Delivery'),
+-- (2, 'Shipped', 250.00, '456 Oak St, City, Country', 'Paid', 'Credit Card'),
+-- (3, 'Delivered', 150.50, '789 Pine St, City, Country', 'Paid', 'PayPal'),
+-- (1, 'Cancelled', 300.75, '123 Main St, City, Country', 'Unpaid', 'Cash On Delivery'),
+-- (2, 'Pending', 70.50, '456 Oak St, City, Country', 'Unpaid', 'Cash On Delivery');
 
-INSERT INTO order_items (order_id, product_id, quantity, price)
-VALUES 
-(1, 1, 2, 100.00),  -- Đơn hàng 1, sản phẩm 1 (Blue womens suit), số lượng 2, giá 100.00
-(1, 3, 1, 200.99),  -- Đơn hàng 1, sản phẩm 3 (Yellow mens suit), số lượng 1, giá 200.99
-(2, 4, 1, 250.00),  -- Đơn hàng 2, sản phẩm 4 (Red dress), số lượng 1, giá 250.00
-(2, 10, 2, 150.00), -- Đơn hàng 2, sản phẩm 10 (Brown leather shoes), số lượng 2, giá 150.00
-(3, 2, 1, 150.50),  -- Đơn hàng 3, sản phẩm 2 (White shirt with long sleeves), số lượng 1, giá 150.50
-(3, 9, 1, 500.00);  -- Đơn hàng 3, sản phẩm 9 (Black formal suit), số lượng 1, giá 500.00
+-- INSERT INTO order_items (order_id, product_id, quantity, price)
+-- VALUES 
+-- (1, 1, 2, 100.00),  -- Đơn hàng 1, sản phẩm 1 (Blue womens suit), số lượng 2, giá 100.00
+-- (1, 3, 1, 200.99),  -- Đơn hàng 1, sản phẩm 3 (Yellow mens suit), số lượng 1, giá 200.99
+-- (2, 4, 1, 250.00),  -- Đơn hàng 2, sản phẩm 4 (Red dress), số lượng 1, giá 250.00
+-- (2, 10, 2, 150.00), -- Đơn hàng 2, sản phẩm 10 (Brown leather shoes), số lượng 2, giá 150.00
+-- (3, 2, 1, 150.50),  -- Đơn hàng 3, sản phẩm 2 (White shirt with long sleeves), số lượng 1, giá 150.50
+-- (3, 9, 1, 500.00);  -- Đơn hàng 3, sản phẩm 9 (Black formal suit), số lượng 1, giá 500.00
 

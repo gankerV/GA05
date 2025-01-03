@@ -10,11 +10,12 @@ class ShopController {
     async index(req, res) {
         try {
             const page = parseInt(req.query.page, 10) || 1; // Trang hiện tại (mặc định là 1)
-            const { category, size, color, brand, rating, product_name } = req.query;
+            const { category, size, color, brand, rating, product_name } =
+                req.query;
             // Tính offset và limit
             const offset = (page - 1) * itemsPerPage;
             const limit = itemsPerPage;
-            
+
             // luôn truy vấn dữ liệu ở lần đầu truy cập trang web
             allProducts = await Shop.getProducts({
                 category,
@@ -24,7 +25,6 @@ class ShopController {
                 rating,
                 product_name, // Tham số tìm kiếm
             });
-            
 
             // Render tối đa 6 sản phẩm đầu tiên
             const productsToRender = allProducts.slice(offset, offset + limit);
@@ -38,7 +38,8 @@ class ShopController {
     async pagination(req, res) {
         try {
             const page = parseInt(req.query.page, 10) || 1; // Trang hiện tại (mặc định là 1)
-            const { category, size, color, brand, rating, product_name } = req.query;
+            const { category, size, color, brand, rating, product_name } =
+                req.query;
             // Tính offset và limit
             const offset = (page - 1) * itemsPerPage;
             const limit = itemsPerPage;
@@ -55,7 +56,10 @@ class ShopController {
 
             // Phân trang từ danh sách đã tải
             const totalProducts = filteredProducts.length;
-            const paginatedProducts = filteredProducts.slice(offset, offset + limit);
+            const paginatedProducts = filteredProducts.slice(
+                offset,
+                offset + limit,
+            );
 
             // Trả về dữ liệu JSON
             res.json({

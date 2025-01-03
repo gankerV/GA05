@@ -8,8 +8,7 @@
 <section id="profile-page" class="bg-white py-16">
     <div class="flex flex-col justify-center items-center">
         <div class="relative flex flex-col items-center rounded-[20px] mx-auto bg-white bg-clip-border shadow-lg">
-            <!-- User Avatar and Email -->
-            <div class="flex flex-row w-full justify-between items-center px-4">
+            <div class="flex flex-col sm:flex-row w-full justify-between items-center px-4">
                 <p></p>
                 <div class="flex items-center">
                     <!-- Ảnh đại diện -->
@@ -97,7 +96,7 @@
             </div>
             <!-- Grid Layout for User Information -->
             <div class="p-4">
-                <div class="grid grid-cols-2 gap-4 w-full border-t-2 pt-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full border-t-2 pt-6">
                     <!-- Name -->
                     <div
                         class="flex flex-col items-start justify-center rounded-2xl bg-white px-3 py-4 shadow-md min-w-52">
@@ -121,7 +120,7 @@
                     </div>
                     <!-- Address -->
                     <div
-                        class="flex flex-col col-span-2 items-center justify-center rounded-2xl bg-white px-3 py-4 shadow-md">
+                        class="flex flex-col col-span-1 sm:col-span-2 items-center justify-center rounded-2xl bg-white px-3 py-4 shadow-md">
                         <p class="address" class="text-sm text-gray-light">Address</p>
                         <p id="address" class="text-base font-medium text-gray-dark">{{userInfo.address}}</p>
                     </div>
