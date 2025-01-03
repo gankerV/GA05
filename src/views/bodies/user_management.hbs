@@ -102,22 +102,43 @@
                   <button class="pl-4">
                     <a href="#" onclick="showUserDetails('{{this.id}}')" class="text-blue-600 hover:underline">Details</a>
                   </button>
-                  <!-- Modal -->
-                  <div id="userModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center">
-                    <div class="bg-white rounded-lg p-6 max-w-md w-full">
-                      <button class="absolute top-4 right-4 text-gray-600 text-xl" onclick="closeModal()">&times;</button>
-                      <h2 class="text-xl font-semibold mb-4">User Details</h2>
-                      <div id="userDetails"></div>
-                    </div>
-                  </div>
+                  
               </td>
           </tr>
           {{/each}}
       </tbody>
     </table>
-
-<!-- Pagination -->
-  <div class="flex justify-center mt-4 space-x-2" id="pagination_admin"></div>
+    
+    <!-- Modal -->
+    <div id="userModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center">
+      <div class="bg-white rounded-lg p-6 max-w-md w-full relative">
+        <!-- Nút đóng modal -->
+        <button class="absolute top-4 right-4 text-gray-600 text-xl" onclick="closeModalDetail()">&times;</button>
+        
+        <!-- Tiêu đề modal -->
+        <h2 class="text-xl font-semibold mb-4">User Details</h2>
+        
+        <!-- Phần để hiển thị chi tiết người dùng -->
+        <div id="userDetails"></div>
+      </div>
+    </div>
+    <!-- Modal Confirmation -->
+    <div id="confirmationModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center">
+      <div class="bg-white rounded-lg p-6 max-w-md w-full relative">
+        <button class="absolute top-4 right-4 text-gray-600 text-xl" onclick="closeModal()">&times;</button>
+        <h2 class="text-xl font-semibold mb-4">Confirmation</h2>
+        <p id="confirmationMessage"></p>
+        <button onclick="submitForm()" class="bg-blue-600 text-white px-4 py-2 rounded">Yes</button>
+        <button onclick="closeModal()" class="bg-gray-300 text-black px-4 py-2 rounded ml-2">No</button>
+      </div>
+    </div>
+    {{#if flash.error}}
+      <div class="bg-red-100 text-red-800 border border-red-300 px-4 py-2 rounded-md">
+        {{flash.error}}
+      </div>
+    {{/if}}
+    <!-- Pagination -->
+    <div class="flex justify-center mt-4 space-x-2" id="pagination_admin"></div>
 
   </main>
 </body>
@@ -157,10 +178,18 @@
               <td class="border border-gray-300 px-4 py-2">${new Date(user.registration_time).toLocaleString()}</td>
               <td class="border border-gray-300 px-4 py-2 flex justify-center">
                 ${
-                  user.access
-                    ? `<button onclick="confirmBan(${user.id})" class="text-red-600 hover:text-red-800">Ban</button>`
-                    : `<button onclick="confirmUnban(${user.id})" class="text-green-600 hover:text-green-800">Unban</button>`
-                }
+                user.access
+                  ? `
+                    <form id="banForm-${user.id}" action="/admin/users/status/${user.id}" method="POST" class="inline">
+                      <input type="hidden" name="status" value="ban">
+                      <button type="button" onclick="confirmBan(${user.id})" class="text-red-600 hover:text-red-800">Ban</button>
+                    </form>`
+                  : `
+                    <form id="unbanForm-${user.id}" action="/admin/users/status/${user.id}" method="POST" class="inline">
+                      <input type="hidden" name="status" value="unban">
+                      <button type="button" onclick="confirmUnban(${user.id})" class="text-green-600 hover:text-green-800">Unban</button>
+                    </form>`
+              }
                 <button class="pl-4">
                   <a href="#" onclick="showUserDetails('${user.id}')" class="text-blue-600 hover:underline">Details</a>
                 </button>
@@ -200,44 +229,32 @@
 
   // Tải dữ liệu trang đầu tiên khi trang load
   document.addEventListener('DOMContentLoaded', () => fetchUsers(1));
-
-  function goToPage(page) {
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set('page', page); // Cập nhật trang
-    window.location.search = urlParams.toString(); // Chuyển hướng với query string mới
-  }
-
-    // Hiển thị modal và tải dữ liệu người dùng
+ 
+  // Hàm hiển thị modal với thông tin chi tiết người dùng
   function showUserDetails(userId) {
-    // Lấy thông tin người dùng từ server bằng AJAX
-    fetch(`/admin/users/${userId}`)
+    fetch(`/admin/users/api/${userId}`)
       .then(response => response.json())
-      .then(data => {
-        // Kiểm tra nếu data.UserInfo có dữ liệu
-        const userInfo = data.UserInfo || {}; // Default to empty object if no user info
-        
-        // Cập nhật nội dung modal với thông tin người dùng
-        const userDetails = document.getElementById('userDetails');
-        userDetails.innerHTML = `
-          <p><strong>Name:</strong> ${userInfo.fullname || 'N/A'}</p>
-          <p><strong>Email:</strong> ${data.email}</p>
-          <p><strong>Registration Time:</strong> ${new Date(data.registration_time).toLocaleString()}</p>
-          <p><strong>Status:</strong> ${data.access ? 'Active' : 'Banned'}</p>
+      .then(user => {
+        const userInfo = user.UserInfo || {};
+        const details = `
+          <p><strong>ID:</strong> ${user.id}</p>
+          <p><strong>Full Name:</strong> ${userInfo.fullname || 'N/A'}</p>
+          <p><strong>Email:</strong> ${user.email}</p>
           <p><strong>Phone:</strong> ${userInfo.phone || 'N/A'}</p>
-          <p><strong>Date of Birth:</strong> ${userInfo.dob ? new Date(userInfo.dob).toLocaleDateString() : 'N/A'}</p>
+          <p><strong>Date of Birth:</strong> ${userInfo.dob || 'N/A'}</p>
           <p><strong>Gender:</strong> ${userInfo.gender || 'N/A'}</p>
           <p><strong>Address:</strong> ${userInfo.address || 'N/A'}</p>
+          <p><strong>Registration Time:</strong> ${new Date(user.registration_time).toLocaleString()}</p>
         `;
-        
-        // Hiển thị modal
-        document.getElementById('userModal').classList.remove("hidden");
+        document.getElementById('userDetails').innerHTML = details;
+        document.getElementById('userModal').classList.remove('hidden');
       })
       .catch(error => console.error('Error fetching user details:', error));
   }
 
-  // Đóng modal khi nhấn vào nút đóng
-  function closeModal() {
-    document.getElementById('userModal').classList.add("hidden");
+  // Hàm đóng modal
+  function closeModalDetail() {
+    document.getElementById('userModal').classList.add('hidden');
   }
 
   let currentFormId = null;
@@ -258,11 +275,15 @@
     document.getElementById('confirmationModal').classList.add("hidden");
   }
 
-  function submitForm() {
-    const form = document.getElementById(currentFormId);
+ function submitForm() {
+  const form = document.getElementById(currentFormId);
+  if (form) {
     form.submit(); // Submit the form after confirmation
     closeModal();
+  } else {
+    console.error("Form not found for ID:", currentFormId); // Log error if form not found
   }
+}
 
   // Đóng modal khi nhấn ngoài modal
   window.onclick = function(event) {
