@@ -204,7 +204,7 @@ function displayProducts(products) {
             </a>
             <a href="/shop/product/${product.id}" class="text-lg font-semibold mb-2">${product.product_name}</a>
             <div class="flex items-center mb-4">
-                <span class="text-lg font-bold text-primary">$${product.price}</span>
+                <span class="text-lg font-bold text-primary">${product.price} VND</span>
             </div>
             <div class="mb-4">
                 <span class="text-sm font-medium text-gray-600">Category:</span>

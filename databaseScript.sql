@@ -20,9 +20,9 @@ CREATE TABLE shop (
 
 -- Thêm dữ liệu mẫu vào bảng products
 INSERT INTO shop (product_name, price, category, size, color, brand, rating, imageFileName) VALUES
-('Blue womens suit', 10000.00, 'Women', 'M', 'Blue', 'Nike', '5', '5.jpg'),
-('White shirt with long sleeves', 15000.50, 'Women', 'L', 'White', 'Nike', '4', '6.jpg'),
-('Yellow mens suit', 20000.99, 'Men', 'S', 'Yellow', 'Puma', '3', '7.jpg'),
+('Blue womens suit', 100000.00, 'Women', 'M', 'Blue', 'Nike', '5', '5.jpg'),
+('White shirt with long sleeves', 150000.50, 'Women', 'L', 'White', 'Nike', '4', '6.jpg'),
+('Yellow mens suit', 200000.99, 'Men', 'S', 'Yellow', 'Puma', '3', '7.jpg'),
 ('Red dress', 250000.00, 'Women', 'M', 'Red', 'Adidas', '5', '8.jpg'),
 ('Black leather jacket', 300000.00, 'Women', 'L', 'Brown', 'Adidas', '4', '4.jpg'),
 ('Black long dress', 3500000.75, 'Women', 'S', 'Black', 'Puma', '5', '3.jpg'),

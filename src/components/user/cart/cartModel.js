@@ -166,28 +166,33 @@ class CartModel {
         }
     }
 
-    static async updateOrders(orderId) {
+    static async updateOrders(orderId, amount) {
         try {
             if (!orderId) throw new Error("Order ID is required.");
-
+            if (amount == null || amount < 0) throw new Error("Amount must be a valid positive number.");
+    
+            // Tìm đơn hàng theo orderId
             const order = await Order.findOne({
                 where: { order_id: orderId },
             });
-
+    
             if (!order) {
                 throw new Error("Order not found.");
             }
-
+    
+            // Cập nhật thông tin đơn hàng
             order.order_status = "Shipped";
             order.payment_status = "Paid";
+            order.amount = amount; // Thêm hoặc cập nhật trường số tiền
             await order.save();
-
+    
             return order;
         } catch (error) {
             console.error("Error updating order:", error);
             throw error;
         }
     }
+    
 }
 
 OrderItem.belongsTo(Shop, { foreignKey: "product_id" });

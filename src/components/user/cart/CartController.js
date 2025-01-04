@@ -179,42 +179,51 @@ class CartController {
             let vnp_return_Params = req.query;
             const secureHash = vnp_return_Params['vnp_SecureHash'];
     
+            // Xóa các trường không cần thiết
             delete vnp_return_Params['vnp_SecureHash'];
             delete vnp_return_Params['vnp_SecureHashType'];
     
+            // Sắp xếp các tham số
             vnp_return_Params = CartController.sortObject(vnp_return_Params);
     
             const tmnCode = process.env.vnp_TmnCode;
             const secretKey = process.env.vnp_HashSecret;
     
+            // Tạo chuỗi ký kết
             const querystring = require('qs');
             const signData = querystring.stringify(vnp_return_Params, { encode: false });
     
+            // Tạo mã băm HMAC SHA512
             const crypto = require('crypto');
             const hmac = crypto.createHmac('sha512', secretKey);
             const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
     
+            // Kiểm tra tính hợp lệ của chữ ký
             if (secureHash === signed) {
                 const responseCode = vnp_return_Params['vnp_ResponseCode'];
     
-                if (responseCode === '00') {
+                if (responseCode === '00') { // Thanh toán thành công
                     const orderInfo = vnp_return_Params['vnp_OrderInfo'];
-                    const orderId = orderInfo.replace('Thanhtoan', ''); // Extract orderId from OrderInfo
+                    const orderId = orderInfo.replace('Thanhtoan', ''); // Tách orderId từ OrderInfo
     
-                    await CartModel.updateOrders(orderId); // Update order status
+                    const amount = parseFloat(vnp_return_Params['vnp_Amount']) / 100; // Chuyển số tiền về dạng gốc
     
-                    res.render("home");
+                    // Gọi updateOrders với orderId và amount
+                    await CartModel.updateOrders(orderId, amount);
+    
+                    res.render("VnPay_Success", { orderId, amount });
                 } else {
-                    res.render("home");
+                    res.render("VnPay_Error");
                 }
             } else {
-                res.render("home");
+                res.render("VnPay_Error");
             }
         } catch (error) {
             console.error("Error during payment confirmation:", error);
             res.status(500).json({ error: "Failed to confirm payment." });
         }
     }
+    
     
 
     checkout(req, res) {
