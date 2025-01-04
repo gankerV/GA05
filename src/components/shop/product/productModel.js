@@ -5,7 +5,7 @@ const ShopModel = require("../shopModel");
 const Shop = ShopModel.Shop;
 
 const Product = sequelize.define(
-    "product",
+    "Product",
     {
         id: {
             type: DataTypes.INTEGER,
@@ -52,7 +52,7 @@ Shop.hasMany(SubImage, { foreignKey: "shop_id", as: "subImages" });
 SubImage.belongsTo(Shop, { foreignKey: "shop_id", targetKey: "id" });
 
 const Review = sequelize.define(
-    "review",
+    "Review",
     {
         id: {
             type: DataTypes.INTEGER,
