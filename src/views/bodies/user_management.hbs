@@ -22,6 +22,16 @@
           class="px-4 py-2 border border-gray-300 rounded-lg"
           onkeyup="fetchUsers(1)"
         >
+        <!-- Filter by user or admin -->
+        <select 
+          id="filter-select" 
+          class="px-4 py-2 border border-gray-300 rounded-lg" 
+          onchange="fetchUsers(1)"
+        >
+          <option value="">All Users</option>
+          <option value="FALSE">Users</option>
+          <option value="TRUE">Admins</option>
+        </select>
         
         <!-- Sort by -->
         <select 
@@ -150,6 +160,7 @@
     const search = document.getElementById('search-input').value;
     const sortBy = document.getElementById('sortBy-select').value;
     const sortOrder = document.getElementById('sortOrder-select').value;
+    const filter = document.getElementById('filter-select').value;
 
     // Tạo URL với các query params
     const url = new URL('/admin/users/api', window.location.origin);
@@ -157,6 +168,7 @@
     url.searchParams.set('search', search);
     url.searchParams.set('sortBy', sortBy);
     url.searchParams.set('sortOrder', sortOrder);
+    url.searchParams.set('filter', filter);
 
     // Gửi yêu cầu AJAX
     fetch(url)

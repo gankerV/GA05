@@ -58,7 +58,7 @@ class User_managementController{
             const page = parseInt(req.query.page) || 1; // Trang hiện tại (mặc định là 1)
             const limit = 10; // Số lượng người dùng mỗi trang
             const offset = (page - 1) * limit; // Vị trí bắt đầu
-            const { search, sortBy, sortOrder } = req.query;
+            const { search,filter , sortBy, sortOrder } = req.query;
 
             // Điều kiện lọc cơ bản
             const whereCondition = {};
@@ -73,6 +73,11 @@ class User_managementController{
                         },
                     },
                 ];
+            }
+
+            // Lọc theo user hoặc admin
+            if (filter) {
+                whereCondition["is_admin"] = filter === "TRUE"; // Chuyển filter thành boolean
             }
 
             // Cấu hình sắp xếp (mặc định là theo `id`)
