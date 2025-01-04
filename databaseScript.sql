@@ -29,10 +29,10 @@ INSERT INTO shop (product_name, price, category, size, color, brand, rating, ima
 ('Red dress', 2500000.00, 'Women', 'M', 'Red', 'Adidas', '5', '8.jpg'),
 ('Black long dress', 3500000.75, 'Women', 'S', 'Black', 'Puma', '5', '3.jpg'),
 
-('Black formal suit', 500.00, 'Men', 'L', 'Black', 'Gucci', '5', '9.jpg'),
-('Brown leather shoes', 150.00, 'Men', 'M', 'Brown', 'Clarks', '5', '10.jpg'),
-('Navy blue chinos', 70.50, 'Men', 'L', 'Blue', 'Zara', '4', '11.jpg'),
-('White polo T-shirt', 40.99, 'Men', 'S', 'White', 'Lacoste', '4', '12.jpg');
+('Black formal suit', 500000.00, 'Men', 'L', 'Black', 'Gucci', '5', '9.jpg'),
+('Brown leather shoes', 150000.00, 'Men', 'M', 'Brown', 'Clarks', '5', '10.jpg'),
+('Navy blue chinos', 70000.50, 'Men', 'L', 'Blue', 'Zara', '4', '11.jpg'),
+('White polo T-shirt', 40000.99, 'Men', 'S', 'White', 'Lacoste', '4', '12.jpg');
 
 -- Tạo bảng Product (Chi tiết sản phẩm)
 CREATE TABLE product (
@@ -123,6 +123,33 @@ CREATE TABLE cart (
         ON DELETE CASCADE                       -- Xóa mục trong giỏ khi sản phẩm bị xóa
 );
 
+INSERT INTO users (email, password, access, is_admin, is_google, is_active, activation_token)
+VALUES
+( 'alice.johnson@example.com', 'password123', TRUE, FALSE, FALSE, FALSE, 'token123'),
+('bob.smith@example.com', 'password456', TRUE, TRUE, FALSE, TRUE, NULL),
+('charlie.brown@example.com', NULL, TRUE, FALSE, TRUE, FALSE, 'token789'),
+('daisy.lee@example.com', 'password789', FALSE, FALSE, FALSE, FALSE, NULL),
+('eve.adams@example.com', 'password012', TRUE, TRUE, TRUE, TRUE, NULL),
+('frank.white@example.com', NULL, TRUE, FALSE, TRUE, FALSE, 'token345'),
+('grace.green@example.com', 'password234', TRUE, FALSE, FALSE, TRUE, NULL),
+('hannah.black@example.com', 'password567', FALSE, FALSE, FALSE, FALSE, NULL),
+('ivy.brown@example.com', 'password890', TRUE, FALSE, TRUE, TRUE, NULL),
+('jack.davis@example.com', NULL, TRUE, TRUE, TRUE, FALSE, 'token678');
+
+INSERT INTO user_info (userID, fullname, phone, dob, gender, address, avatar)
+VALUES
+(1, 'Alice Johnson', '123-456-7890', '1985-05-20', 'Female', '123 Elm Street, Springfield', 'avatar1'),
+(2, 'Bob Smith', '234-567-8901', '1990-06-15', 'Male', '456 Oak Avenue, Metropolis', 'avatar2'),
+(3, 'Charlie Brown', '345-678-9012', '1982-03-10', 'Male', '789 Pine Road, Gotham', 'avatar3'),
+(4, 'Daisy Lee', '456-789-0123', '1995-07-25', 'Female', '321 Maple Drive, Rivertown', 'avatar4'),
+(5, 'Eve Adams', '567-890-1234', '1980-11-30', 'Female', '654 Cedar Street, Hilltop', 'avatar5'),
+(6, 'Frank White', '678-901-2345', '1975-02-05', 'Male', '987 Birch Road, Downtown', 'avatar6'),
+(7, 'Grace Green', '789-012-3456', '1988-04-18', 'Female', '112 Willow Lane, Lakeside', 'avatar7'),
+(8, 'Hannah Black', '890-123-4567', '1992-12-12', 'Female', '213 Redwood Boulevard, Parkwood', 'avatar8'),
+(9, 'Ivy Brown', '901-234-5678', '1987-01-22', 'Female', '324 Ash Street, Stonebridge', 'avatar9'),
+(10, 'Jack Davis', '012-345-6789', '1993-09-09', 'Male', '435 Birch Street, Pinehill', 'avatar10');
+
+
 CREATE TABLE orders (
     order_id INT AUTO_INCREMENT PRIMARY KEY,  -- ID của đơn hàng
     user_id INT NOT NULL,                     -- ID người dùng (liên kết với bảng users)
@@ -151,19 +178,16 @@ CREATE TABLE order_items (
 );
 
 -- Dữ liệu mẫu cho bảng orders
--- INSERT INTO orders (user_id, order_status, total_amount, shipping_address, payment_status, payment_method) VALUES
--- (1, 'Pending', 100.00, '123 Main St, City, Country', 'Unpaid', 'Cash On Delivery'),
--- (2, 'Shipped', 250.00, '456 Oak St, City, Country', 'Paid', 'Credit Card'),
--- (3, 'Delivered', 150.50, '789 Pine St, City, Country', 'Paid', 'PayPal'),
--- (1, 'Cancelled', 300.75, '123 Main St, City, Country', 'Unpaid', 'Cash On Delivery'),
--- (2, 'Pending', 70.50, '456 Oak St, City, Country', 'Unpaid', 'Cash On Delivery');
+INSERT INTO orders (user_id, order_status, total_amount, shipping_address, payment_status, payment_method) VALUES
+(1, 'Pending', 30000.99, '123 Main St, City, Country', 'Unpaid', 'Cash On Delivery'),
+(2, 'Shipped', 400000.00, '456 Oak St, City, Country', 'Paid', 'Credit Card'),
+(3, 'Delivered', 22000.10, '789 Pine St, City, Country', 'Paid', 'PayPal');
 
--- INSERT INTO order_items (order_id, product_id, quantity, price)
--- VALUES 
--- (1, 1, 2, 100.00),  -- Đơn hàng 1, sản phẩm 1 (Blue womens suit), số lượng 2, giá 100.00
--- (1, 3, 1, 200.99),  -- Đơn hàng 1, sản phẩm 3 (Yellow mens suit), số lượng 1, giá 200.99
--- (2, 4, 1, 250.00),  -- Đơn hàng 2, sản phẩm 4 (Red dress), số lượng 1, giá 250.00
--- (2, 10, 2, 150.00), -- Đơn hàng 2, sản phẩm 10 (Brown leather shoes), số lượng 2, giá 150.00
--- (3, 2, 1, 150.50),  -- Đơn hàng 3, sản phẩm 2 (White shirt with long sleeves), số lượng 1, giá 150.50
--- (3, 9, 1, 500.00);  -- Đơn hàng 3, sản phẩm 9 (Black formal suit), số lượng 1, giá 500.00
-
+INSERT INTO order_items (order_id, product_id, quantity, price)
+VALUES 
+(1, 1, 2, 10000.00),  -- Đơn hàng 1, sản phẩm 1 (Blue womens suit), số lượng 2, giá 100.00
+(1, 3, 1, 20000.99),  -- Đơn hàng 1, sản phẩm 3 (Yellow mens suit), số lượng 1, giá 200.99
+(2, 4, 1, 250000.00),  -- Đơn hàng 2, sản phẩm 4 (Red dress), số lượng 1, giá 250.00
+(2, 10, 2, 150000.00), -- Đơn hàng 2, sản phẩm 10 (Brown leather shoes), số lượng 2, giá 150.00
+(3, 2, 1, 15000.50),  -- Đơn hàng 3, sản phẩm 2 (White shirt with long sleeves), số lượng 1, giá 150.50
+(3, 9, 1, 70000.50);  -- Đơn hàng 3, sản phẩm 9 (Black formal suit), số lượng 1, giá 500.00
