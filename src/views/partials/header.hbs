@@ -2,11 +2,19 @@
 <header class="bg-gray-dark sticky top-0 z-50">
     <div class="container mx-auto flex justify-between items-center py-4">
         <!-- Left section: Logo -->
+        {{#if user.dataValues.is_admin}}
+        <a href="/admin" class="flex items-center">
+            <div>
+                <img src="/public/images/template-white-logo.png" alt="Logo" class="h-14 w-auto mr-4" />
+            </div>
+        </a>
+        {{else}}
         <a href="/" class="flex items-center">
             <div>
                 <img src="/public/images/template-white-logo.png" alt="Logo" class="h-14 w-auto mr-4" />
             </div>
         </a>
+        {{/if}}
 
         <!-- Hamburger menu (for mobile) -->
         <div class="flex lg:hidden">
@@ -22,15 +30,15 @@
         <nav class="hidden lg:flex md:flex-grow justify-center">
             <ul class="flex justify-center space-x-4 text-white">
                 {{#if user.dataValues.is_admin}}
-                    <li><a href="/admin/users" class="hover:text-secondary font-semibold">Users management</a></li>
-                    <li><a href="/admin/products" class="hover:text-secondary font-semibold">Products management</a></li>
-                    <li><a href="/admin/orders" class="hover:text-secondary font-semibold">Orders management</a></li>
-                    <li><a href="/admin" class="hover:text-secondary font-semibold">Admin</a></li>
+                <li><a href="/admin/users" class="hover:text-secondary font-semibold">Users management</a></li>
+                <li><a href="/admin/products" class="hover:text-secondary font-semibold">Products management</a></li>
+                <li><a href="/admin/orders" class="hover:text-secondary font-semibold">Orders management</a></li>
+                <li><a href="/admin/reports" class="hover:text-secondary font-semibold">Report</a></li>
                 {{else}}
-                    <li><a href="/" class="hover:text-secondary font-semibold">Home</a></li>
-                    <li><a href="/shop" class="hover:text-secondary font-semibold">Shop</a></li>
-                    <li><a href="/about" class="hover:text-secondary font-semibold">About</a></li>
-                    <li><a href="/contact" class="hover:text-secondary font-semibold">Contact</a></li>
+                <li><a href="/" class="hover:text-secondary font-semibold">Home</a></li>
+                <li><a href="/shop" class="hover:text-secondary font-semibold">Shop</a></li>
+                <li><a href="/about" class="hover:text-secondary font-semibold">About</a></li>
+                <li><a href="/contact" class="hover:text-secondary font-semibold">Contact</a></li>
                 {{/if}}
             </ul>
         </nav>
