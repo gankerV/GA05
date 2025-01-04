@@ -80,19 +80,41 @@
                             required
                         />
                     </div>
-                    <div class="mb-4">
-                        <label class="mb-4">Ship to a different address?</label>
-                        <input
-                            type="checkbox"
-                            id="different-address"
-                            class="mr-2"
-                        />
-                        <label
-                            for="different-address"
-                            class="text-gray-700"
-                        >Yes</label>
-                    </div>
                 </form>
+                <!-- Shipping Options -->
+                <div class="mb-4">
+                    <h2 class="text-xl font-semibold mb-4">Shipping Options</h2>
+                    <div class="flex flex-col gap-2">
+                        <label class="flex items-center">
+                            <input
+                                type="radio"
+                                name="shipping-option"
+                                value="30000"
+                                class="mr-2 shipping-option"
+                                checked
+                            />
+                            Express (in today)
+                        </label>
+                        <label class="flex items-center">
+                            <input
+                                type="radio"
+                                name="shipping-option"
+                                value="20000"
+                                class="mr-2 shipping-option"
+                            />
+                            Fast (Delivery within a few days)
+                        </label>
+                        <label class="flex items-center">
+                            <input
+                                type="radio"
+                                name="shipping-option"
+                                value="15000"
+                                class="mr-2 shipping-option"
+                            />
+                            Economy 
+                        </label>
+                    </div>
+                </div>
             </div>
             <!-- Order Summary -->
             <div class="md:w-1/3 bg-white rounded-lg shadow-md p-4">
@@ -101,16 +123,16 @@
                 </h2>
                 <div class="flex justify-between mb-4">
                     <p>Subtotal</p>
-                    <p>${{totalAmount}}</p>
+                    <p id="subtotal">{{totalAmount}} VND</p>
                 </div>
                 <div class="flex justify-between mb-4">
                     <p>Shipping</p>
-                    <p>$10.00</p>
+                    <p id="shipping-cost">30,000 VND</p>
                 </div>
                 <div class="flex justify-between mb-4">
                     <p class="font-semibold">Total</p>
-                    <p class="font-semibold">
-                        ${{add (parseFloat totalAmount) 10}}
+                    <p id="total-cost" class="font-semibold">
+                        {{add (parseFloat totalAmount) 30000}} VND
                     </p>
                 </div>
                 <button
@@ -125,32 +147,46 @@
 </section>
 
 <script>
-    document.getElementById("checkout-btn").addEventListener("click", async function(event) {
-        event.preventDefault();  // Ngừng hành động mặc định của nút
+    document.addEventListener("DOMContentLoaded", function () {
+        const shippingOptions = document.querySelectorAll(".shipping-option");
+        const shippingCostElement = document.getElementById("shipping-cost");
+        const totalCostElement = document.getElementById("total-cost");
+        const subtotal = parseFloat("{{totalAmount}}");
 
-        // Tính tổng tiền
-        const totalAmount = parseFloat("{{totalAmount}}") + 10; // Tổng tiền bao gồm phí vận chuyển (cố định $10)
-
-        try {
-            // Gửi yêu cầu GET với tham số totalAmount trong URL
-            const response = await fetch(`/user/cart/create_payment_url?totalAmount=${totalAmount}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+        shippingOptions.forEach(option => {
+            option.addEventListener("change", function () {
+                const shippingCost = parseFloat(this.value);
+                shippingCostElement.textContent = `${shippingCost.toLocaleString()} VND`;
+                const totalCost = subtotal + shippingCost;
+                totalCostElement.textContent = `${totalCost.toLocaleString()} VND`;
             });
+        });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                alert("Checkout failed: " + errorData.message);
-            } else {
-                // Lấy URL thanh toán từ server và chuyển hướng đến URL đó
-                const paymentUrl = await response.json(); // Giả sử server trả về URL thanh toán dưới dạng JSON
-                window.location.href = paymentUrl.url;  // Chuyển hướng đến trang thanh toán
+        document.getElementById("checkout-btn").addEventListener("click", async function (event) {
+            event.preventDefault(); // Ngừng hành động mặc định của nút
+
+            const selectedShippingOption = document.querySelector(".shipping-option:checked").value;
+            const totalAmount = subtotal + parseFloat(selectedShippingOption); // Tổng tiền bao gồm phí giao hàng
+
+            try {
+                const response = await fetch(`/user/cart/create_payment_url?totalAmount=${totalAmount}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert("Checkout failed: " + errorData.message);
+                } else {
+                    const paymentUrl = await response.json();
+                    window.location.href = paymentUrl.url; // Chuyển hướng đến trang thanh toán
+                }
+            } catch (error) {
+                console.error("Error during payment request", error);
+                alert("An error occurred. Please try again later.");
             }
-        } catch (error) {
-            console.error("Error during payment request", error);
-            alert("An error occurred. Please try again later.");
-        }
+        });
     });
 </script>

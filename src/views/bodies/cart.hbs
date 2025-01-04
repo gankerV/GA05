@@ -27,15 +27,7 @@
                                     </td>
                                     <td class="px-1 py-4 text-center">${{this.price}}</td>
                                     <td class="px-1 py-4 text-center">
-                                        <div class="flex items-center justify-center">
-                                            <button
-                                                class="cart-decrement border border-primary bg-primary text-white hover:bg-transparent hover:text-primary rounded-full w-10 h-10 flex items-center justify-center">
-                                                -</button>
-                                            <p class="quantity text-center w-8">{{this.quantity}}</p>
-                                            <button
-                                                class="cart-increment border border-primary bg-primary text-white hover:bg-transparent hover:text-primary rounded-full w-10 h-10 flex items-center justify-center">
-                                                +</button>
-                                        </div>
+                                        <p class="quantity text-sm md:text-base inline-block">{{this.quantity}}</p>
                                     </td>
                                     <td class="px-1 py-4 text-right">${{multiply this.price this.quantity}}</td>
                                 </tr>
@@ -51,15 +43,11 @@
                                     Apply Coupon
                                 </button>
                             </div>
-                            <div class="mt-4 lg:mt-0 flex space-x-2">
+                            <div class="mt-4 lg:mt-0">
                                 <button
                                     class="bg-primary text-white border border-primary hover:bg-transparent hover:text-primary rounded-full py-2 px-4"
                                     id="empty-cart-btn">
                                     Empty Cart
-                                </button>
-                                <button
-                                    class="bg-primary text-white border border-primary hover:bg-transparent hover:text-primary rounded-full py-2 px-4">
-                                    Update Cart
                                 </button>
                             </div>
                         </div>
