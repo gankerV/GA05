@@ -165,7 +165,6 @@ class CartController {
     
             // Tạo URL thanh toán
             const paymentUrl = `${vnpUrl}?${querystring.stringify(vnp_Params, { encode: false })}`;
-            console.log(paymentUrl);
             // Trả về URL thanh toán cho client
             res.json({ url: paymentUrl });
     
@@ -206,10 +205,10 @@ class CartController {
     
                     res.render("home");
                 } else {
-                    res.render("cart");
+                    res.render("home");
                 }
             } else {
-                res.render('failure', { code: '97', message: "Invalid signature" });
+                res.render("home");
             }
         } catch (error) {
             console.error("Error during payment confirmation:", error);
