@@ -20,14 +20,14 @@ CREATE TABLE shop (
 
 -- Thêm dữ liệu mẫu vào bảng products
 INSERT INTO shop (product_name, price, category, size, color, brand, rating, imageFileName) VALUES
-('Blue womens suit', 100.00, 'Women', 'M', 'Blue', 'Nike', '5', '5.jpg'),
-('White shirt with long sleeves', 150.50, 'Women', 'L', 'White', 'Nike', '4', '6.jpg'),
-('Yellow mens suit', 200.99, 'Men', 'S', 'Yellow', 'Puma', '3', '7.jpg'),
-('Red dress', 250.00, 'Women', 'M', 'Red', 'Adidas', '5', '8.jpg'),
-('Black leather jacket', 300.00, 'Women', 'L', 'Brown', 'Adidas', '4', '4.jpg'),
-('Black long dress', 350.75, 'Women', 'S', 'Black', 'Puma', '5', '3.jpg'),
-('Red dress', 250.00, 'Women', 'M', 'Red', 'Adidas', '5', '8.jpg'),
-('Black long dress', 350.75, 'Women', 'S', 'Black', 'Puma', '5', '3.jpg'),
+('Blue womens suit', 10000.00, 'Women', 'M', 'Blue', 'Nike', '5', '5.jpg'),
+('White shirt with long sleeves', 15000.50, 'Women', 'L', 'White', 'Nike', '4', '6.jpg'),
+('Yellow mens suit', 20000.99, 'Men', 'S', 'Yellow', 'Puma', '3', '7.jpg'),
+('Red dress', 250000.00, 'Women', 'M', 'Red', 'Adidas', '5', '8.jpg'),
+('Black leather jacket', 300000.00, 'Women', 'L', 'Brown', 'Adidas', '4', '4.jpg'),
+('Black long dress', 3500000.75, 'Women', 'S', 'Black', 'Puma', '5', '3.jpg'),
+('Red dress', 2500000.00, 'Women', 'M', 'Red', 'Adidas', '5', '8.jpg'),
+('Black long dress', 3500000.75, 'Women', 'S', 'Black', 'Puma', '5', '3.jpg'),
 
 ('Black formal suit', 500.00, 'Men', 'L', 'Black', 'Gucci', '5', '9.jpg'),
 ('Brown leather shoes', 150.00, 'Men', 'M', 'Brown', 'Clarks', '5', '10.jpg'),
