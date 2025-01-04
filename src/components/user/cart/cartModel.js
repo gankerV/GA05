@@ -183,7 +183,7 @@ class CartModel {
             // Cập nhật thông tin đơn hàng
             order.order_status = "Shipped";
             order.payment_status = "Paid";
-            order.amount = amount; // Thêm hoặc cập nhật trường số tiền
+            order.total_amount = amount; 
             await order.save();
     
             return order;
