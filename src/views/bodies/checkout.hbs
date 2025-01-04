@@ -101,7 +101,7 @@
                 </h2>
                 <div class="flex justify-between mb-4">
                     <p>Subtotal</p>
-                    <p>$59.00</p>
+                    <p>${{totalAmount}}</p>
                 </div>
                 <div class="flex justify-between mb-4">
                     <p>Shipping</p>
@@ -109,9 +109,12 @@
                 </div>
                 <div class="flex justify-between mb-4">
                     <p class="font-semibold">Total</p>
-                    <p class="font-semibold">$69.00</p>
+                    <p class="font-semibold">
+                        ${{add (parseFloat totalAmount) 10}}
+                    </p>
                 </div>
                 <button
+                    id="checkout-btn"
                     class="bg-primary text-white border border-primary hover:bg-transparent hover:text-primary py-2 px-4 rounded-full w-full"
                 >
                     Proceed to Payment
@@ -120,3 +123,34 @@
         </div>
     </div>
 </section>
+
+<script>
+    document.getElementById("checkout-btn").addEventListener("click", async function(event) {
+        event.preventDefault();  // Ngừng hành động mặc định của nút
+
+        // Tính tổng tiền
+        const totalAmount = parseFloat("{{totalAmount}}") + 10; // Tổng tiền bao gồm phí vận chuyển (cố định $10)
+
+        try {
+            // Gửi yêu cầu GET với tham số totalAmount trong URL
+            const response = await fetch(`/user/cart/create_payment_url?totalAmount=${totalAmount}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                alert("Checkout failed: " + errorData.message);
+            } else {
+                // Lấy URL thanh toán từ server và chuyển hướng đến URL đó
+                const paymentUrl = await response.json(); // Giả sử server trả về URL thanh toán dưới dạng JSON
+                window.location.href = paymentUrl.url;  // Chuyển hướng đến trang thanh toán
+            }
+        } catch (error) {
+            console.error("Error during payment request", error);
+            alert("An error occurred. Please try again later.");
+        }
+    });
+</script>

@@ -45,6 +45,7 @@ app.engine(
             },
             gt: (a, b) => a > b, // Kiểm tra lớn hơn
             lt: (a, b) => a < b, // Kiểm tra nhỏ hơn
+            parseFloat: (value) => parseFloat(value),
         },
     }),
 );

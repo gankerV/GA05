@@ -74,6 +74,7 @@
                         <p class="font-semibold">${{calculateSubtotal cartItems}}</p>
                     </div>
                     <a href="/user/cart/checkout"
+                        id="checkout-btn"
                         class="bg-primary text-white border hover:border-primary hover:bg-transparent hover:text-primary py-2 px-4 rounded-full mt-4 w-full text-center block">
                         Check out
                     </a>
@@ -82,3 +83,26 @@
         </div>
     </div>
 </section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+    const checkoutButton = document.querySelector("#checkout-btn");
+
+    if (checkoutButton) {
+        checkoutButton.addEventListener("click", (event) => {
+            event.preventDefault();  // Ngừng hành động mặc định của thẻ <a> nếu có
+
+            // Tính tổng tiền
+            const cartItems = {{{json cartItems}}}; // Rendered data from server
+            const calculateSubtotal = (items) => {
+                return items.reduce((total, item) => total + (item.price * item.quantity), 0);
+            };
+
+            const totalAmount = calculateSubtotal(cartItems);
+
+            // Điều hướng đến trang checkout với totalAmount trong query string
+            window.location.href = `/user/cart/checkout?totalAmount=${totalAmount}`;
+        });
+    }
+    });
+</script>

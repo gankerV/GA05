@@ -21,7 +21,7 @@ class CartModel {
                 attributes: ["order_id"],
             });
 
-            if (!order) throw new Error("No pending order found for this user.");
+            if (!order) return [];
 
             const orderId = order.order_id;
 
@@ -42,6 +42,7 @@ class CartModel {
                 const itemData = item.get({ plain: true });
                 const product = itemData.Shop; // Lấy thông tin sản phẩm từ bảng Shop
                 return {
+                    order_id: orderId,  // Thêm order_id vào mỗi sản phẩm
                     id: itemData.order_item_id,
                     product_id: itemData.product_id,
                     quantity: itemData.quantity,
@@ -138,6 +139,52 @@ class CartModel {
             });
             return result > 0; // Trả về true nếu có ít nhất một sản phẩm bị xóa
         } catch (error) {
+            throw error;
+        }
+    }
+
+    static async updatePaymentStatus(userId) {
+        try {
+            // Kiểm tra xem người dùng có đơn hàng "Pending" nào không
+            const order = await Order.findOne({
+                where: { user_id: userId, order_status: "Pending" },
+            });
+
+            if (!order) {
+                throw new Error("No pending order found for this user.");
+            }
+
+            // Cập nhật trạng thái thanh toán thành "Unpaid"
+            order.payment_status = "Unpaid";
+            await order.save();
+
+            // Trả về đơn hàng đã cập nhật
+            return order;
+        } catch (error) {
+            console.error("Error updating payment status:", error);
+            throw error;
+        }
+    }
+
+    static async updateOrders(orderId) {
+        try {
+            if (!orderId) throw new Error("Order ID is required.");
+
+            const order = await Order.findOne({
+                where: { order_id: orderId },
+            });
+
+            if (!order) {
+                throw new Error("Order not found.");
+            }
+
+            order.order_status = "Shipped";
+            order.payment_status = "Paid";
+            await order.save();
+
+            return order;
+        } catch (error) {
+            console.error("Error updating order:", error);
             throw error;
         }
     }

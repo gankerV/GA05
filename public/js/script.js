@@ -226,7 +226,7 @@ function displayProducts(products) {
                 <span class="text-sm font-medium text-gray-600">Rating:</span>
                 <span class="text-sm font-semibold">${product.rating}/5</span>
             </div>
-            <div class="add-to-cart-form" data-product-id="${product.id}">
+            <div class="add-to-cart-form" data-product-id="${product.id}" data-product-price="${product.price}">
                 <button class="add-to-cart-btn bg-primary border border-transparent hover:bg-transparent hover:border-primary text-white hover:text-primary font-semibold py-2 px-4 rounded-full w-full">
                     Add to Cart
                 </button>
@@ -252,9 +252,10 @@ function attachAddToCartEvents() {
 
             // Lấy product_id từ form
             const productId = form.getAttribute("data-product-id");
+            const price = form.getAttribute("data-product-price");
 
             // Đặt quantity luôn bằng 1
-            const payload = { product_id: productId, quantity: 1 };
+            const payload = { product_id: productId, quantity: 1, price: price };
 
             // Gửi yêu cầu AJAX tới server
             fetch("/user/cart/add-product", {

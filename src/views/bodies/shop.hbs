@@ -183,9 +183,11 @@
                                 <span class="text-sm font-medium text-gray-600">Rating:</span>
                                 <span class="text-sm font-semibold">{{this.rating}}/5</span>
                             </div>
-                            <button type="button" class="bg-primary border border-transparent hover:bg-transparent hover:border-primary text-white hover:text-primary font-semibold py-2 px-4 rounded-full w-full">
-                                Add to Cart
-                            </button>
+                            <div class="add-to-cart-form" data-product-id="{{this.id}}" data-product-price="{{this.price}}">
+                                <button class="add-to-cart-btn bg-primary border border-transparent hover:bg-transparent hover:border-primary text-white hover:text-primary font-semibold py-2 px-4 rounded-full w-full">
+                                    Add to Cart
+                                </button>
+                            </div>
                         </div>
                         {{/each}}
                     </div>
@@ -219,4 +221,53 @@
     </div>
 </section>
 
+<script>
+    // Hàm xử lý khi click nút Add to Cart
+    function handleAddToCart(event) {
+        const button = event.currentTarget;
+        const productId = button.parentElement.getAttribute("data-product-id");
+        const price = parseFloat(button.parentElement.getAttribute("data-product-price"));
+        const quantity = 1; // Giả sử mỗi lần chỉ thêm 1 sản phẩm vào giỏ hàng
 
+        // Tạo payload gửi tới server
+        const payload = {
+            product_id: productId,
+            quantity: quantity,
+            price: price
+        };
+
+        // Gửi yêu cầu POST tới server
+        fetch("/user/cart/add-product", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload),
+            redirect: "follow" // Cho phép theo dõi chuyển hướng
+        })
+        .then((response) => {
+            if (response.redirected) {
+                // Nếu server chuyển hướng, di chuyển người dùng tới URL mới
+                window.location.href = response.url;
+            } else if (response.ok) {
+                // Hiển thị thông báo thành công nếu không bị chuyển hướng
+                alert("Product added to cart!");
+            } else {
+                // Hiển thị thông báo lỗi nếu không thành công
+                alert("Failed to add product to cart.");
+            }
+        })
+        .catch((error) => {
+            console.error("Error adding product to cart:", error);
+            alert("An error occurred.");
+        });
+    }
+
+    // Lắng nghe sự kiện cho tất cả các nút Add to Cart
+    document.addEventListener("DOMContentLoaded", () => {
+        const addToCartButtons = document.querySelectorAll(".add-to-cart-btn");
+        addToCartButtons.forEach(button => {
+            button.addEventListener("click", handleAddToCart);
+        });
+    });
+</script>

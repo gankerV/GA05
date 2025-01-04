@@ -31,4 +31,5 @@ router.use("/change-password", userController.changePasswordPage);
 router.use("/profile", AuthModel.userAuthenticated, profileRouter);
 router.use("/cart", AuthModel.userAuthenticated, cartRouter);
 
+
 module.exports = router;
