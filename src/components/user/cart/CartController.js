@@ -60,7 +60,12 @@ class CartController {
             }
 
             // Thêm sản phẩm vào giỏ hàng dựa trên userId
-            const addedProduct = await CartModel.addToCart(userId, product_id, quantity || 1, price);
+            const addedProduct = await CartModel.addToCart(
+                userId,
+                product_id,
+                quantity || 1,
+                price,
+            );
 
             return res.status(201).json({
                 message: "Product added to cart successfully.",
@@ -68,7 +73,9 @@ class CartController {
             });
         } catch (error) {
             console.error("Error adding product to cart:", error);
-            return res.status(500).json({ error: "Failed to add product to cart." });
+            return res
+                .status(500)
+                .json({ error: "Failed to add product to cart." });
         }
     }
 
@@ -125,39 +132,42 @@ class CartController {
         try {
             const userId = req.user.id;
             const totalAmountFromClient = parseFloat(req.query.totalAmount); // Lấy tổng tiền từ query string
-    
+
             if (!userId) {
                 return res.status(400).json({ error: "User ID is required." });
             }
-    
+
             if (isNaN(totalAmountFromClient) || totalAmountFromClient <= 0) {
                 return res.status(400).json({ error: "Invalid total amount." });
             }
-    
+
             // Lấy cấu hình từ .env
             const tmnCode = process.env.vnp_TmnCode;
             const secretKey = process.env.vnp_HashSecret;
             const vnpUrl = process.env.vnp_Url;
             const returnUrl = process.env.vnp_ReturnUrl;
-    
+
             // Lấy orderId từ cơ sở dữ liệu
             const cart = await CartModel.getCartByUser(userId); // Gọi hàm lấy đơn hàng của user
             if (!cart || cart.length === 0) {
-                return res.status(400).json({ error: "No pending cart items found." });
+                return res
+                    .status(400)
+                    .json({ error: "No pending cart items found." });
             }
             const orderId = cart[0].order_id; // Lấy orderId từ kết quả trả về
-    
+
             // Tạo tham số cho VNPay
             const date = new Date();
             const { default: dateFormat } = await import("dateformat");
             const createDate = dateFormat(date, "yyyymmddHHmmss");
-            const orderTime =  dateFormat(date, "HHmmss");
+            const orderTime = dateFormat(date, "HHmmss");
 
-            const ipAddr = req.headers["x-forwarded-for"] ||
+            const ipAddr =
+                req.headers["x-forwarded-for"] ||
                 req.connection.remoteAddress ||
                 req.socket.remoteAddress ||
                 req.connection.socket?.remoteAddress;
-    
+
             let vnp_Params = {
                 vnp_Version: "2.1.0",
                 vnp_Command: "pay",
@@ -172,64 +182,75 @@ class CartController {
                 vnp_IpAddr: ipAddr,
                 vnp_CreateDate: createDate,
             };
-    
+
             // Sắp xếp tham số theo thứ tự alphabet
-            vnp_Params = CartController.sortObject(vnp_Params);  // Thay đổi đây
-    
+            vnp_Params = CartController.sortObject(vnp_Params); // Thay đổi đây
+
             // Tạo chữ ký bảo mật
-            const signData = querystring.stringify(vnp_Params, { encode: true });
+            const signData = querystring.stringify(vnp_Params, {
+                encode: true,
+            });
             const hmac = crypto.createHmac("sha512", secretKey);
-            const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
+            const signed = hmac
+                .update(Buffer.from(signData, "utf-8"))
+                .digest("hex");
             vnp_Params["vnp_SecureHash"] = signed;
-    
+
             // Tạo URL thanh toán
-            const paymentUrl = `${vnpUrl}?${querystring.stringify(vnp_Params, { encode: false })}`;
+            const paymentUrl = `${vnpUrl}?${querystring.stringify(vnp_Params, {
+                encode: false,
+            })}`;
             // Trả về URL thanh toán cho client
             res.json({ url: paymentUrl });
-    
         } catch (error) {
             console.error("Error during checkout:", error);
             res.status(500).json({ error: "Failed to process checkout." });
         }
     }
-    
+
     async returnCart(req, res) {
         try {
             let vnp_return_Params = req.query;
-            const secureHash = vnp_return_Params['vnp_SecureHash'];
-    
+            const secureHash = vnp_return_Params["vnp_SecureHash"];
+
             // Xóa các trường không cần thiết
-            delete vnp_return_Params['vnp_SecureHash'];
-            delete vnp_return_Params['vnp_SecureHashType'];
-    
+            delete vnp_return_Params["vnp_SecureHash"];
+            delete vnp_return_Params["vnp_SecureHashType"];
+
             // Sắp xếp các tham số
             vnp_return_Params = CartController.sortObject(vnp_return_Params);
-    
+
             const tmnCode = process.env.vnp_TmnCode;
             const secretKey = process.env.vnp_HashSecret;
-    
+
             // Tạo chuỗi ký kết
-            const querystring = require('qs');
-            const signData = querystring.stringify(vnp_return_Params, { encode: false });
-    
+            const querystring = require("qs");
+            const signData = querystring.stringify(vnp_return_Params, {
+                encode: false,
+            });
+
             // Tạo mã băm HMAC SHA512
-            const crypto = require('crypto');
-            const hmac = crypto.createHmac('sha512', secretKey);
-            const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
-    
+            const crypto = require("crypto");
+            const hmac = crypto.createHmac("sha512", secretKey);
+            const signed = hmac
+                .update(Buffer.from(signData, "utf-8"))
+                .digest("hex");
+
             // Kiểm tra tính hợp lệ của chữ ký
             if (secureHash === signed) {
-                const responseCode = vnp_return_Params['vnp_ResponseCode'];
-    
-                if (responseCode === '00') { // Thanh toán thành công
-                    const orderInfo = vnp_return_Params['vnp_OrderInfo'];
-                    const orderId = orderInfo.replace('Thanhtoan', ''); // Tách orderId từ OrderInfo
-    
-                    const amount = parseFloat(vnp_return_Params['vnp_Amount']) / 100; // Chuyển số tiền về dạng gốc
-    
+                const responseCode = vnp_return_Params["vnp_ResponseCode"];
+
+                if (responseCode === "00") {
+                    // Thanh toán thành công
+                    const orderInfo = vnp_return_Params["vnp_OrderInfo"];
+                    const orderId = orderInfo.replace("Thanhtoan", ""); // Tách orderId từ OrderInfo
+
+                    const amount =
+                        parseFloat(vnp_return_Params["vnp_Amount"]) / 100; // Chuyển số tiền về dạng gốc
+
                     // Gọi updateOrders với orderId và amount
                     await CartModel.updateOrders(orderId, amount);
-    
+
                     res.render("VnPay_Success", { orderId, amount });
                 } else {
                     res.render("VnPay_Error");
@@ -242,19 +263,18 @@ class CartController {
             res.status(500).json({ error: "Failed to confirm payment." });
         }
     }
-    
-    
 
     checkout(req, res) {
-        const { totalAmount } = req.query;  // Lấy totalAmount từ query string
+        const { totalAmount } = req.query; // Lấy totalAmount từ query string
         if (!totalAmount) {
-            return res.status(400).json({ message: "Total amount is required" });
+            return res
+                .status(400)
+                .json({ message: "Total amount is required" });
         }
 
         // Render trang thanh toán với totalAmount
         res.render("checkout", { totalAmount });
     }
-    
 }
 
 module.exports = new CartController();
