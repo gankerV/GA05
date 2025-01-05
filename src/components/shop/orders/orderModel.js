@@ -246,7 +246,7 @@ class OrderModel {
                 limit: 5, // Lấy tối đa 5 sản phẩm
                 raw: false, // Sử dụng raw: false để có thể truy cập vào quan hệ
             });
-    
+
             return topProducts;
         } catch (error) {
             console.error("Error fetching top revenue products:", error);

@@ -31,7 +31,7 @@
                     {{#each revenueData}}
                     <tr class="border-b border-gray-200">
                         <td class="p-4">{{this.date_or_period}}</td>
-                        <td class="p-4">${{this.revenue}}</td>
+                        <td class="p-4">{{this.revenue}} VND</td>
                     </tr>
                     {{/each}}
                 </tbody>
@@ -51,7 +51,7 @@
                     {{#each topProducts}}
                     <tr>
                         <td class="p-4">{{this.dataValues.shop.dataValues.product_name}}</td>
-                        <td class="p-4">${{this.dataValues.total_revenue}}</td>
+                        <td class="p-4">{{this.dataValues.total_revenue}} VND</td>
                     </tr>
                     {{/each}}
                 </tbody>
