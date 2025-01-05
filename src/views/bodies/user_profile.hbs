@@ -127,6 +127,13 @@
                 </div>
             </div>
         </div>
+        <!-- Nút View Purchased Orders -->
+        <div class="w-full flex justify-center mt-6 p-4">
+            <button id="view-orders-button" 
+                class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700">
+                View Purchased Orders
+            </button>
+        </div>
     </div>
 </section>
 
@@ -270,5 +277,11 @@
             }
             modal.classList.add('hidden');
         });
+    });
+
+
+    document.getElementById("view-orders-button").addEventListener("click", function () {
+        // Chuyển hướng đến trang hiển thị danh sách đơn hàng
+        window.location.href = "/user/profile/order";
     });
 </script>

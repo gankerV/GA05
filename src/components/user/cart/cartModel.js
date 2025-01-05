@@ -56,6 +56,42 @@ class CartModel {
         }
     }
 
+    static async getOrderItemsByOrderId(orderId) {
+        try {
+            // Kiểm tra orderId
+            if (!orderId) throw new Error("Order ID is required.");
+
+            // Lấy thông tin từ bảng order_items và join với bảng shop
+            const orderItems = await OrderItem.findAll({
+                where: { order_id: orderId },
+                include: [
+                    {
+                        model: Shop,
+                        attributes: ["product_name", "price", "imageFileName"],
+                    },
+                ],
+            });
+
+            // Xử lý dữ liệu kết quả
+            const baseImageUrl = "../../../public/images/products/";
+            return orderItems.map((item) => {
+                const itemData = item.get({ plain: true });
+                const product = itemData.Shop; // Lấy thông tin sản phẩm từ bảng Shop
+                return {
+                    order_id: orderId,  // Thêm order_id vào mỗi sản phẩm
+                    id: itemData.order_item_id,
+                    product_id: itemData.product_id,
+                    quantity: itemData.quantity,
+                    price: itemData.price,
+                    product_name: product.product_name,
+                    imageUrl: baseImageUrl + (product.imageFileName || ""),
+                };
+            });
+        } catch (error) {
+            throw error;
+        }
+    }
+
     /**
      * Thêm sản phẩm vào giỏ hàng (order_items)
      * @param {number} userId - ID của người dùng
