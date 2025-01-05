@@ -5,7 +5,7 @@ const path = require("path");
 const userFilename = (req, file) => {
     const userID = req.query.userID || "default";
     const ext = path.extname(file.originalname);
-    return `${userID}${ext}`;
+    return `${userID}.jpg`;
 };
 
 // Hàm để tạo tên file cho ảnh sản phẩm
