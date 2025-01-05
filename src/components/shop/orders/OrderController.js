@@ -61,6 +61,27 @@ class OrderController {
             res.status(500).json({ success: false, message: 'Internal server error' });
         }
     }
+
+    async getOrderUser(req, res) {
+        try {
+            const userId = req.user.id; 
+            
+            const order = new orderModel();
+            // Fetch all orders for the user
+            const orders = await order.getOrdersByUserId( userId );
+            
+            // Convert Sequelize data to plain JSON
+            const plainOrders = orders.map(order => order.get({ plain: true }));
+            
+            // Render view with all orders
+            res.render("order_user", {
+                orders: plainOrders,
+            });
+        } catch (error) {
+            console.error("Error fetching user orders:", error);
+            res.status(500).json({ message: "Internal Server Error" });
+        }
+    }
 } 
 
 module.exports = new OrderController();

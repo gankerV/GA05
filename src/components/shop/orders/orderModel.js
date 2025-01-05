@@ -117,6 +117,23 @@ class OrderModel {
         }
     }
 
+    // Hàm lấy danh sách orders dựa trên user_id
+    async getOrdersByUserId(userId) {
+        try {
+            return await Order.findAll({
+                where: { user_id: userId },
+                attributes: [
+                    'order_id', 'order_date', 'order_status', 'total_amount',
+                    'shipping_address', 'payment_status', 'payment_method'
+                ], // Các cột cần lấy
+                order: [['order_date', 'DESC']], // Sắp xếp theo ngày đặt hàng mới nhất
+            });
+        } catch (error) {
+            console.error("Error fetching orders by user_id:", error);
+            return [];
+        }
+    }
+
     // Update order status
     async updateOrderStatus(userId, status) {
         try {

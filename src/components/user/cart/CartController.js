@@ -25,6 +25,25 @@ class CartController {
         }
     }
 
+    async getOrderItems(req, res) {
+        try {
+            const { order_id } = req.query;  // Lấy orderId từ query string
+            
+            if (!order_id) {
+                return res.status(400).json({ error: "Order ID is required." });
+            }
+
+            // Lấy thông tin sản phẩm trong đơn hàng từ CartModel
+            const orderItems = await CartModel.getOrderItemsByOrderId(order_id);
+
+            // Render hoặc trả về thông tin sản phẩm trong đơn hàng
+            res.render("orderDetail", { orderItems });
+        } catch (error) {
+            console.error("Error fetching order items:", error);
+            return res.status(500).json({ error: "Failed to fetch order items." });
+        }
+    }
+
     /**
      * Thêm sản phẩm vào giỏ hàng
      * @param {Object} req - Request từ Express

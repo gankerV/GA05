@@ -1,0 +1,57 @@
+<!-- Order Details -->
+<section id="order-detail-page" class="bg-white py-16">
+    <div class="container mx-auto px-4">
+        <h1 class="text-2xl font-semibold mb-4">Order Details</h1>
+        <div class="flex flex-col md:flex-row gap-4">
+            <div class="md:w-full">
+                <div class="bg-white rounded-lg shadow-md p-6 mb-4">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr>
+                                    <th class="text-center md:text-left font-semibold">Product</th>
+                                    <th class="text-center font-semibold">Price</th>
+                                    <th class="text-center font-semibold">Quantity</th>
+                                    <th class="text-center md:text-right font-semibold">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="order-items">
+                                {{#each orderItems}}
+                                <tr class="pb-4 border-b border-gray-line">
+                                    <td class="px-1 py-4">
+                                        <div class="flex items-center flex-col sm:flex-row text-center sm:text-left">
+                                            <img class="h-16 w-16 md:h-24 md:w-24 sm:mr-8 mb-4 sm:mb-0"
+                                                src="{{this.imageUrl}}" alt="Product image" />
+                                            <p class="text-sm md:text-base md:font-semibold">{{this.product_name}}</p>
+                                        </div>
+                                    </td>
+                                    <td class="px-1 py-4 text-center">${{this.price}}</td>
+                                    <td class="px-1 py-4 text-center">
+                                        <p class="quantity text-sm md:text-base inline-block">{{this.quantity}}</p>
+                                    </td>
+                                    <td class="px-1 py-4 text-right">${{multiply this.price this.quantity}}</td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const orderItems = {{{json orderItems}}}; // Rendered data from server
+        
+        // Tính tổng tiền cho các sản phẩm trong đơn hàng
+        const calculateTotalAmount = (items) => {
+            return items.reduce((total, item) => total + (item.price * item.quantity), 0);
+        };
+        
+        // Hiển thị tổng tiền (nếu cần, có thể hiển thị trong footer hoặc ở nơi khác trong trang)
+        const totalAmount = calculateTotalAmount(orderItems);
+        console.log(`Total Amount for this order: ${totalAmount}`);
+    });
+</script>

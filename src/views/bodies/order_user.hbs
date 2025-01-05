@@ -1,0 +1,64 @@
+<div class="container mx-auto my-8 px-4">
+    <!-- Title -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-semibold">Your Orders</h1>
+    </div>
+
+    <!-- Orders Table -->
+    <table class="min-w-full border-collapse border border-gray-300">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="border border-gray-300 px-4 py-2">Order ID</th>
+                <th class="border border-gray-300 px-4 py-2">Order Date</th>
+                <th class="border border-gray-300 px-4 py-2">Order Status</th>
+                <th class="border border-gray-300 px-4 py-2">Total Amount</th>
+                <th class="border border-gray-300 px-4 py-2">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Iterate through orders -->
+            {{#each orders}}
+            <tr class="hover:bg-gray-100">
+                <td class="border border-gray-300 px-4 py-2">{{order_id}}</td>
+                <td class="border border-gray-300 px-4 py-2">{{order_date}}</td>
+                <td class="border border-gray-300 px-4 py-2">
+                    <span class="px-2 py-1 text-sm font-semibold rounded-lg {{order_status}}">
+                        {{order_status}}
+                    </span>
+                </td>
+                <td class="border border-gray-300 px-4 py-2">{{total_amount}} VND</td>
+                <td class="border border-gray-300 px-4 py-2 text-center">
+                    <button 
+                        class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                        onclick="viewOrderDetails({{order_id}})">
+                        View Details
+                    </button>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function viewOrderDetails(orderId) {
+        // Gửi yêu cầu GET tới /user/cart/order với order_id
+        fetch(`/user/cart/order?order_id=${orderId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                // Nếu server trả về trang HTML, điều hướng đến trang order mới
+                window.location.href = `/user/cart/order?order_id=${orderId}`;
+            } else {
+                throw new Error('Network response was not ok.');
+            }
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+    }
+</script>
