@@ -1,7 +1,3 @@
-const { User } = require("../../user/userModel");
-const Product = require("../../shop/product/productModel");
-const Shop = require("../../shop/shopModel");
-const profileModel = require("../../user/profile/profileModel");
 const orderModel = require("../../shop/orders/orderModel");
 const Sequelize = require("sequelize");
 

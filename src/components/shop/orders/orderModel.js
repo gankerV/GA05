@@ -150,6 +150,7 @@ class OrderModel {
                 ],
                 where: {
                     order_status: 'Delivered',
+                    order_date: sequelize.where(sequelize.fn('DATE', sequelize.col('order_date')), '=', sequelize.literal('CURRENT_DATE'))
                 },
                 group: [sequelize.fn('DATE', sequelize.col('order_date'))],
                 order: [[sequelize.fn('DATE', sequelize.col('order_date')), 'DESC']], // Sắp xếp theo ngày mới nhất
@@ -174,6 +175,7 @@ class OrderModel {
                 ],
                 where: {
                     order_status: 'Delivered',
+                    order_date: sequelize.where(sequelize.fn('WEEK', sequelize.col('order_date')), '=', sequelize.literal('WEEK(CURRENT_DATE())'))
                 },
                 group: [sequelize.fn('WEEK', sequelize.col('order_date'))],
                 order: [[sequelize.fn('WEEK', sequelize.col('order_date')), 'DESC']], // Sắp xếp theo tuần mới nhất
@@ -198,6 +200,7 @@ class OrderModel {
                 ],
                 where: {
                     order_status: 'Delivered',
+                    order_date: sequelize.where(sequelize.fn('MONTH', sequelize.col('order_date')), '=', sequelize.literal('MONTH(CURRENT_DATE())'))
                 },
                 group: [sequelize.fn('MONTH', sequelize.col('order_date'))],
                 order: [[sequelize.fn('MONTH', sequelize.col('order_date')), 'DESC']], // Sắp xếp theo tháng mới nhất
