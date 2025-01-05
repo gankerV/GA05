@@ -169,7 +169,7 @@ class CartController {
 
             // Tạo chữ ký bảo mật
             const signData = querystring.stringify(vnp_Params, {
-                encode: false,
+                encode: true,
             });
             const hmac = crypto.createHmac("sha512", secretKey);
             const signed = hmac
