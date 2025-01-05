@@ -79,7 +79,7 @@ class CartModel {
                 order = await Order.create({
                     user_id: userId,
                     order_status: "Pending",
-                    created_at: new Date(),
+                    order_date: new Date(),
                     total_amount: 0, // Cập nhật giá trị ban đầu của tổng tiền
                     shipping_address: '', // Cập nhật địa chỉ giao hàng nếu cần
                     payment_status: 'Unpaid', // Trạng thái thanh toán mặc định
