@@ -178,9 +178,7 @@ class User_managementController{
             }
 
             if (user.id === adminID) {
-                return res
-                    .status(400)
-                    .json({ error: "You can't ban yourself" });
+                return res.render("ban_error")
             }
 
             // Cập nhật trạng thái người dùng
